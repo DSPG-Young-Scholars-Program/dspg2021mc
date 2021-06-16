@@ -37,3 +37,13 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Data
+.csv
+.xlsx
+.xls
+.RDS
+.rds
+
+# For mac Users
+.DS_Store
