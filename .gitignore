@@ -47,3 +47,4 @@ vignettes/*.pdf
 
 # For mac Users
 .DS_Store
+.Rproj.user
