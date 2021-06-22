@@ -8,7 +8,7 @@
 library(tidycensus)
 library(tidyverse)
 
-######## Pull ACS 2014/18 data for basic Patrick County sociodemographics #################
+######## Pull ACS 2015/19 data for basic Arlington County sociodemographics #################
 
 
 #
@@ -108,7 +108,7 @@ data_tract <- get_acs(geography = "tract", state = 51, county = 013,
 # Get data from 2015/19 5-year estimates for Arlington County (51013) at block group level
 data_bgrp <- get_acs(geography = "block group", state = 51, county = 013,
                      variables = acsvars,
-                     year = 2019, survey = "acs5",
+                     year = 2020, survey = "acs5",
                      cache_table = TRUE, output = "wide", geometry = TRUE,
                      keep_geo_vars = TRUE)
 
@@ -207,3 +207,4 @@ acs_bgrp <- data_bgrp %>% transmute(
 )
 
 # NA values will be replaced with zeroes
+
