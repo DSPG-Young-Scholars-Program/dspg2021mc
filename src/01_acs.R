@@ -137,7 +137,27 @@ acs_tract <- data_tract %>% transmute(
   inpov = B17001_002E / B17001_001E * 100,
   nohealthins = (B27001_005E + B27001_008E + B27001_011E + B27001_014E + B27001_017E + B27001_020E + B27001_023E + 
                    B27001_026E + B27001_029E + B27001_033E + B27001_036E + B27001_039E + B27001_042E + B27001_045E +
-                   B27001_048E + B27001_051E + B27001_054E + B27001_057E) / B27001_001E * 100
+                   B27001_048E + B27001_051E + B27001_054E + B27001_057E) / B27001_001E * 100,
+  med_inc_w = B19013A_001E,
+  med_inc_b = B19013B_001E,
+  med_inc_a = B19013D_001E,
+  med_inc_h = B19013I_001E,
+  med_inc_o = B19013G_001E,
+  pov_w = B17020A_002E / B17020A_001E * 100,
+  pov_b = B17020B_002E / B17020B_001E * 100,
+  pov_a = B17020D_002E / B17020D_001E * 100,
+  pov_h = B17020I_002E / B17020I_001E * 100,
+  pov_o = B17020G_002E / B17020G_001E * 100,
+  rent_ov_30 = (B25070_007E + B25070_008E + B25070_009E + B25070_010E) / B25070_001E * 100,
+  commute_un_10 = B08134_002E / B08134_001E * 100,
+  commute_10_14 = B08134_003E / B08134_001E * 100,
+  commute_15_19 = B08134_004E / B08134_001E * 100,
+  commute_20_24 = B08134_005E / B08134_001E * 100,
+  commute_25_29 = B08134_006E / B08134_001E * 100,
+  commute_30_34 = B08134_007E / B08134_001E * 100,
+  commute_35_44 = B08134_008E / B08134_001E * 100,
+  commute_45_59 = B08134_009E / B08134_001E * 100,
+  commute_60_pl = B08134_010E / B08134_001E * 100
 )
 
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
@@ -163,5 +183,27 @@ acs_bgrp <- data_bgrp %>% transmute(
   inpov = B17001_002E / B17001_001E * 100,
   nohealthins = (B27001_005E + B27001_008E + B27001_011E + B27001_014E + B27001_017E + B27001_020E + B27001_023E + 
                    B27001_026E + B27001_029E + B27001_033E + B27001_036E + B27001_039E + B27001_042E + B27001_045E +
-                   B27001_048E + B27001_051E + B27001_054E + B27001_057E) / B27001_001E * 100
+                   B27001_048E + B27001_051E + B27001_054E + B27001_057E) / B27001_001E * 100,
+  med_inc_w = B19013A_001E,
+  med_inc_b = B19013B_001E,
+  med_inc_a = B19013D_001E,
+  med_inc_h = B19013I_001E,
+  med_inc_o = B19013G_001E,
+  pov_w = B17020A_002E / B17020A_001E * 100,
+  pov_b = B17020B_002E / B17020B_001E * 100,
+  pov_a = B17020D_002E / B17020D_001E * 100,
+  pov_h = B17020I_002E / B17020I_001E * 100,
+  pov_o = B17020G_002E / B17020G_001E * 100,
+  rent_ov_30 = (B25070_007E + B25070_008E + B25070_009E + B25070_010E) / B25070_001E * 100,
+  commute_un_10 = B08134_002E / B08134_001E * 100,
+  commute_10_14 = B08134_003E / B08134_001E * 100,
+  commute_15_19 = B08134_004E / B08134_001E * 100,
+  commute_20_24 = B08134_005E / B08134_001E * 100,
+  commute_25_29 = B08134_006E / B08134_001E * 100,
+  commute_30_34 = B08134_007E / B08134_001E * 100,
+  commute_35_44 = B08134_008E / B08134_001E * 100,
+  commute_45_59 = B08134_009E / B08134_001E * 100,
+  commute_60_pl = B08134_010E / B08134_001E * 100
 )
+
+# NA values will be replaced with zeroes
