@@ -206,5 +206,6 @@ acs_bgrp <- data_bgrp %>% transmute(
   commute_60_pl = B08134_010E / B08134_001E * 100
 )
 
-# NA values will be replaced with zeroes
+write_rds(acs_tract, "./data/working/acs_tract.Rds")
+write_rds(acs_bgrp, "./data/working/acs_bgrp.Rds")
 
