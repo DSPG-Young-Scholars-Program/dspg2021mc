@@ -276,7 +276,7 @@ ggplot() +
   labs(title = "Percent population unemployed \nby Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
-  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.35),
     legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
@@ -402,7 +402,7 @@ ggplot() +
   labs(title = "Percent population in poverty (Hispanic) \nby Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
-  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.35),
+  theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.3),
     legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
@@ -419,7 +419,7 @@ ggplot() +
   labs(title = "Percent population in poverty (one or more \nraces) by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
-  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.35),
+  theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.35),
     legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
@@ -433,10 +433,10 @@ min_rent_ov_30_trct <- floor(min(acs_tract$rent_ov_30))
 max_rent_ov_30_trct <- ceiling(max(acs_tract$rent_ov_30))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = rent_ov_30)) +
-  labs(title = "Percent population whose rent more than 30 percent of income \nby Census tract level, 2014/18",
+  labs(title = "Percent population whose rent more than 30 percent \nof income by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
-  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
+  theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.3),
     legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
@@ -468,7 +468,7 @@ min_commute_10_14_trct <- floor(min(acs_tract$commute_10_14))
 max_commute_10_14_trct <- ceiling(max(acs_tract$commute_10_14))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = commute_10_14)) +
-  labs(title = "Percent population with commute between 10 and 14 minutes \nby Census tract level, 2014/18",
+  labs(title = "Percent population with commute between 10 and 14 \nminutes by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
@@ -502,7 +502,7 @@ min_commute_20_24_trct <- floor(min(acs_tract$commute_20_24))
 max_commute_20_24_trct <- ceiling(max(acs_tract$commute_20_24))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = commute_20_24)) +
-  labs(title = "Percent population with commute between 20 and 24 minutes \nby Census tract level, 2014/18",
+  labs(title = "Percent population with commute between 20 and 24 \nminutes by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
@@ -519,7 +519,7 @@ min_commute_25_29_trct <- floor(min(acs_tract$commute_25_29))
 max_commute_25_29_trct <- ceiling(max(acs_tract$commute_25_29))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = commute_25_29)) +
-  labs(title = "Percent population with commute between 25 and 29 minutes \nby Census tract level, 2014/18",
+  labs(title = "Percent population with commute between 25 and 29 \nminutes by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
@@ -536,7 +536,7 @@ min_commute_30_34_trct <- floor(min(acs_tract$commute_30_34))
 max_commute_30_34_trct <- ceiling(max(acs_tract$commute_30_34))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = commute_30_34)) +
-  labs(title = "Percent population with commute between 30 and 34 minutes \nby Census tract level, 2014/18",
+  labs(title = "Percent population with commute between 30 and 34 \nminutes by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
@@ -554,7 +554,7 @@ min_commute_35_44_trct <- floor(min(acs_tract$commute_35_44))
 max_commute_35_44_trct <- ceiling(max(acs_tract$commute_35_44))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = commute_35_44)) +
-  labs(title = "Percent population with commute between 35 and 44 minutes \nby Census tract level, 2014/18",
+  labs(title = "Percent population with commute between 35 and 44 \nminutes by Census tract level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
@@ -571,10 +571,10 @@ ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_35_44_tr
        max_commute_45_59_trct <- ceiling(max(acs_tract$commute_45_59))
        ggplot() +
          geom_sf(data = acs_tract, size = 0.2, aes(fill = commute_45_59)) +
-         labs(title = "Percent population with commute between 45 and 59 \n minutes by Census tract level, 2014/18",
+         labs(title = "Percent population with commute between 45 and \n59 minutes by Census tract level, 2014/18",
               caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
          theme_map() +
-         theme(plot.title = element_text(size = 13, face = "bold", hjust = 0.35),
+         theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.3),
                legend.title = element_text(size = 11, face = "bold"),
                legend.text = element_text(size = 11),
                legend.position = "right") +
