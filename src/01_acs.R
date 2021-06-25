@@ -46,6 +46,13 @@ Sys.getenv("CENSUS_API_KEY")
 # % population without health insurance
 # (005 + 008 + 011 + 014 + 017 + 020 + 023 + 026 + 029 + 033 + 036 + 039 + 042 + 045 + 048 + 051 + 054 + 057) /  B27001_001
 
+# Unemployment by race
+# S2301_C04_001, S2301_C04_012, S2301_C04_013, S2301_C04_015, S2301_C04_019
+# Educational attainment
+# S1501_C02_015, S1501_C02_030, S1501_C02_036, S1501_C02_042, S1501_C02_054
+# Disconnected youth
+# S1401_C02_010
+
 # Select variables
 acsvars <- c(
   # total pop
@@ -67,6 +74,8 @@ acsvars <- c(
   "B27001_005", "B27001_008", "B27001_011", "B27001_014", "B27001_017", "B27001_020", "B27001_023",
   "B27001_026", "B27001_029", "B27001_033", "B27001_036", "B27001_039", "B27001_042", "B27001_045",
   "B27001_048", "B27001_051", "B27001_054", "B27001_057", "B27001_001",
+  # median income at household level - all
+  "B19013_001",
   # median income at household level - white
   "B19013A_001",
   # median income at household level - asian
@@ -81,6 +90,8 @@ acsvars <- c(
   "B08134_001", "B08134_002", "B08134_003", "B08134_004", "B08134_005", "B08134_006", "B08134_007", "B08134_008", "B08134_009", "B08134_010",
   # gross rent as percentage of income
   "B25070_001", "B25070_007", "B25070_008", "B25070_009", "B25070_010",
+  # poverty status - all
+  "B17001_001", "B17001_002",
   # poverty status - white
   "B17020A_001", "B17020A_002",
   # poverty status - asian
@@ -93,23 +104,73 @@ acsvars <- c(
   "B17020G_001", "B17020G_002"
 )
 
+acs_subject_vars <- c(
+  # Unemployment rate - all
+  "S2301_C04_001",
+  # Unemployment rate - White
+  "S2301_C04_012",
+  # Unemployment rate - Black
+  "S2301_C04_013",
+  # Unemployment rate - Asian
+  "S2301_C04_015",
+  # Unemployment rate - Hispanic
+  "S2301_C04_019",
+  # 25 and older with BA or higher - all
+  "S1501_C02_015",
+  # 25 and older with BA or higher - White
+  "S1501_C02_030",
+  # 25 and older with BA or higher - Black
+  "S1501_C02_036",
+  # 25 and older with BA or higher - Asian
+  "S1501_C02_042",
+  # 25 and older with BA or higher - Hispanic
+  "S1501_C02_054",
+  # % pop enrolled in college or graduate school
+  "S1401_C02_010"
+)
+
 
 #
 # Get data ------------------------------------------------------------------------
 #
 
 # Get data from 2015/19 5-year estimates for Arlington County (51013) at tract level 
-data_tract <- get_acs(geography = "tract", state = 51, county = 013,
+data_tract <- get_acs(geography = "tract", 
+                      state = 51, 
+                      county = 013,
                       variables = acsvars,
-                      year = 2019, survey = "acs5",
-                      cache_table = TRUE, output = "wide", geometry = TRUE,
+                      year = 2019, 
+                      survey = "acs5",
+                      cache_table = TRUE, 
+                      output = "wide", 
+                      geometry = TRUE,
                       keep_geo_vars = TRUE)
 
+# Get subject table data from 2015/19 5-year estimates for Arlington County (51013) at tract level 
+data_tract_subject <- get_acs(geography = "tract", 
+                              state = 51, 
+                              county = 013,
+                              variables = acs_subject_vars,
+                              year = 2019, 
+                              survey = "acs5",
+                              cache_table = TRUE, 
+                              output = "wide")
+
+data_tract_subject <- data_tract_subject %>% select(-NAME)
+
+# join with other acs variables
+data_tract <- data_tract %>% left_join(data_tract_subject, by = "GEOID")
+
 # Get data from 2015/19 5-year estimates for Arlington County (51013) at block group level
-data_bgrp <- get_acs(geography = "block group", state = 51, county = 013,
+data_bgrp <- get_acs(geography = "block group", 
+                     state = 51, 
+                     county = 013,
                      variables = acsvars,
-                     year = 2020, survey = "acs5",
-                     cache_table = TRUE, output = "wide", geometry = TRUE,
+                     year = 2020, 
+                     survey = "acs5",
+                     cache_table = TRUE, 
+                     output = "wide", 
+                     geometry = TRUE,
                      keep_geo_vars = TRUE)
 
 #
@@ -138,11 +199,13 @@ acs_tract <- data_tract %>% transmute(
   nohealthins = (B27001_005E + B27001_008E + B27001_011E + B27001_014E + B27001_017E + B27001_020E + B27001_023E + 
                    B27001_026E + B27001_029E + B27001_033E + B27001_036E + B27001_039E + B27001_042E + B27001_045E +
                    B27001_048E + B27001_051E + B27001_054E + B27001_057E) / B27001_001E * 100,
+  med_inc_all = B19013_001E,
   med_inc_w = B19013A_001E,
   med_inc_b = B19013B_001E,
   med_inc_a = B19013D_001E,
   med_inc_h = B19013I_001E,
   med_inc_o = B19013G_001E,
+  pov_all = B17001_002E / B17001_001E * 100,
   pov_w = B17020A_002E / B17020A_001E * 100,
   pov_b = B17020B_002E / B17020B_001E * 100,
   pov_a = B17020D_002E / B17020D_001E * 100,
@@ -157,7 +220,18 @@ acs_tract <- data_tract %>% transmute(
   commute_30_34 = B08134_007E / B08134_001E * 100,
   commute_35_44 = B08134_008E / B08134_001E * 100,
   commute_45_59 = B08134_009E / B08134_001E * 100,
-  commute_60_pl = B08134_010E / B08134_001E * 100
+  commute_60_pl = B08134_010E / B08134_001E * 100,
+  unemploy_rate_all = S2301_C04_001E,
+  unemploy_rate_w = S2301_C04_012E,
+  unemploy_rate_b = S2301_C04_013E,
+  unemploy_rate_a = S2301_C04_015E,
+  unemploy_rate_h = S2301_C04_019E,
+  ba_higher_all = S1501_C02_015E,
+  ba_higher_w = S1501_C02_030E,
+  ba_higher_b = S1501_C02_036E,
+  ba_higher_a = S1501_C02_042E,
+  ba_higher_h = S1501_C02_054E,
+  perc_college_higher = S1401_C02_010E
 )
 
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
