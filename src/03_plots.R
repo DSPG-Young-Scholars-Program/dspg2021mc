@@ -169,6 +169,7 @@ acs_tract <- data_tract %>% transmute(
 # Drop tract level 9801; reassign acs_tract
 acs_tract <- acs_tract[-c(53), ]
 
+summary(acs_tract)
 
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
 # for now and use tract-level values for plotting.)
@@ -216,6 +217,10 @@ acs_bgrp <- data_bgrp %>% transmute(
   commute_60_pl = B08134_010E / B08134_001E * 100
 )
 
+acs_bgrp_no <- acs_bgrp[-c(53), ]
+
+summary(acs_bgrp)
+summary(acs_bgrp_no)
 
 
 write_rds(acs_tract, "./data/working/acs_tract.Rds")
@@ -227,10 +232,10 @@ write_rds(acs_bgrp, "/home/unq6jg/git/dspg21mc/data/working/acs_bgrp.Rds")
 
 # hispanic 
 
-min_hispanic_bgrp <- floor(min(acs_bgrp$commute_60_pl))
-max_hispanic_bgrp <- ceiling(max(acs_bgrp$commute_60_pl))
+min_hispanic_bgrp <- floor(min(acs_bgrp$black))
+max_hispanic_bgrp <- ceiling(max(acs_bgrp$black))
 ggplot() +
-  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = commute_60_pl)) +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = black)) +
   labs(title = "Percent population Hispanic \nby Census block level, 2014/18",
        caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
   theme_map() +

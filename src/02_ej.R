@@ -22,6 +22,7 @@ environment <- ej %>% transmute(fips = ID,
                                 VULEOPCT = VULEOPCT * 100,
                                 DSLPM,
                                 CANCER,
+                                P_CANCR,
                                 RESP,
                                 PTRAF,
                                 OZONE,
@@ -45,12 +46,12 @@ write_rds(environment, "./data/working/ej.Rds")
 acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
 environment <- left_join(environment, acs_bgrp, by = c("fips" = "GEOID"))
 
-# particles (PM25)
-min_pm25 <- floor(min(environment$PM25))
-max_pm25 <- ceiling(max(environment$PM25))
+# cancer percentile
+min <- floor(min(environment$P_CANCR))
+max <- ceiling(max(environment$P_CANCR))
 ggplot() +
-  geom_sf(data = environment, size = 0.2, aes(fill = PM25, geometry = geometry)) +
-  labs(title = "PM25 Levels by Census Block Group, 2019",
+  geom_sf(data = environment, size = 0.2, aes(fill = P_CANCR, geometry = geometry)) +
+  labs(title = "Air Toxin Cancer Risk\n by Census Block Group, 2019",
        caption = "Source: EJ Screen 2019 Estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
@@ -58,9 +59,9 @@ ggplot() +
         legend.text = element_text(size = 11),
         legend.position = "right") +
   scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
-                        limits = c(min_pm25, max_pm25), 
-                        breaks = seq(min_pm25, max_pm25, length.out = 5))
-ggsave(path = "./output/ej/", device = "png", filename = "plot_pm25.png", plot = last_plot())
+                        limits = c(min, max), 
+                        breaks = seq(min, max, length.out = 5))
+ggsave(path = "./output/ej", device = "png", filename = "plot_p_cancer.png", plot = last_plot())
 
 
 
