@@ -283,3 +283,24 @@ acs_bgrp <- data_bgrp %>% transmute(
 write_rds(acs_tract, "./data/working/acs_tract.Rds")
 write_rds(acs_bgrp, "./data/working/acs_bgrp.Rds")
 
+
+#
+# Plots -------------------------------------------------
+#
+
+# ba_higher_all
+min <- floor(min(acs_tract$ba_higher_all, na.rm = T))
+max <- ceiling(max(acs_tract$ba_higher_all, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_tract, size = 0.2, aes(fill = ba_higher_all, geometry = geometry)) +
+  labs(title = "Share of Population with a Bachelor's \n Age 25-64 by Census Tract, 2015/19",
+       caption = "Source: American Community Survey, 2019 Estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
+                        limits = c(min, max), 
+                        breaks = seq(min, max, length.out = 5))
+ggsave(path = "./output/acs", device = "png", filename = "plot_educ_attain.png", plot = last_plot())

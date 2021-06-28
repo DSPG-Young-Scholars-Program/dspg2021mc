@@ -58,7 +58,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min, max), 
                         breaks = seq(min, max, length.out = 5))
 ggsave(path = "./output/ej", device = "png", filename = "plot_p_cancer.png", plot = last_plot())
