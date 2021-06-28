@@ -7,7 +7,10 @@
 # install.packages("ggplot2")
 library(tidycensus)
 library(tidyverse)
+library(magrittr)
+library(dplyr)
 library(ggthemes)
+library(ggplot2)
 
 ######## Pull ACS 2015/19 data for basic Arlington County sociodemographics #################
 
@@ -109,13 +112,15 @@ data_tract <- get_acs(geography = "tract", state = 51, county = 013,
 # Get data from 2015/19 5-year estimates for Arlington County (51013) at block group level
 data_bgrp <- get_acs(geography = "block group", state = 51, county = 013,
                      variables = acsvars,
-                     year = 2020, survey = "acs5",
+                     year = 2019, survey = "acs5",
                      cache_table = TRUE, output = "wide", geometry = TRUE,
                      keep_geo_vars = TRUE)
+
 
 #
 # Calculate ------------------------------------------------------------------------
 #
+
 
 # Tract level 
 acs_tract <- data_tract %>% transmute(
@@ -164,6 +169,7 @@ acs_tract <- data_tract %>% transmute(
 # Drop tract level 9801; reassign acs_tract
 acs_tract <- acs_tract[-c(53), ]
 
+
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
 # for now and use tract-level values for plotting.)
 acs_bgrp <- data_bgrp %>% transmute(
@@ -211,10 +217,35 @@ acs_bgrp <- data_bgrp %>% transmute(
 )
 
 
+
 write_rds(acs_tract, "./data/working/acs_tract.Rds")
-write_rds(acs_bgrp, "./data/working/acs_bgrp.Rds")
+write_rds(acs_bgrp, "/home/unq6jg/git/dspg21mc/data/working/acs_bgrp.Rds")
 
 # Plot ----------------------------------------------------------------------
+
+# Block level 
+
+# hispanic 
+
+min_hispanic_bgrp <- floor(min(acs_bgrp$commute_60_pl))
+max_hispanic_bgrp <- ceiling(max(acs_bgrp$commute_60_pl))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = commute_60_pl)) +
+  labs(title = "Percent population Hispanic \nby Census block level, 2014/18",
+       caption = "Source: American Community Survey 2014/18 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_hispanic_bgrp, max_hispanic_bgrp),
+                        breaks = seq(min_hispanic_bgrp, max_hispanic_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_hispanic_bgrp.png", plot = last_plot())
+
+# black
+
+
 
 # Tract level
 # hispanic
