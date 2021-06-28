@@ -294,7 +294,7 @@ max <- ceiling(max(acs_tract$ba_higher_all, na.rm = T))
 ggplot() +
   geom_sf(data = acs_tract, size = 0.2, aes(fill = ba_higher_all, geometry = geometry)) +
   labs(title = "Share of Population with a Bachelor's \n Age 25-64 by Census Tract, 2015/19",
-       caption = "Source: American Community Survey, 2019 Estimates.") +
+       caption = "Source: American Community Survey 2015/19 (5-year) Estimates.") +
   theme_map() +
   theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
         legend.title = element_text(size = 11, face = "bold"),
