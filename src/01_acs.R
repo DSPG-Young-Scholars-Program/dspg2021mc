@@ -7,6 +7,7 @@
 # install.packages("ggplot2")
 library(tidycensus)
 library(tidyverse)
+library(ggthemes)
 
 ######## Pull ACS 2015/19 data for basic Arlington County sociodemographics #################
 
@@ -288,6 +289,9 @@ write_rds(acs_bgrp, "./data/working/acs_bgrp.Rds")
 # Plots -------------------------------------------------
 #
 
+acs_tract <- read_rds("./data/working/acs_tract.Rds")
+acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
+
 # ba_higher_all
 min <- floor(min(acs_tract$ba_higher_all, na.rm = T))
 max <- ceiling(max(acs_tract$ba_higher_all, na.rm = T))
@@ -304,3 +308,37 @@ ggplot() +
                         limits = c(min, max), 
                         breaks = seq(min, max, length.out = 5))
 ggsave(path = "./output/acs", device = "png", filename = "plot_educ_attain.png", plot = last_plot())
+
+# inpov
+min <- floor(min(acs_tract$inpov, na.rm = T))
+max <- ceiling(max(acs_tract$inpov, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_tract, size = 0.2, aes(fill = inpov, geometry = geometry)) +
+  labs(title = "Percent Population Below 100 Percent \n Poverty Line by Census Tract, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) Estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
+                        limits = c(min, max), 
+                        breaks = seq(min, max, length.out = 5))
+ggsave(path = "./output/acs", device = "png", filename = "plot_inpov.png", plot = last_plot())
+
+# black
+min <- floor(min(acs_bgrp$black, na.rm = T))
+max <- ceiling(max(acs_bgrp$black, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = black, geometry = geometry)) +
+  labs(title = "Percent Population Black \nby Census Block Group, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) Estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
+                        limits = c(min, max), 
+                        breaks = seq(min, max, length.out = 5))
+ggsave(path = "./output/acs", device = "png", filename = "plot_black.png", plot = last_plot())
