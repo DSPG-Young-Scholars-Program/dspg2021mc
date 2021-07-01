@@ -230,10 +230,12 @@ write_rds(acs_bgrp, "/home/unq6jg/git/dspg21mc/data/working/acs_bgrp.Rds")
 
 # Block level 
 
-# hispanic 
+# hispanic = unable to get at block level 
 
-min_hispanic_bgrp <- floor(min(acs_bgrp$black))
-max_hispanic_bgrp <- ceiling(max(acs_bgrp$black))
+# black
+
+min_black_bgrp <- floor(min(acs_bgrp$black, na.rm = T))
+max_black_bgrp <- ceiling(max(acs_bgrp$black, na.rm = T))
 ggplot() +
   geom_sf(data = acs_bgrp, size = 0.2, aes(fill = black)) +
   labs(title = "Percent population Hispanic \nby Census block level, 2014/18",
@@ -248,9 +250,199 @@ ggplot() +
                         breaks = seq(min_hispanic_bgrp, max_hispanic_bgrp, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_hispanic_bgrp.png", plot = last_plot())
 
-# black
+
+# without bachelors (noba)
+min_noba_bgrp <- floor(min(acs_bgrp$noba, na.rm = T))
+max_noba_bgrp <- ceiling(max(acs_bgrp$noba, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = noba)) +
+  labs(title = "Percent population without bachelor's degree \nby Block tract level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.3),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_noba_bgrp, max_noba_bgrp),
+                        breaks = seq(min_noba_bgrp, max_noba_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_noba_bgrp.png", plot = last_plot())
+
+# unemployed
+min_unempl_bgrp <- floor(min(acs_bgrp$unempl, na.rm = T))
+max_unempl_bgrp <- ceiling(max(acs_bgrp$unempl, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = unempl)) +
+  labs(title = "Percent population unemployed \nby Census Block level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.35),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_unempl_bgrp, max_unempl_bgrp),
+                        breaks = seq(min_unempl_bgrp, max_unempl_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_unempl_bgrp.png", plot = last_plot())
+
+# in poverty = unable to get at block level
+min_inpov_bgrp <- floor(min(acs_bgrp$inpov, na.rm = T))
+max_inpov_bgrp <- ceiling(max(acs_bgrp$inpov, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = inpov)) +
+  labs(title = "Percent population in poverty \nby Census block level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_inpov_bgrp, max_inpov_bgrp),
+                        breaks = seq(min_inpov_bgrp, max_inpov_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_inpov_bgrp.png", plot = last_plot())
+
+# no health insurance = unable to get at block level
+min_nohealthins_bgrp <- floor(min(acs_bgrp$nohealthins, na.rm = T))
+max_nohealthins_bgrp <- ceiling(max(acs_bgrp$nohealthins, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = nohealthins)) +
+  labs(title = "Percent population in without health insurance \nby Census Block level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 13, face = "bold", hjust = 0.3),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_nohealthins_bgrp, max_nohealthins_bgrp),
+                        breaks = seq(min_nohealthins_bgrp, max_nohealthins_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_nohealthins_bgrp.png", plot = last_plot())
 
 
+# median income white = unable to get at block level 
+min_med_inc_w_bgrp <- floor(min(acs_bgrp$med_inc_w, na.rm = T))
+max_med_inc_w_bgrp <- ceiling(max(acs_bgrp$med_inc_w, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = med_inc_w)) +
+  labs(title = "Median household income white \nby Census block level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 13, face = "bold", hjust = 0.3),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Dollars", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_nohealthins_bgrp, max_nohealthins_bgrp),
+                        breaks = seq(min_nohealthins_bgrp, max_nohealthins_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_nohealthins_bgrp.png", plot = last_plot())
+
+
+# poverty status white = unable to get at block level 
+min_pov_w_bgrp <- floor(min(acs_bgrp$pov_w))
+max_pov_w_bgrp <- ceiling(max(acs_bgrp$pov_w))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = pov_w)) +
+  labs(title = "Percent population in poverty (white) \nby Census block level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.35),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_pov_w_bgrp, max_pov_w_bgrp),
+                        breaks = seq(min_pov_w_bgrp, max_pov_w_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_w_bgrp.png", plot = last_plot())
+
+# poverty status black = unable to get at block level 
+min_pov_b_bgrp <- floor(min(acs_bgrp$pov_b, na.rm = T))
+max_pov_b_bgrp <- ceiling(max(acs_bgrp$pov_b, na.rm = T))
+ggplot() +
+  geom_sf(data = acs_bgrp, size = 0.2, aes(fill = pov_b)) +
+  labs(title = "Percent population in poverty (Black) \nby Census block level, 2015/19",
+       caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+  theme_map() +
+  theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.35),
+        legend.title = element_text(size = 11, face = "bold"),
+        legend.text = element_text(size = 11),
+        legend.position = "right") +
+  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                        limits = c(min_pov_b_bgrp, max_pov_b_bgrp),
+                        breaks = seq(min_pov_b_bgrp, max_pov_b_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_b_bgrp.png", plot = last_plot())
+
+
+# commute 30 to 34 mins = unable to get at block level 
+min_commute_30_34_bgrp <- floor(min(acs_bgrp$commute_30_34))
+max_commute_30_34_bgrp <- ceiling(max(acs_bgrp$commute_30_34))
+ggplot() +
+geom_sf(data = acs_bgrp, size = 0.2, aes(fill = commute_30_34)) +
+labs(title = "Percent population with commute between 30 and 34 \nminutes by Census block level, 2015/19",
+caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+theme_map() +
+theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
+legend.title = element_text(size = 11, face = "bold"),
+legend.text = element_text(size = 11),
+legend.position = "right") +
+scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+    limits = c(min_commute_30_34_bgrp, max_commute_30_34_bgrp),
+    breaks = seq(min_commute_30_34_bgrp, max_commute_30_34_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_30_34_bgrp.png", plot = last_plot
+
+
+# commute 35 to 44 mins = unable to get at block level 
+min_commute_35_44_bgrp <- floor(min(acs_bgrp$commute_35_44))
+max_commute_35_44_bgrp <- ceiling(max(acs_bgrp$commute_35_44))
+ggplot() +
+geom_sf(data = acs_bgrp, size = 0.2, aes(fill = commute_35_44)) +
+labs(title = "Percent population with commute between 35 and 44 \nminutes by Census Block level, 2015/19",
+caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+theme_map() +
+theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.35),
+legend.title = element_text(size = 11, face = "bold"),
+legend.text = element_text(size = 11),
+legend.position = "right") +
+scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+           limits = c(min_commute_35_44_bgrp, max_commute_35_44_bgrp),
+           breaks = seq(min_commute_35_44_bgrp, max_commute_35_44_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_35_44_bgrp.png", plot = last_plot
+
+# commute 45 to 59 mins = unable to get at block level
+min_commute_45_59_bgrp <- floor(min(acs_bgrp$commute_45_59))
+max_commute_45_59_bgrp <- ceiling(max(acs_bgrp$commute_45_59))
+ggplot() +
+geom_sf(data = acs_bgrp, size = 0.2, aes(fill = commute_45_59)) +
+labs(title = "Percent population with commute between 45 and \n59 minutes by Census Block level, 2015/19",
+ caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+theme_map() +
+theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.3),
+  legend.title = element_text(size = 11, face = "bold"),
+  legend.text = element_text(size = 11),
+  legend.position = "right") +
+scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                  limits = c(min_commute_45_59_bgrp, max_commute_45_59_bgrp),
+                  breaks = seq(min_commute_45_59_bgrp, max_commute_45_59_bgrp, length.out = 5))
+ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_45_59_bgrp.png", plot = last_plot
+ 
+ 
+ # commute 60+ mins = unable to get at block level
+ min_commute_60_pl_bgrp <- floor(min(acs_bgrp$commute_60_pl))
+ max_commute_60_pl_bgrp <- ceiling(max(acs_bgrp$commute_60_pl))
+ ggplot() +
+   geom_sf(data = acs_bgrp, size = 0.2, aes(fill = commute_60_pl)) +
+   labs(title = "Percent population with commute 60+ minutes \nby Census Block level, 2015/19",
+        caption = "Source: American Community Survey 2015/19 (5-year) estimates.") +
+   theme_map() +
+   theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.35),
+         legend.title = element_text(size = 11, face = "bold"),
+         legend.text = element_text(size = 11),
+         legend.position = "right") +
+   scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+                         limits = c(min_commute_60_pl_bgrp, max_commute_60_pl_bgrp),
+                         breaks = seq(min_commute_60_pl_bgrp, max_commute_60_pl_bgrp, length.out = 5))
+ ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_60_pl_bgrp.png", plot = last_plot
+                                          
 
 # Tract level
 # hispanic
