@@ -17,3 +17,6 @@ acs_tract <- acs_tract %>%
                           abs(unemploy_rate_b - unemploy_rate_all))/4)*100)/unemploy_rate_all,
                 ba_higher_rate_index = (((abs(ba_higher_a - ba_higher_all) + abs(ba_higher_h - ba_higher_all) + abs(ba_higher_w - ba_higher_all) +
                                            abs(ba_higher_b - ba_higher_all))/4)*100)/ba_higher_all)
+
+ggplot(acs_tract, aes(x=pov_index)) +
+  geom_histogram()
