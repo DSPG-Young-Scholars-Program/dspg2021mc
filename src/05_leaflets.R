@@ -19,12 +19,7 @@ acs_tract <- acs_tract %>%
 
 parks = parks %>%
   st_as_sf(coords = c("long","lat")) %>%
-  st_transform("+proj=longlat +datum=WGS84") %>%
-  st_sf() %>%
-  st_cast()
-for(i in seq(nrow(parks))) {
-  names(parks$geometry[i][[1]]) = NULL 
-}
+  st_transform("+proj=longlat +datum=WGS84")
 
 bb <- getbb('arlington county, virginia')
 
