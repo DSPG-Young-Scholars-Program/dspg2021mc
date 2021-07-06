@@ -35,7 +35,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_black_bgrp, max_black_bgrp),
                         breaks = seq(min_black_bgrp, max_black_bgrp, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_black_bgrp.png", plot = last_plot())
@@ -53,7 +53,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_noba_bgrp, max_noba_bgrp),
                         breaks = seq(min_noba_bgrp, max_noba_bgrp, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_noba_bgrp.png", plot = last_plot())
@@ -70,7 +70,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_unempl_bgrp, max_unempl_bgrp),
                         breaks = seq(min_unempl_bgrp, max_unempl_bgrp, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_unempl_bgrp.png", plot = last_plot())
@@ -89,7 +89,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_hispanic_trct, max_hispanic_trct),
                         breaks = seq(min_hispanic_trct, max_hispanic_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_hispanic_trct.png", plot = last_plot())
@@ -106,7 +106,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_black_trct, max_black_trct),
                         breaks = seq(min_black_trct, max_black_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_black_trct.png", plot = last_plot())
@@ -123,7 +123,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_noba_trct, max_noba_trct),
                         breaks = seq(min_noba_trct, max_noba_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_noba_trct.png", plot = last_plot())
@@ -140,7 +140,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_unempl_trct, max_unempl_trct),
                         breaks = seq(min_unempl_trct, max_unempl_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_unempl_trct.png", plot = last_plot())
@@ -157,7 +157,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_inpov_trct, max_inpov_trct),
                         breaks = seq(min_inpov_trct, max_inpov_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_inpov_trct.png", plot = last_plot())
@@ -174,7 +174,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_nohealthins_trct, max_nohealthins_trct),
                         breaks = seq(min_nohealthins_trct, max_nohealthins_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_nohealthins_trct.png", plot = last_plot())
@@ -192,7 +192,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Dollars", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Dollars", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_nohealthins_trct, max_nohealthins_trct),
                         breaks = seq(min_nohealthins_trct, max_nohealthins_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_nohealthins_trct.png", plot = last_plot())
@@ -210,7 +210,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_pov_w_trct, max_pov_w_trct),
                         breaks = seq(min_pov_w_trct, max_pov_w_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_w_trct.png", plot = last_plot())
@@ -230,7 +230,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_pov_b_trct, max_pov_b_trct),
                         breaks = seq(min_pov_b_trct, max_pov_b_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_b_trct.png", plot = last_plot())
@@ -249,7 +249,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_pov_a_trct, max_pov_a_trct),
                         breaks = seq(min_pov_a_trct, max_pov_a_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_a_trct.png", plot = last_plot())
@@ -266,7 +266,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_pov_h_trct, max_pov_h_trct),
                         breaks = seq(min_pov_h_trct, max_pov_h_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_h_trct.png", plot = last_plot())
@@ -283,7 +283,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_pov_o_trct, max_pov_o_trct),
                         breaks = seq(min_pov_o_trct, max_pov_o_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_pov_o_trct.png", plot = last_plot())
@@ -300,7 +300,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_rent_ov_30_trct, max_rent_ov_30_trct),
                         breaks = seq(min_rent_ov_30_trct, max_rent_ov_30_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_rent_ov_30_trct.png", plot = last_plot())
@@ -317,7 +317,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_un_10_trct, max_commute_un_10_trct),
                         breaks = seq(min_commute_un_10_trct, max_commute_un_10_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_un_10_trct.png", plot = last_plot())
@@ -335,7 +335,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_10_14_trct, max_commute_10_14_trct),
                         breaks = seq(min_commute_10_14_trct, max_commute_10_14_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_10_14_trct.png", plot = last_plot())
@@ -352,7 +352,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_15_19_trct, max_commute_15_19_trct),
                         breaks = seq(min_commute_15_19_trct, max_commute_15_19_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_15_19_trct.png", plot = last_plot())
@@ -369,7 +369,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_20_24_trct, max_commute_20_24_trct),
                         breaks = seq(min_commute_20_24_trct, max_commute_20_24_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_20_24_trct.png", plot = last_plot())
@@ -386,7 +386,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_25_29_trct, max_commute_25_29_trct),
                         breaks = seq(min_commute_25_29_trct, max_commute_25_29_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_25_29_trct.png", plot = last_plot())
@@ -403,7 +403,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_30_34_trct, max_commute_30_34_trct),
                         breaks = seq(min_commute_30_34_trct, max_commute_30_34_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_30_34_trct.png", plot = last_plot())
@@ -421,7 +421,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_35_44_trct, max_commute_35_44_trct),
                         breaks = seq(min_commute_35_44_trct, max_commute_35_44_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_35_44_trct.png", plot = last_plot())
@@ -438,7 +438,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_45_59_trct, max_commute_45_59_trct),
                         breaks = seq(min_commute_45_59_trct, max_commute_45_59_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_45_59_trct.png", plot = last_plot())
@@ -456,7 +456,7 @@ ggplot() +
         legend.title = element_text(size = 11, face = "bold"),
         legend.text = element_text(size = 11),
         legend.position = "right") +
-  scale_fill_continuous(name = "Percent", low = "#fee6ce", high = "#e6550d",
+  scale_fill_continuous(name = "Percent", low = "#ffc20a", high = "#0c7bdc",
                         limits = c(min_commute_60_pl_trct, max_commute_60_pl_trct),
                         breaks = seq(min_commute_60_pl_trct, max_commute_60_pl_trct, length.out = 5))
 ggsave(path = "./output/acs/", device = "png", filename = "plot_commute_60_pl_trct.png", plot = last_plot())
