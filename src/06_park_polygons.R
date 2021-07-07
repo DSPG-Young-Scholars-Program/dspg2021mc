@@ -17,11 +17,16 @@ parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
 parks = parks %>%
   st_as_sf(coords = c("long","lat")) %>%
   st_transform("+proj=longlat +datum=WGS84")
+parks = parks %>% filter(Ownership == "Arlington County Park") # 148
 
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
+residential <- read_sf("./data/working/corelogic/residential.csv")
+residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "parcel_level_latitude"))
+st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
+
 #
-# Centroids ---------------------------------------
+# Create Centroids ---------------------------------------
 #
 
 centroid <- st_centroid(parks)
@@ -81,14 +86,15 @@ for(i in 1:nrow(centroid)){
   saveRDS(park_iso10, file = paste0('./data/working/traveltime_isochrones/park_iso_10_',i,'.RDS'))
   saveRDS(park_iso15, file = paste0('./data/working/traveltime_isochrones/park_iso_15_',i,'.RDS'))
   
+  # looks like not a lot of residential areas...
+  residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
+  
   m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
-  m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+  m2 = mapview(spark_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
   m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
   
-  m1 = m1 + m2 + m3
-  
-  #this isn't working and I'm mad
-  mapshot(m1, file = paste0("./output/leaflet/park_tt_map_",i, ".png", sep = ""))
+  m1 = m1 + m2 + m3 + residential
+  # mapshot(m1, file = paste0("./output/leaflet/park_tt_map_",i, ".png", sep = ""))
 }
 
 
