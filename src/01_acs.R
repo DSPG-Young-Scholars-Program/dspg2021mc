@@ -12,7 +12,7 @@ library(ggthemes)
 ######## Pull ACS 2015/19 data for basic Arlington County sociodemographics #################
 
 
-#
+#   
 # API key ------------------------------------------------------------------------
 #
 
