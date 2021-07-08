@@ -41,16 +41,23 @@ coords <- centroid %>%
 
 centroid <- cbind(centroid, coords)
 
+
 #
 # Circle Polygons ---------------------------------------
 #
 
-spCircle(radius,
-         spUnits = CRS(projargs = as.character(NA)),
-         centerPoint = c(x = 0, y = 0),
-         nptsPerimeter = 100,
-         spID = paste("circle", .StemEnv$randomID(), sep = ":"),
-         ...)
+st_crs(centroid)$units
+
+circles <- st_buffer(centroid, dist = .007)
+
+park_map = mapview(st_geometry(parks), cex =.5, layer.name = "parks", color = colors[3])
+circle_map = mapview(st_geometry(circles), cex =.5, layer.name = "1/2 mile circles", color = colors[4])
+residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
+
+map = park_map + circle_map + residential
+map
+
+write_rds(circles, "./data/working/circle_poly.Rds")
 
 #
 # TravelTime Polygon Maps --------------------------------
@@ -60,7 +67,8 @@ readRenviron("~/.Renviron")
 traveltime_api <- Sys.getenv("TRAVELAPI")
 traveltime_id <- Sys.getenv("TRAVELID")
 
-for(i in 1:nrow(centroid)){
+# just go by 10s I guess to save the polygons bc limitations lmao
+for(i in 1:10){
   park_iso5 <- traveltime_map(appId= traveltime_id,
                              apiKey = traveltime_api,
                              location=c(centroid$lat[i],centroid$long[i]),
@@ -85,16 +93,14 @@ for(i in 1:nrow(centroid)){
   saveRDS(park_iso5, file = paste0('./data/working/traveltime_isochrones/park_iso_5_',i,'.RDS'))
   saveRDS(park_iso10, file = paste0('./data/working/traveltime_isochrones/park_iso_10_',i,'.RDS'))
   saveRDS(park_iso15, file = paste0('./data/working/traveltime_isochrones/park_iso_15_',i,'.RDS'))
-  
-  # looks like not a lot of residential areas...
-  residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
-  
-  m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
-  m2 = mapview(spark_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
-  m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
-  
-  m1 = m1 + m2 + m3 + residential
-  # mapshot(m1, file = paste0("./output/leaflet/park_tt_map_",i, ".png", sep = ""))
+
+  # residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
+  # 
+  # m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+  # m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+  # m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+  # 
+  # m1 = m1 + m2 + m3 + residential
 }
 
 

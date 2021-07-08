@@ -14,6 +14,7 @@ conn <- dbConnect(drv = PostgreSQL(), dbname = "sdad",
                   password = Sys.getenv(x = "db_pwd"))
 
 arlington <- dbGetQuery(conn, "SELECT * FROM corelogic_sdad.tax_hist_2_51 WHERE fips_code = '51013'")
+arlington2 <- dbGetQuery(conn, "SELECT * FROM corelogic_usda.current_tax_200627_latest_all_add_vars_add_progs_geom_blk WHERE geoid_cnty = '51013'")
 
 dbDisconnect(conn)
 rm(conn)
@@ -84,7 +85,8 @@ sum(is.na(arlington$parcel_level_latitude)) # 1706
 residential <- arlington %>% filter(!is.na(parcel_level_longitude) &
                                     !is.na(parcel_level_latitude))
 
-residential <- residential %>% filter(county_use_description == "1 FAMILY DETACHED AFFORDABLE DWELLING UNIT" |
+residential <- residential %>% filter(county_use_description == "1 FAMILY DETACHED" |
+                                        county_use_description == "AFFORDABLE DWELLING UNIT" |
                                         county_use_description == "CONDO HOA" |
                                         county_use_description == "COMMEMRCIAL CONDO" |
                                         county_use_description == "CONDO MASTER" |
@@ -97,7 +99,7 @@ residential <- residential %>% filter(county_use_description == "1 FAMILY DETACH
                                         county_use_description == "MIS-RISE APARTMENT" |
                                         county_use_description == "RESIDENTIAL" |
                                         county_use_description == "SINGLE FAM ZON APT" |
-                                        county_use_description == "SINGLE FAM  ZON COMML" |
+                                        county_use_description == "SINGLE FAM ZON COMML" |
                                         county_use_description == "STACKED CONDO" |
                                         county_use_description == "TOWNHOUSE" |
                                         county_use_description == "TOWNHOUSE CONDO")

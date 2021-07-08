@@ -102,7 +102,9 @@ acsvars <- c(
   # poverty status - hispanic
   "B17020I_001", "B17020I_002",
   # poverty status - two or more races
-  "B17020G_001", "B17020G_002"
+  "B17020G_001", "B17020G_002",
+  # under 18 population
+  "B09001_001"
 )
 
 acs_subject_vars <- c(
@@ -127,7 +129,11 @@ acs_subject_vars <- c(
   # 25 and older with BA or higher - Hispanic
   "S1501_C02_054",
   # % pop enrolled in college or graduate school
-  "S1401_C02_010"
+  "S1401_C02_010",
+  # Ambulatory Disability rate
+  "S1810_C02_051",
+  # no cars
+  "S2504_C02_033"
 )
 
 
@@ -232,7 +238,10 @@ acs_tract <- data_tract %>% transmute(
   ba_higher_b = S1501_C02_036E,
   ba_higher_a = S1501_C02_042E,
   ba_higher_h = S1501_C02_054E,
-  perc_college_higher = S1401_C02_010E
+  perc_college_higher = S1401_C02_010E,
+  perc_under_18 = B09001_001E/B01003_001E*100,
+  perc_ambulatory_disability = S1810_C02_051E/B01003_001E*100,
+  no_vehic = S2504_C02_033E
 )
 
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
@@ -278,7 +287,8 @@ acs_bgrp <- data_bgrp %>% transmute(
   commute_30_34 = B08134_007E / B08134_001E * 100,
   commute_35_44 = B08134_008E / B08134_001E * 100,
   commute_45_59 = B08134_009E / B08134_001E * 100,
-  commute_60_pl = B08134_010E / B08134_001E * 100
+  commute_60_pl = B08134_010E / B08134_001E * 100,
+  perc_under_18 = B09001_001E/B01003_001E*100
 )
 
 write_rds(acs_tract, "./data/working/acs_tract.Rds")
