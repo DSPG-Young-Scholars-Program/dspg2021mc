@@ -93,14 +93,17 @@ for(i in 1:10){
   saveRDS(park_iso5, file = paste0('./data/working/traveltime_isochrones/park_iso_5_',i,'.RDS'))
   saveRDS(park_iso10, file = paste0('./data/working/traveltime_isochrones/park_iso_10_',i,'.RDS'))
   saveRDS(park_iso15, file = paste0('./data/working/traveltime_isochrones/park_iso_15_',i,'.RDS'))
-
-  # residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
-  # 
-  # m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
-  # m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
-  # m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
-  # 
-  # m1 = m1 + m2 + m3 + residential
 }
 
 
+#
+# Boundary Polygons ----------------------------------------
+#
+for(i in 1:nrow(parks)){
+  polygon <- osrmIsochrone(parks[i,],
+                         breaks = seq(from = 5, to = 15, length.out = 5),
+                         exclude = NULL,
+                         res = 30,
+                         returnclass = "sf")
+  saveRDS(polygon, file = paste0('./data/working/osrm_isochrones/park_iso_',i,'.RDS'))
+  }
