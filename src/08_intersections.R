@@ -72,24 +72,16 @@ write.csv(table, file = "./data/working/traveltime_isochrones/park_iso_table.csv
 # make initial unions of 1 and 2 so that loop is easier
 park_iso_1 <- readRDS("./data/working/osrm_isochrones/park_iso_1.RDS")
 park_iso_2 <- readRDS("./data/working/osrm_isochrones/park_iso_2.RDS")
-osrm_park_iso5 <- st_union(park_iso_1[1,],park_iso_1[1,])
-
-osrm_park_iso10 <- st_union(park_iso_1[2,],park_iso_1[3,])
-osrm_park_iso10 <- st_union(osrm_park_iso10,park_iso_2[2,])
-osrm_park_iso10 <- st_union(osrm_park_iso10,park_iso_2[3,])
-
-osrm_park_iso15 <- st_union(park_iso_1[4,],park_iso_1[5,])
-osrm_park_iso15 <- st_union(osrm_park_iso15,park_iso_2[4,])
-osrm_park_iso15 <- st_union(osrm_park_iso15,park_iso_2[5,])
+osrm_park_iso5 <- st_union(park_iso_1[1,],park_iso_2[1,])
+osrm_park_iso10 <- st_union(park_iso_1[2,],park_iso_2[3,])
+osrm_park_iso15 <- st_union(park_iso_1[3,],park_iso_2[3,])
 
 # loop through isochrones and continiously union with last
 for(i in 3:nrow(parks)){
   park_iso_i <- readRDS(paste0("./data/working/osrm_isochrones/park_iso_",i,".RDS"))
   osrm_park_iso5 <- st_union(osrm_park_iso5,park_iso_i[1,])
   osrm_park_iso10 <- st_union(osrm_park_iso10,park_iso_i[2,])
-  osrm_park_iso10 <- st_union(osrm_park_iso10,park_iso_i[3,])
-  osrm_park_iso15 <- st_union(osrm_park_iso15,park_iso_i[4,])
-  osrm_park_iso15 <- st_union(osrm_park_iso15,park_iso_i[5,])
+  osrm_park_iso15 <- st_union(osrm_park_iso15,park_iso_i[3,])
 }
 
 plot(st_geometry(osrm_park_iso5))

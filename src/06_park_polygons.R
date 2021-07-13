@@ -41,14 +41,14 @@ coords <- centroid %>%
 
 centroid <- cbind(centroid, coords)
 
-
 #
 # Circle Polygons ---------------------------------------
 #
 
-st_crs(centroid)$units
-
-circles <- st_buffer(centroid, dist = .007)
+st_crs(centroid) <- 4326
+centroid <- st_transform(centroid, crs = 7801)
+circles <- st_buffer(centroid, dist = 804)
+circles <- st_transform(circles, "+proj=longlat +datum=WGS84")
 
 park_map = mapview(st_geometry(parks), cex =.5, layer.name = "parks", color = colors[3])
 circle_map = mapview(st_geometry(circles), cex =.5, layer.name = "1/2 mile circles", color = colors[4])
@@ -99,11 +99,12 @@ for(i in 1:10){
 #
 # Boundary Polygons ----------------------------------------
 #
+options(osrm.profile = "walk")
 for(i in 1:nrow(parks)){
   polygon <- osrmIsochrone(parks[i,],
-                         breaks = seq(from = 5, to = 15, length.out = 5),
+                         breaks = c(5,10,15),
                          exclude = NULL,
                          res = 30,
                          returnclass = "sf")
   saveRDS(polygon, file = paste0('./data/working/osrm_isochrones/park_iso_',i,'.RDS'))
-  }
+}
