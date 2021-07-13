@@ -12,7 +12,7 @@ library(ggthemes)
 ######## Pull ACS 2015/19 data for basic Arlington County sociodemographics #################
 
 
-#   
+#
 # API key ------------------------------------------------------------------------
 #
 
@@ -103,12 +103,8 @@ acsvars <- c(
   "B17020I_001", "B17020I_002",
   # poverty status - two or more races
   "B17020G_001", "B17020G_002",
-  # Under 18 
-  "S0101_024E",
-  # No car 
-  "DP04_066E",
-  # Disability
-  "S1810_051E"
+  # under 18 population
+  "B09001_001"
 )
 
 acs_subject_vars <- c(
@@ -133,13 +129,11 @@ acs_subject_vars <- c(
   # 25 and older with BA or higher - Hispanic
   "S1501_C02_054",
   # % pop enrolled in college or graduate school
-  "S1401_C02_010", 
-  # Under 18 
-  "S0101_024E",
-  # No car 
-  "DP04_066E",
-  # Disability
-  "S1810_051E"
+  "S1401_C02_010",
+  # Ambulatory Disability rate
+  "S1810_C02_051",
+  # no cars
+  "S2504_C02_033"
 )
 
 
@@ -245,9 +239,9 @@ acs_tract <- data_tract %>% transmute(
   ba_higher_a = S1501_C02_042E,
   ba_higher_h = S1501_C02_054E,
   perc_college_higher = S1401_C02_010E,
-  age_under_18 = S0101_024E,
-  no_car = DP04_066E,
-  amblutary_difficulty = S1810_051E
+  perc_under_18 = B09001_001E/B01003_001E*100,
+  perc_ambulatory_disability = S1810_C02_051E/B01003_001E*100,
+  no_vehic = S2504_C02_033E
 )
 
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
@@ -265,7 +259,7 @@ acs_bgrp <- data_bgrp %>% transmute(
   geometry = geometry,
   totalpop_bgrp = B01003_001E,
   hispanic = B03001_003E / B03001_001E * 100,
-  black = B02001_003E / B02001_001E * 100, 
+  black = B02001_003E / B02001_001E * 100,
   noba = (B15003_002E + B15003_003E + B15003_004E + B15003_005E + B15003_006E + B15003_007E + B15003_008E +
             B15003_009E + B15003_010E + B15003_011E + B15003_012E + B15003_013E + B15003_014E + B15003_015E +
             B15003_016E + B15003_017E + B15003_018E + B15003_019E + B15003_020E + B15003_021E) / B15003_001E * 100,
@@ -294,11 +288,8 @@ acs_bgrp <- data_bgrp %>% transmute(
   commute_35_44 = B08134_008E / B08134_001E * 100,
   commute_45_59 = B08134_009E / B08134_001E * 100,
   commute_60_pl = B08134_010E / B08134_001E * 100,
-  age_under_18 = S0101_024E,
-  no_car = DP04_066,
-  amblutary_difficulty = S1810_051
+  perc_under_18 = B09001_001E/B01003_001E*100
 )
-
 
 write_rds(acs_tract, "./data/working/acs_tract.Rds")
 write_rds(acs_bgrp, "./data/working/acs_bgrp.Rds")
