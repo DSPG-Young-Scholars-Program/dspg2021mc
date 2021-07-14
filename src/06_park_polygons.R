@@ -29,6 +29,9 @@ st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
 # Create Centroids ---------------------------------------
 #
 
+# temp fix for sf 1.0 s2 issue
+sf_use_s2(FALSE)
+
 centroid <- st_centroid(parks)
 centroid = centroid %>%
   st_as_sf(coords = c("long","lat")) %>%
