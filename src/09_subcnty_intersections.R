@@ -28,20 +28,34 @@ parks <- parks %>%
 # use eric's handy dandy function to get the geoid
 geo2fips <- function(latitude, longitude) {
   url <- "https://geo.fcc.gov/api/census/area?lat=%f&lon=%f&format=json"
-  res <- jsonlite::fromJSON(sprintf(url, latitude, longitude))[["results"]][["block_fips"]]
-  unique(res)
+  block <- jsonlite::fromJSON(sprintf(url, latitude, longitude))[["results"]][["block_fips"]]
+  
+  # get block group
+  block_grp <- substr(block, 1, 12)
+  block_grp <- ifelse(length(unique(block_grp)) == 1, unique(block_grp), block_grp[1])
+  
+  # get tract
+  tract <- substr(block, 1, 11)
+  tract <- ifelse(length(unique(tract)) == 1, unique(tract), tract[1])
+  
+  c(block_grp, tract)
 }
 
+parks_geoids <- apply(parks, 1, function(x) geo2fips(x$lat, x$long))
+
+parks$bgrp_geoid <- parks_geoids[1,]
+parks$tract_geoid <- parks_geoids[2,]
+
 # loop to get geoids by park row - these geoids don't merge maybe because block verus block group fips
-for(i in 1:nrow(parks)){
-  parks$geoid[i] <- geo2fips(parks$lat[i], parks$long[i])
-}
+#for(i in 1:nrow(parks)){
+#  parks$geoid[i] <- geo2fips(parks$lat[i], parks$long[i])
+#}
 
 # head(acs_bgrp$GEOID)
 # head(acs_tract$GEOID)
 # head(parks$geoid)
-parks$bgrp_geoid <- substr(parks$geoid, start = 1, stop = 12)
-parks$tract_geoid <- substr(parks$geoid, start = 1, stop = 11)
+#parks$bgrp_geoid <- substr(parks$geoid, start = 1, stop = 12)
+#parks$tract_geoid <- substr(parks$geoid, start = 1, stop = 11)
 
 # head(parks$bgrp_geoid)
 # head(parks$tract_geoid)
