@@ -46,6 +46,14 @@ Sys.getenv("CENSUS_API_KEY")
 # B17001_002 / B17001_001
 # % population without health insurance
 # (005 + 008 + 011 + 014 + 017 + 020 + 023 + 026 + 029 + 033 + 036 + 039 + 042 + 045 + 048 + 051 + 054 + 057) /  B27001_001
+# % population with no vehicle available
+# B08201_002 / B08201_001
+# % population with 1 or more vehicle available
+# B08201_003:006 / B08201_001
+# % population with own children under 18 years
+# B23007_002 / B23007_001 
+# % population with no children under 18 years
+# B23007_031 / B23007_001 
 
 # Unemployment by race
 # S2301_C04_001, S2301_C04_012, S2301_C04_013, S2301_C04_015, S2301_C04_019
@@ -104,7 +112,15 @@ acsvars <- c(
   # poverty status - two or more races
   "B17020G_001", "B17020G_002",
   # under 18 population
-  "B09001_001"
+  "B09001_001",
+  # no vehicle available
+  "B08201_002", "B08201_001",
+  # 1 or more vehicles 
+  "B08201_003", "B08201_004", "B08201_005", "B08201_006",
+  # children under 18 
+  "B23007_002", "B23007_001", 
+  # no children under 18
+  "B23007_031"
 )
 
 acs_subject_vars <- c(
@@ -241,7 +257,11 @@ acs_tract <- data_tract %>% transmute(
   perc_college_higher = S1401_C02_010E,
   perc_under_18 = B09001_001E/B01003_001E*100,
   perc_ambulatory_disability = S1810_C02_051E/B01003_001E*100,
-  no_vehic = S2504_C02_033E
+  #no_vehic = S2504_C02_033E,
+  no_vehic = B08201_002E/B08201_001E * 100,
+  one_or_more_vehic = (B08201_003E + B08201_004E + B08201_005E + B08201_006E)/B08201_001E * 100,
+  children_under_18 = B23007_002E/B23007_001E * 100,
+  no_children_under_18 = B23007_031E/B23007_001E * 100
 )
 
 # Block group (note: variables with estimate = 0 will have NAs in the final calculation. Disregard these
@@ -288,7 +308,11 @@ acs_bgrp <- data_bgrp %>% transmute(
   commute_35_44 = B08134_008E / B08134_001E * 100,
   commute_45_59 = B08134_009E / B08134_001E * 100,
   commute_60_pl = B08134_010E / B08134_001E * 100,
-  perc_under_18 = B09001_001E/B01003_001E*100
+  perc_under_18 = B09001_001E/B01003_001E*100,
+  no_vehic = B08201_002E/B08201_001E * 100,
+  one_or_more_vehic = (B08201_003E + B08201_004E + B08201_005E + B08201_006E)/B08201_001E * 100,
+  children_under_18 = B23007_002E/B23007_001E * 100,
+  no_children_under_18 = B23007_031E/B23007_001E * 100
 )
 
 write_rds(acs_tract, "./data/working/acs_tract.Rds")
