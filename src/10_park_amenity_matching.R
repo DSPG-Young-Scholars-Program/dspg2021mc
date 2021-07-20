@@ -1,6 +1,6 @@
 library(stringr)
 
-arlington_park_amenities <- read.csv("~/git/arlington_park_amenities.csv")
+arlington_park_amenities <- read.csv("./data/working/arlington_park_amenities.csv")
 
 create_amenity_ind <- function(amenity, all) {
   ind <- which(all %in% amenity)
