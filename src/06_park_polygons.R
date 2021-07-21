@@ -13,11 +13,13 @@ library(rmapzen)
 library(rgdal)
 library(rgeos)
 
-parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
-parks = parks %>%
+orig_parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
+orig_parks <- orig_parks %>% filter(Ownership == "Arlington County Park") # 148
+
+parks <- orig_parks %>%
   st_as_sf(coords = c("long","lat")) %>%
   st_transform("+proj=longlat +datum=WGS84")
-parks = parks %>% filter(Ownership == "Arlington County Park") # 148
+parks <- parks %>% filter(Ownership == "Arlington County Park") # 148
 
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
@@ -32,9 +34,8 @@ st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
 # temp fix for sf 1.0 s2 issue
 sf_use_s2(FALSE)
 
-centroid <- st_centroid(parks)
-centroid = centroid %>%
-  st_as_sf(coords = c("long","lat")) %>%
+centroid <- st_centroid(orig_parks)
+centroid <- centroid %>%
   st_transform("+proj=longlat +datum=WGS84")
 
 coords <- centroid %>%
@@ -53,11 +54,11 @@ centroid <- st_transform(centroid, crs = 7801)
 circles <- st_buffer(centroid, dist = 804)
 circles <- st_transform(circles, "+proj=longlat +datum=WGS84")
 
-park_map = mapview(st_geometry(parks), cex =.5, layer.name = "parks", color = colors[3])
-circle_map = mapview(st_geometry(circles), cex =.5, layer.name = "1/2 mile circles", color = colors[4])
-residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
+park_map <- mapview(st_geometry(parks), cex =.5, layer.name = "parks", color = colors[3])
+circle_map <- mapview(st_geometry(circles), cex =.5, layer.name = "1/2 mile circles", color = colors[4])
+residential <- mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
 
-map = park_map + circle_map + residential
+map <- park_map + circle_map + residential
 map
 
 write_rds(circles, "./data/working/circle_poly.Rds")
@@ -73,25 +74,25 @@ traveltime_id <- Sys.getenv("TRAVELID")
 # just go by 10s I guess to save the polygons bc limitations lmao
 for(i in 1:10){
   park_iso5 <- traveltime_map(appId= traveltime_id,
-                             apiKey = traveltime_api,
-                             location=c(centroid$lat[i],centroid$long[i]),
-                             traveltime=300,
-                             type="walking",
-                             departure="2021-08-07T08:00:00+01:00")
+                              apiKey = traveltime_api,
+                              location=c(centroid$lat[i],centroid$long[i]),
+                              traveltime=300,
+                              type="walking",
+                              departure="2021-08-07T08:00:00+01:00")
   
   park_iso10 <- traveltime_map(appId= traveltime_id,
-                              apiKey = traveltime_api,
-                              location=c(centroid$lat[i],centroid$long[i]),
-                              traveltime=600,
-                              type="walking",
-                              departure="2021-08-07T08:00:00+01:00")
+                               apiKey = traveltime_api,
+                               location=c(centroid$lat[i],centroid$long[i]),
+                               traveltime=600,
+                               type="walking",
+                               departure="2021-08-07T08:00:00+01:00")
   
   park_iso15 <- traveltime_map(appId= traveltime_id,
-                              apiKey = traveltime_api,
-                              location=c(centroid$lat[i],centroid$long[i]),
-                              traveltime=900,
-                              type="walking",
-                              departure="2021-08-07T08:00:00+01:00")
+                               apiKey = traveltime_api,
+                               location=c(centroid$lat[i],centroid$long[i]),
+                               traveltime=900,
+                               type="walking",
+                               departure="2021-08-07T08:00:00+01:00")
   
   saveRDS(park_iso5, file = paste0('./data/working/traveltime_isochrones/park_iso_5_',i,'.RDS'))
   saveRDS(park_iso10, file = paste0('./data/working/traveltime_isochrones/park_iso_10_',i,'.RDS'))
@@ -105,9 +106,9 @@ for(i in 1:10){
 options(osrm.profile = "walk")
 for(i in 1:nrow(parks)){
   polygon <- osrmIsochrone(parks[i,],
-                         breaks = c(5,10,15),
-                         exclude = NULL,
-                         res = 30,
-                         returnclass = "sf")
+                          breaks = c(5,10,15),
+                          exclude = NULL,
+                          res = 30,
+                          returnclass = "sf")
   saveRDS(polygon, file = paste0('./data/working/osrm_isochrones/park_iso_',i,'.RDS'))
 }
