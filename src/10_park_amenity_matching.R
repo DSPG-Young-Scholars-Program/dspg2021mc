@@ -4,7 +4,7 @@ library(sf)
 
 # read in .csv with columns filled
 # with names of parks with each amenity
-arlington_park_amenities <- read.csv("./data/working/arlington_park_amenities.csv")
+arlington_park_amenities <- read.csv("./data/original/arlington_park_amenities.csv")
 
 # function to convert column of parks to 
 # numeric vector indicating whether
@@ -59,10 +59,10 @@ arlington_park_amenities$park_name <- str_replace(arlington_park_amenities$park_
 
 # read in park polygon data
 parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
-parks = parks %>%
+parks <- parks %>%
   st_as_sf(coords = c("long","lat")) %>%
   st_transform("+proj=longlat +datum=WGS84")
-parks = parks %>% filter(Ownership == "Arlington County Park") # 148
+parks <- parks %>% filter(Ownership == "Arlington County Park") # 148
 
 parks <- parks[order(parks$ParkName),]
 

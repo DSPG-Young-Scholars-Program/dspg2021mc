@@ -107,7 +107,6 @@ residential <- residential %>% filter(county_use_description == "1 FAMILY DETACH
                                         county_use_description == "TOWNHOUSE CONDO")
 
 residential$greenspace <- ifelse(residential$county_use_description == "1 FAMILY DETACHED" |
-                                   residential$county_use_description == "RESIDENTIAL" |
                                    residential$county_use_description == "TOWNHOUSE" |
                                    residential$county_use_description == "TOWNHOUSE CONDO",
                                  1,
