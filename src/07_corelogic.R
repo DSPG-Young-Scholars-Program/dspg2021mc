@@ -3,6 +3,8 @@ library(dplyr)
 library(readr)
 library(sf)
 
+source("utils.R")
+
 #
 # Get Arlington County data from the available tables-----------------------------------------------------------
 #
@@ -103,6 +105,23 @@ residential <- residential %>% filter(county_use_description == "1 FAMILY DETACH
                                         county_use_description == "STACKED CONDO" |
                                         county_use_description == "TOWNHOUSE" |
                                         county_use_description == "TOWNHOUSE CONDO")
+
+residential$greenspace <- ifelse(residential$county_use_description == "1 FAMILY DETACHED" |
+                                   residential$county_use_description == "RESIDENTIAL" |
+                                   residential$county_use_description == "TOWNHOUSE" |
+                                   residential$county_use_description == "TOWNHOUSE CONDO",
+                                 1,
+                                 0)
+
+residential$parcel_level_latitude <- as.numeric(residential$parcel_level_latitude)
+residential$parcel_level_longitude <- as.numeric(residential$parcel_level_longitude)
+
+residential_geoids <- apply(residential, 
+                            1, 
+                            function(x) geo2fips(as.numeric(x[39]), 
+                                                 as.numeric(x[40])))
+residential$bgrp_geoid <- residential_geoids[1,]
+residential$tract_geoid <- residential_geoids[2,]
 
 # Test plot
 residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "parcel_level_latitude"))
