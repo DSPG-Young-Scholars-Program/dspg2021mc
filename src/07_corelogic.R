@@ -132,3 +132,21 @@ plot(st_geometry(residential_sf), pch = 21, cex = 0.3)
 #
 
 write.csv(residential, "./data/working/corelogic/residential.csv")
+
+# Basic summary statistics
+ 
+bgrp_greenspace <- residential %>%
+  group_by(bgrp_geoid) %>%
+  summarise(mean_greenspace = mean(greenspace)) %>%
+  as.data.frame()
+
+write.csv(bgrp_greenspace, "./data/working/bgrp_greenspace.csv", row.names = FALSE)
+
+tract_greenspace <- residential %>%
+  group_by(tract_geoid) %>%
+  summarise(mean_greenspace = mean(greenspace)) %>%
+  as.data.frame()
+
+write.csv(tract_greenspace, "./data/working/tract_greenspace.csv", row.names = FALSE)
+
+
