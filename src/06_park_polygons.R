@@ -100,6 +100,63 @@ for(i in 1:10){
   saveRDS(park_iso15, file = paste0('./data/working/traveltime_isochrones/park_iso_15_',i,'.RDS'))
 }
 
+# Driving 
+for(i in 1:10){
+  park_iso5 <- traveltime_map(appId= traveltime_id,
+                              apiKey = traveltime_api,
+                              location=c(centroid$lat[i],centroid$long[i]),
+                              traveltime=300,
+                              type="driving",
+                              departure="2021-08-07T08:00:00+01:00")
+  
+  park_iso10 <- traveltime_map(appId= traveltime_id,
+                               apiKey = traveltime_api,
+                               location=c(centroid$lat[i],centroid$long[i]),
+                               traveltime=600,
+                               type="driving",
+                               departure="2021-08-07T08:00:00+01:00")
+  
+  park_iso15 <- traveltime_map(appId= traveltime_id,
+                               apiKey = traveltime_api,
+                               location=c(centroid$lat[i],centroid$long[i]),
+                               traveltime=900,
+                               type="driving",
+                               departure="2021-08-07T08:00:00+01:00")
+  
+  saveRDS(park_iso5, file = paste0('./data/working/traveltime_isochrones/park_iso_drv_5_',i,'.RDS'))
+  saveRDS(park_iso10, file = paste0('./data/working/traveltime_isochrones/park_iso_drv_10_',i,'.RDS'))
+  saveRDS(park_iso15, file = paste0('./data/working/traveltime_isochrones/park_iso_drv_15_',i,'.RDS'))
+}
+
+# Public Transport 
+
+for(i in 1:nrow(centroid)){
+  park_iso5 <- traveltime_map(appId= traveltime_id,
+                              apiKey = traveltime_api,
+                              location=c(centroid$lat[i],centroid$long[i]),
+                              traveltime=300,
+                              type="public_transport",
+                              departure="2021-08-07T08:00:00+01:00")
+  
+  park_iso10 <- traveltime_map(appId= traveltime_id,
+                               apiKey = traveltime_api,
+                               location=c(centroid$lat[i],centroid$long[i]),
+                               traveltime=600,
+                               type="public_transport",
+                               departure="2021-08-07T08:00:00+01:00")
+  
+  park_iso15 <- traveltime_map(appId= traveltime_id,
+                               apiKey = traveltime_api,
+                               location=c(centroid$lat[i],centroid$long[i]),
+                               traveltime=900,
+                               type="public_transport",
+                               departure="2021-08-07T08:00:00+01:00")
+  
+  saveRDS(park_iso5, file = paste0('./data/working/traveltime_isochrones/park_iso_pt_5_',i,'.RDS'))
+  saveRDS(park_iso10, file = paste0('./data/working/traveltime_isochrones/park_iso_pt_10_',i,'.RDS'))
+  saveRDS(park_iso15, file = paste0('./data/working/traveltime_isochrones/park_iso_pt_15_',i,'.RDS'))
+}
+
 
 #
 # Boundary Polygons ----------------------------------------
