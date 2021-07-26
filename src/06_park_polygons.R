@@ -1,4 +1,3 @@
-
 library(data.table)
 library(tidyverse)
 library(leaflet)
@@ -72,8 +71,10 @@ readRenviron("~/.Renviron")
 traveltime_api <- Sys.getenv("TRAVELAPI")
 traveltime_id <- Sys.getenv("TRAVELID")
 
-# just go by 10s I guess to save the polygons bc limitations lmao
-for(i in 1:10){
+# walking
+
+for(i in 1:nrow(centroid)){
+  Sys.sleep(20)
   park_iso5 <- traveltime_map(appId= traveltime_id,
                               apiKey = traveltime_api,
                               location=c(centroid$lat[i],centroid$long[i]),
@@ -101,7 +102,9 @@ for(i in 1:10){
 }
 
 # Driving 
-for(i in 1:10){
+
+for(i in 1:nrow(centroid)){
+  Sys.sleep(20)
   park_iso5 <- traveltime_map(appId= traveltime_id,
                               apiKey = traveltime_api,
                               location=c(centroid$lat[i],centroid$long[i]),
@@ -131,6 +134,7 @@ for(i in 1:10){
 # Public Transport 
 
 for(i in 1:nrow(centroid)){
+  Sys.sleep(20)
   park_iso5 <- traveltime_map(appId= traveltime_id,
                               apiKey = traveltime_api,
                               location=c(centroid$lat[i],centroid$long[i]),
