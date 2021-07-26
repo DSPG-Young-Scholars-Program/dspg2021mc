@@ -1,4 +1,5 @@
 name: "mastercard-website"
+output_dir: "../../../docs"
 navbar:
   title: "Measuring Equity of Park Access in Arlington County"
   left:
