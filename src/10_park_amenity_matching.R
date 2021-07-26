@@ -103,6 +103,6 @@ parks_amenities <- parks %>%
   slice(order(factor(ParkName.x, levels = parks_copy$ParkName))) %>%
   as.data.frame()
 
-write.csv(parks_amenities, "~/git/parks_amenities.csv", row.names = FALSE)
+write.csv(parks_amenities, "./data/working/parks_amenities.csv", row.names = FALSE)
 
 
