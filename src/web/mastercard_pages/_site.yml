@@ -1,0 +1,20 @@
+name: "mastercard-website"
+navbar:
+  title: "Measuring Equity of Park Access in Arlington County"
+  left:
+    - text: "Overview"
+      href: index.html
+    - text: "Data"
+      href: data.html
+    - text: "Methods"
+      href: methods.html
+    - text: "Findings"
+      menu:
+        - text: "Demographics of Arington" # acs variable plots
+          href: demographics.html
+        - text: "Parks of Arlington" # parks + residences + coverage at county level
+          href: parks.html
+        - text: "Equity of Parks" # statistics tables
+          href: equity.html
+        - text: "Equity of Parks by Residences and Car Usage" # specific coverage by types of residences + cars
+          href: case_study.html
