@@ -24,7 +24,8 @@ amenity_ind_df <- apply(arlington_park_amenities[,2:ncol(arlington_park_amenitie
 
 arlington_park_amenities <- data.frame(cbind(arlington_park_amenities$all,
                                              amenity_ind_df))
-colnames(arlington_park_amenities)[1] <- "park_name"
+colnames(arlington_park_amenities)[1] <- "ParkName"
+arlington_park_amenities$park_name <- arlington_park_amenities$ParkName
 
 # do some manual fixes to match the park polygon park names #
 arlington_park_amenities$park_name <- str_replace_all(arlington_park_amenities$park_name, "&", "and")
@@ -59,42 +60,49 @@ arlington_park_amenities$park_name <- str_replace(arlington_park_amenities$park_
 
 # read in park polygon data
 parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
+
 parks <- parks %>%
   st_as_sf(coords = c("long","lat")) %>%
   st_transform("+proj=longlat +datum=WGS84")
 parks <- parks %>% filter(Ownership == "Arlington County Park") # 148
 
+parks_copy <- parks
+
 parks <- parks[order(parks$ParkName),]
 
-# do some manual fixes to match the park amenities park names #
-parks$ParkName <- str_replace_all(parks$ParkName, "North", "N")
-parks$ParkName <- str_replace_all(parks$ParkName, "South", "S")
-parks$ParkName <- str_replace_all(parks$ParkName, "Street", "St")
-parks$ParkName <- tolower(parks$ParkName)
+parks$park_name <- parks$ParkName
 
-parks$ParkName <- str_replace(parks$ParkName,
+# do some manual fixes to match the park amenities park names #
+parks$park_name <- str_replace_all(parks$park_name, "North", "N")
+parks$park_name <- str_replace_all(parks$park_name, "South", "S")
+parks$park_name <- str_replace_all(parks$park_name, "Street", "St")
+parks$park_name <- tolower(parks$park_name)
+
+parks$park_name <- str_replace(parks$park_name,
                               "isaac crossman park at four mile run",
                               "isaac crossman park")
-parks$ParkName <- str_replace(parks$ParkName,
+parks$park_name <- str_replace(parks$park_name,
                               "nauck garden",
                               "nauck park")
-parks$ParkName <- str_replace(parks$ParkName,
+parks$park_name <- str_replace(parks$park_name,
                               "oakland st park",
                               "oakland park")
-parks$ParkName <- str_replace(parks$ParkName,
+parks$park_name <- str_replace(parks$park_name,
                               "wakefield high school park",
                               "wakefield stadium")
-parks$ParkName <- str_replace(parks$ParkName,
+parks$park_name <- str_replace(parks$park_name,
                               "woodmont center",
                               "woodmont park")
-parks$ParkName <- str_replace(parks$ParkName,
+parks$park_name <- str_replace(parks$park_name,
                               "zitkala-ša",
                               "zitkala-ša park")
 
 # join park polygons and amenities
 parks_amenities <- parks %>%
-  full_join(arlington_park_amenities, by = c("ParkName" = "park_name"))
+  left_join(arlington_park_amenities, by = "park_name") %>%
+  slice(order(factor(ParkName.x, levels = parks_copy$ParkName))) %>%
+  as.data.frame()
 
-write.csv(parks_amenities, file = "./data/working/parks_amenities.csv", row.names = FALSE)
+write.csv(parks_amenities, "~/git/parks_amenities.csv", row.names = FALSE)
 
 
