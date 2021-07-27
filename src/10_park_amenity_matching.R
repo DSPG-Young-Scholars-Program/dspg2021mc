@@ -101,7 +101,7 @@ parks$park_name <- str_replace(parks$park_name,
 parks_amenities <- parks %>%
   left_join(arlington_park_amenities, by = "park_name") %>%
   slice(order(factor(ParkName.x, levels = parks_copy$ParkName))) %>%
-  as.data.frame()
+  st_drop_geometry()
 
 write.csv(parks_amenities, "./data/working/parks_amenities.csv", row.names = FALSE)
 

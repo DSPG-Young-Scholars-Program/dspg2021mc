@@ -1,12 +1,98 @@
+library(sf)
 library(SpatialAcc)
 library(osrm)
 library(dplyr)
-
-sf_use_s2(FALSE)
+library(tidycensus)
 
 # read in ACS data
-acs_tract <- readRDS("./data/working/acs_tract.Rds")
-acs_bgrp <- readRDS("./data/working/acs_bgrp.Rds")
+Sys.getenv("CENSUS_API_KEY")
+
+acs_vars <- c(  
+  # total population
+  "B01003_001",
+  # Hispanic ethnicity
+  "B03001_003", "B03001_001",
+  # White
+  "B02001_002", "B02001_001",
+  # Black
+  "B02001_003",
+  # Asian
+  "B02001_005",
+  # Other
+  "B02001_004", "B02001_006", "B02001_007",
+  "B02001_008", "B02001_009", "B02001_010"
+  )
+
+data_tract <- get_acs(geography = "tract", 
+                      state = 51, 
+                      county = 013,
+                      variables = acs_vars,
+                      year = 2019, 
+                      survey = "acs5",
+                      cache_table = TRUE, 
+                      output = "wide", 
+                      geometry = TRUE,
+                      keep_geo_vars = TRUE)
+
+acs_tract <- data_tract %>%
+  transmute(STATEFP = STATEFP,
+            COUNTYFP = COUNTYFP,
+            TRACTCE = TRACTCE,
+            GEOID = GEOID,
+            NAME.x = NAME.x,
+            NAME.y = NAME.y,
+            ALAND = ALAND,
+            AWATER = AWATER,
+            total_pop = B01003_001E,
+            hispanic = B03001_003E,
+            white = B02001_002E,
+            black = B02001_003E,
+            asian = B02001_005E,
+            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
+            )
+
+acs_tract$total_pop[acs_tract$total_pop == 0] <- 0.0001
+acs_tract$hispanic[acs_tract$hispanic == 0] <- 0.0001
+acs_tract$white[acs_tract$white == 0] <- 0.0001
+acs_tract$black[acs_tract$black == 0] <- 0.0001
+acs_tract$asian[acs_tract$asian == 0] <- 0.0001
+acs_tract$other[acs_tract$other == 0] <- 0.0001
+
+
+data_bgrp <- get_acs(geography = "block group", 
+                     state = 51, 
+                     county = 013,
+                     variables = acs_vars,
+                     year = 2019, 
+                     survey = "acs5",
+                     cache_table = TRUE, 
+                     output = "wide", 
+                     geometry = TRUE,
+                     keep_geo_vars = TRUE)
+
+acs_bgrp <- data_bgrp %>%
+  transmute(STATEFP = STATEFP,
+            COUNTYFP = COUNTYFP,
+            TRACTCE = TRACTCE,
+            GEOID = GEOID,
+            NAME.x = NAME.x,
+            NAME.y = NAME.y,
+            ALAND = ALAND,
+            AWATER = AWATER,
+            total_pop = B01003_001E,
+            hispanic = B03001_003E,
+            white = B02001_002E,
+            black = B02001_003E,
+            asian = B02001_005E,
+            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
+  )
+
+acs_bgrp$total_pop[acs_bgrp$total_pop == 0] <- 0.0001
+acs_bgrp$hispanic[acs_bgrp$hispanic == 0] <- 0.0001
+acs_bgrp$white[acs_bgrp$white == 0] <- 0.0001
+acs_bgrp$black[acs_bgrp$black == 0] <- 0.0001
+acs_bgrp$asian[acs_bgrp$asian == 0] <- 0.0001
+acs_bgrp$other[acs_bgrp$other == 0] <- 0.0001
 
 # transform to utm with meter units
 acs_tract_utm <- st_transform(acs_tract, crs = "+proj=utm +zone=18S +datum=NAD83 +ellps=GRS80") 
@@ -60,6 +146,8 @@ tract_dist <- osrmTable(src = tract_centroids,
 
 tract_dist_mat <- tract_dist$distances
 
+write.csv(tract_dist_mat, "./data/working/park_to_tract_dist_mat.csv", row.names = FALSE)
+
 bgrp_dist1 <- osrmTable(src = bgrp_centroids[1:60,],
                         dst = parks_centroids,
                         measure = "distance")
@@ -76,18 +164,83 @@ bgrp_dist_mat <- rbind(bgrp_dist1$distances,
                        bgrp_dist2$distances,
                        bgrp_dist3$distances)
 
-# run two-step floating catchment area
-tract_tsfca <- ac(p = acs_tract$black, 
-                  n = acs_tract$acres, 
-                  D = tract_dist_mat, 
-                  d0 = 1609, 
-                  family = "2SFCA")
+write.csv(bgrp_dist_mat, "./data/working/park_to_bgrp_dist_mat.csv", row.names = FALSE)
 
-bgrp_tsfca <- ac(p = acs_bgrp$black, 
-                 n = acs_bgrp$acres, 
-                 D = bgrp_dist_mat, 
-                 d0 = 1609, 
-                 family = "2SFCA")
+## run two-step floating catchment area ##
+
+# tract level
+all_tract_tsfca <- ac(p = acs_tract$total_pop, 
+                      n = parks$Acreage, 
+                      D = tract_dist_mat, 
+                      d0 = 1609, 
+                      family = "2SFCA")
+
+all_tract_tsfca2 <- ac(p = acs_tract$total_pop, 
+                      n = parks$Acreage, 
+                      D = tract_dist_mat, 
+                      d0 = 5000, 
+                      family = "2SFCA")
+  
+white_tract_tsfca <- ac(p = acs_tract$white, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+white_tract_tsfca2 <- ac(p = acs_tract$white, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 804, 
+                        family = "2SFCA")
+
+black_tract_tsfca <- ac(p = acs_tract$black, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+asian_tract_tsfca <- ac(p = acs_tract$asian, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+other_tract_tsfca <- ac(p = acs_tract$other, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+# bgrp level
+all_bgrp_tsfca <- ac(p = acs_bgrp$total_pop, 
+                     n = parks$Acreage, 
+                     D = bgrp_dist_mat, 
+                     d0 = 1609, 
+                     family = "2SFCA")
+
+white_bgrp_tsfca <- ac(p = acs_bgrp$white, 
+                       n = parks$Acreage, 
+                       D = bgrp_dist_mat, 
+                       d0 = 1609, 
+                       family = "2SFCA")
+
+black_bgrp_tsfca <- ac(p = acs_bgrp$black, 
+                       n = parks$Acreage, 
+                       D = bgrp_dist_mat, 
+                       d0 = 1609, 
+                       family = "2SFCA")
+
+asian_bgrp_tsfca <- ac(p = acs_bgrp$asian, 
+                       n = parks$Acreage, 
+                       D = bgrp_dist_mat, 
+                       d0 = 1609, 
+                       family = "2SFCA")
+
+other_bgrp_tsfca <- ac(p = acs_bgrp$other, 
+                       n = parks$Acreage, 
+                       D = bgrp_dist_mat, 
+                       d0 = 1609, 
+                       family = "2SFCA")
 
 
 
