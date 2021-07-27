@@ -137,6 +137,9 @@ parks_centroids <- parks_centroids %>%
          lon = X,
          lat = Y)
 
+# amenities
+parks_amenities <- read.csv("./data/working/parks_amenities.csv")
+
 
 ## calculate distances between each
 ## park and neighborhood centroid
@@ -174,23 +177,11 @@ all_tract_tsfca <- ac(p = acs_tract$total_pop,
                       D = tract_dist_mat, 
                       d0 = 1609, 
                       family = "2SFCA")
-
-all_tract_tsfca2 <- ac(p = acs_tract$total_pop, 
-                      n = parks$Acreage, 
-                      D = tract_dist_mat, 
-                      d0 = 5000, 
-                      family = "2SFCA")
   
 white_tract_tsfca <- ac(p = acs_tract$white, 
                         n = parks$Acreage, 
                         D = tract_dist_mat, 
                         d0 = 1609, 
-                        family = "2SFCA")
-
-white_tract_tsfca2 <- ac(p = acs_tract$white, 
-                        n = parks$Acreage, 
-                        D = tract_dist_mat, 
-                        d0 = 804, 
                         family = "2SFCA")
 
 black_tract_tsfca <- ac(p = acs_tract$black, 
@@ -241,6 +232,37 @@ other_bgrp_tsfca <- ac(p = acs_bgrp$other,
                        D = bgrp_dist_mat, 
                        d0 = 1609, 
                        family = "2SFCA")
+
+
+# accessibility to playground
+playground <- which(parks_amenities$playground == 1)
+
+all_tract_tsfca_playground <- ac(p = acs_tract$total_pop, 
+                                 n = parks$Acreage[playground], 
+                                 D = tract_dist_mat[,playground], 
+                                 d0 = 1609, 
+                                 family = "2SFCA")
+
+black_tract_tsfca_playground <- ac(p = acs_tract$black, 
+                                   n = parks$Acreage[playground], 
+                                   D = tract_dist_mat[,playground], 
+                                   d0 = 1609, 
+                                   family = "2SFCA")
+
+# accessibility to basketball
+basketball <- which(parks_amenities$basketball == 1)
+
+all_tract_tsfca_basketball <- ac(p = acs_tract$total_pop, 
+                                 n = parks$Acreage[basketball], 
+                                 D = tract_dist_mat[,basketball], 
+                                 d0 = 1609, 
+                                 family = "2SFCA")
+
+black_tract_tsfca_basketball <- ac(p = acs_tract$black, 
+                                   n = parks$Acreage[basketball], 
+                                   D = tract_dist_mat[,basketball], 
+                                   d0 = 1609, 
+                                   family = "2SFCA")
 
 
 
