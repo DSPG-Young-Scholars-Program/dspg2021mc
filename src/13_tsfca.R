@@ -3,6 +3,7 @@ library(SpatialAcc)
 library(osrm)
 library(dplyr)
 library(tidycensus)
+library(mapview)
 
 # read in ACS data
 Sys.getenv("CENSUS_API_KEY")
@@ -149,7 +150,8 @@ tract_dist <- osrmTable(src = tract_centroids,
 
 tract_dist_mat <- tract_dist$distances
 
-write.csv(tract_dist_mat, "./data/working/park_to_tract_dist_mat.csv", row.names = FALSE)
+#write.csv(tract_dist_mat, "./data/working/park_to_tract_dist_mat.csv", row.names = FALSE)
+tract_dist_mat <- read.csv("./data/working/park_to_tract_dist_mat.csv")
 
 bgrp_dist1 <- osrmTable(src = bgrp_centroids[1:60,],
                         dst = parks_centroids,
@@ -167,16 +169,19 @@ bgrp_dist_mat <- rbind(bgrp_dist1$distances,
                        bgrp_dist2$distances,
                        bgrp_dist3$distances)
 
-write.csv(bgrp_dist_mat, "./data/working/park_to_bgrp_dist_mat.csv", row.names = FALSE)
+#write.csv(bgrp_dist_mat, "./data/working/park_to_bgrp_dist_mat.csv", row.names = FALSE)
+bgrp_dist_mat <- read.csv("./data/working/park_to_bgrp_dist_mat.csv")
 
 ## run two-step floating catchment area ##
 
-# tract level
+# tract level - acreage
 all_tract_tsfca <- ac(p = acs_tract$total_pop, 
                       n = parks$Acreage, 
                       D = tract_dist_mat, 
                       d0 = 1609, 
                       family = "2SFCA")
+
+acs_tract$all_tract_tsfca <- all_tract_tsfca
   
 white_tract_tsfca <- ac(p = acs_tract$white, 
                         n = parks$Acreage, 
@@ -184,11 +189,15 @@ white_tract_tsfca <- ac(p = acs_tract$white,
                         d0 = 1609, 
                         family = "2SFCA")
 
+acs_tract$white_tract_tsfca <- white_tract_tsfca
+
 black_tract_tsfca <- ac(p = acs_tract$black, 
                         n = parks$Acreage, 
                         D = tract_dist_mat, 
                         d0 = 1609, 
                         family = "2SFCA")
+
+acs_tract$black_tract_tsfca <- black_tract_tsfca
 
 asian_tract_tsfca <- ac(p = acs_tract$asian, 
                         n = parks$Acreage, 
@@ -196,18 +205,24 @@ asian_tract_tsfca <- ac(p = acs_tract$asian,
                         d0 = 1609, 
                         family = "2SFCA")
 
+acs_tract$asian_tract_tsfca <- asian_tract_tsfca
+
 other_tract_tsfca <- ac(p = acs_tract$other, 
                         n = parks$Acreage, 
                         D = tract_dist_mat, 
                         d0 = 1609, 
                         family = "2SFCA")
 
-# bgrp level
+acs_tract$other_tract_tsfca <- other_tract_tsfca
+
+# bgrp level - acreage
 all_bgrp_tsfca <- ac(p = acs_bgrp$total_pop, 
                      n = parks$Acreage, 
                      D = bgrp_dist_mat, 
                      d0 = 1609, 
                      family = "2SFCA")
+
+acs_bgrp$all_bgrp_tsfca <- all_bgrp_tsfca
 
 white_bgrp_tsfca <- ac(p = acs_bgrp$white, 
                        n = parks$Acreage, 
@@ -215,11 +230,15 @@ white_bgrp_tsfca <- ac(p = acs_bgrp$white,
                        d0 = 1609, 
                        family = "2SFCA")
 
+acs_bgrp$white_bgrp_tsfca <- white_bgrp_tsfca
+
 black_bgrp_tsfca <- ac(p = acs_bgrp$black, 
                        n = parks$Acreage, 
                        D = bgrp_dist_mat, 
                        d0 = 1609, 
                        family = "2SFCA")
+
+acs_bgrp$black_bgrp_tsfca <- black_bgrp_tsfca
 
 asian_bgrp_tsfca <- ac(p = acs_bgrp$asian, 
                        n = parks$Acreage, 
@@ -227,11 +246,131 @@ asian_bgrp_tsfca <- ac(p = acs_bgrp$asian,
                        d0 = 1609, 
                        family = "2SFCA")
 
+acs_bgrp$asian_bgrp_tsfca <- asian_bgrp_tsfca
+
 other_bgrp_tsfca <- ac(p = acs_bgrp$other, 
                        n = parks$Acreage, 
                        D = bgrp_dist_mat, 
                        d0 = 1609, 
                        family = "2SFCA")
+
+acs_bgrp$other_bgrp_tsfca <- other_bgrp_tsfca
+
+# plots #
+
+# tract level
+
+# all
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "all_tract_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# white
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "white_tract_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# black
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "black_tract_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# asian
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "asian_tract_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# other
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "other_tract_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# block group level
+
+# all
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_bgrp, 
+          zcol = "all_bgrp_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# white
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_bgrp, 
+          zcol = "white_bgrp_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# black
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_bgrp, 
+          zcol = "black_bgrp_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# asian
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_bgrp, 
+          zcol = "asian_bgrp_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# other
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_bgrp, 
+          zcol = "other_bgrp_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
 
 
 # accessibility to playground
@@ -243,29 +382,60 @@ all_tract_tsfca_playground <- ac(p = acs_tract$total_pop,
                                  d0 = 1609, 
                                  family = "2SFCA")
 
+white_tract_tsfca_playground <- ac(p = acs_tract$white, 
+                                   n = parks$Acreage[playground], 
+                                   D = tract_dist_mat[,playground], 
+                                   d0 = 1609, 
+                                   family = "2SFCA")
+
 black_tract_tsfca_playground <- ac(p = acs_tract$black, 
                                    n = parks$Acreage[playground], 
                                    D = tract_dist_mat[,playground], 
                                    d0 = 1609, 
                                    family = "2SFCA")
 
-# accessibility to basketball
-basketball <- which(parks_amenities$basketball == 1)
-
-all_tract_tsfca_basketball <- ac(p = acs_tract$total_pop, 
-                                 n = parks$Acreage[basketball], 
-                                 D = tract_dist_mat[,basketball], 
-                                 d0 = 1609, 
-                                 family = "2SFCA")
-
-black_tract_tsfca_basketball <- ac(p = acs_tract$black, 
-                                   n = parks$Acreage[basketball], 
-                                   D = tract_dist_mat[,basketball], 
+asian_tract_tsfca_playground <- ac(p = acs_tract$asian, 
+                                   n = parks$Acreage[playground], 
+                                   D = tract_dist_mat[,playground], 
                                    d0 = 1609, 
                                    family = "2SFCA")
 
+other_tract_tsfca_playground <- ac(p = acs_tract$other, 
+                                   n = parks$Acreage[playground], 
+                                   D = tract_dist_mat[,playground], 
+                                   d0 = 1609, 
+                                   family = "2SFCA")
 
+# accessibility to parking
+parking <- which(parks_amenities$parking == 1)
 
+all_tract_tsfca_parking <- ac(p = acs_tract$total_pop, 
+                              n = parks$Acreage[parking], 
+                              D = tract_dist_mat[,parking], 
+                              d0 = 1609, 
+                              family = "2SFCA")
 
+white_tract_tsfca_parking <- ac(p = acs_tract$white, 
+                                n = parks$Acreage[parking], 
+                                D = tract_dist_mat[,parking], 
+                                d0 = 1609, 
+                                family = "2SFCA")
 
+black_tract_tsfca_parking <- ac(p = acs_tract$black, 
+                                n = parks$Acreage[parking], 
+                                D = tract_dist_mat[,parking], 
+                                d0 = 1609, 
+                                family = "2SFCA")
+
+asian_tract_tsfca_parking <- ac(p = acs_tract$asian, 
+                                n = parks$Acreage[parking], 
+                                D = tract_dist_mat[,parking], 
+                                d0 = 1609, 
+                                family = "2SFCA")
+
+other_tract_tsfca_parking <- ac(p = acs_tract$other, 
+                                n = parks$Acreage[parking], 
+                                D = tract_dist_mat[,parking], 
+                                d0 = 1609, 
+                                family = "2SFCA")
 
