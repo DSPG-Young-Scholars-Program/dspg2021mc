@@ -382,11 +382,15 @@ all_tract_tsfca_playground <- ac(p = acs_tract$total_pop,
                                  d0 = 1609, 
                                  family = "2SFCA")
 
+acs_tract$all_tract_tsfca_playground <- all_tract_tsfca_playground
+
 white_tract_tsfca_playground <- ac(p = acs_tract$white, 
                                    n = parks$Acreage[playground], 
                                    D = tract_dist_mat[,playground], 
                                    d0 = 1609, 
                                    family = "2SFCA")
+
+acs_tract$white_tract_tsfca_playground <- white_tract_tsfca_playground
 
 black_tract_tsfca_playground <- ac(p = acs_tract$black, 
                                    n = parks$Acreage[playground], 
@@ -394,11 +398,15 @@ black_tract_tsfca_playground <- ac(p = acs_tract$black,
                                    d0 = 1609, 
                                    family = "2SFCA")
 
+acs_tract$black_tract_tsfca_playground <- black_tract_tsfca_playground
+
 asian_tract_tsfca_playground <- ac(p = acs_tract$asian, 
                                    n = parks$Acreage[playground], 
                                    D = tract_dist_mat[,playground], 
                                    d0 = 1609, 
                                    family = "2SFCA")
+
+acs_tract$asian_tract_tsfca_playground <- asian_tract_tsfca_playground
 
 other_tract_tsfca_playground <- ac(p = acs_tract$other, 
                                    n = parks$Acreage[playground], 
@@ -406,8 +414,66 @@ other_tract_tsfca_playground <- ac(p = acs_tract$other,
                                    d0 = 1609, 
                                    family = "2SFCA")
 
+acs_tract$other_tract_tsfca_playground <- other_tract_tsfca_playground
+
+
+# all
+mapview(st_geometry(parks[playground,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "all_tract_tsfca_playground", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# white
+mapview(st_geometry(parks[playground,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "white_tract_tsfca_playground", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# black
+mapview(st_geometry(parks[playground,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "black_tract_tsfca_playground", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# asian
+mapview(st_geometry(parks[playground,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "asian_tract_tsfca_playground", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# other
+mapview(st_geometry(parks[playground,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "other_tract_tsfca_playground", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
 # accessibility to parking
-parking <- which(parks_amenities$parking == 1)
+parking <- which(parks_amenities$free_parking == 1)
 
 all_tract_tsfca_parking <- ac(p = acs_tract$total_pop, 
                               n = parks$Acreage[parking], 
@@ -415,11 +481,15 @@ all_tract_tsfca_parking <- ac(p = acs_tract$total_pop,
                               d0 = 1609, 
                               family = "2SFCA")
 
+acs_tract$all_tract_tsfca_parking <- all_tract_tsfca_parking
+
 white_tract_tsfca_parking <- ac(p = acs_tract$white, 
                                 n = parks$Acreage[parking], 
                                 D = tract_dist_mat[,parking], 
                                 d0 = 1609, 
                                 family = "2SFCA")
+
+acs_tract$white_tract_tsfca_parking <- white_tract_tsfca_parking
 
 black_tract_tsfca_parking <- ac(p = acs_tract$black, 
                                 n = parks$Acreage[parking], 
@@ -427,15 +497,77 @@ black_tract_tsfca_parking <- ac(p = acs_tract$black,
                                 d0 = 1609, 
                                 family = "2SFCA")
 
+acs_tract$black_tract_tsfca_parking <- black_tract_tsfca_parking
+
 asian_tract_tsfca_parking <- ac(p = acs_tract$asian, 
                                 n = parks$Acreage[parking], 
                                 D = tract_dist_mat[,parking], 
                                 d0 = 1609, 
                                 family = "2SFCA")
 
+acs_tract$asian_tract_tsfca_parking <- asian_tract_tsfca_parking
+
 other_tract_tsfca_parking <- ac(p = acs_tract$other, 
                                 n = parks$Acreage[parking], 
                                 D = tract_dist_mat[,parking], 
                                 d0 = 1609, 
                                 family = "2SFCA")
+
+acs_tract$other_tract_tsfca_parking <- other_tract_tsfca_parking
+
+
+# all
+mapview(st_geometry(parks[parking,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "all_tract_tsfca_parking", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# white
+mapview(st_geometry(parks[parking,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "white_tract_tsfca_parking", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# black
+mapview(st_geometry(parks[parking,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "black_tract_tsfca_parking", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# asian
+mapview(st_geometry(parks[parking,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "asian_tract_tsfca_parking", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+# other
+mapview(st_geometry(parks[parking,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "other_tract_tsfca_parking", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
 
