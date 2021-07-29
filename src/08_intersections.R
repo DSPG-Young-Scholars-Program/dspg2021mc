@@ -1,6 +1,8 @@
 library(tidyverse)
 library(sf)
 library(sp)
+library(mapview)
+library(leaflet)
 
 parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
 parks = parks %>%
@@ -57,6 +59,10 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
+write_rds(park_iso5, "./data/working/traveltime_isochrones/park_intersect_w_5.Rds")
+write_rds(park_iso10, "./data/working/traveltime_isochrones/park_intersect_w_10.Rds")
+write_rds(park_iso15, "./data/working/traveltime_isochrones/park_intersect_w_15.Rds")
+
 # get coverage based on intersections and the number of total residences from corelogic
 park_coverage_5 <- (nrow(park_intersect_5)/nrow(residential_sf)*100)
 park_coverage_10 <- (nrow(park_intersect_10)/nrow(residential_sf)*100)
@@ -66,7 +72,7 @@ park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
-write.csv(table, file = "./data/working/traveltime_isochrones/park_iso_table.csv", row.names = FALSE)
+write.csv(table, file = "./data/working/park_iso_table.csv", row.names = FALSE)
 
 residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
 m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
@@ -114,6 +120,10 @@ plot(st_geometry(park_iso15))
 park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
+
+write_rds(park_iso5, "./data/working/traveltime_isochrones/park_intersect_drv_5.Rds")
+write_rds(park_iso10, "./data/working/traveltime_isochrones/park_intersect_drv_10.Rds")
+write_rds(park_iso15, "./data/working/traveltime_isochrones/park_intersect_drv_15.Rds")
 
 # get coverage based on intersections and the number of total residences from corelogic
 park_coverage_5 <- (nrow(park_intersect_5)/nrow(residential_sf)*100)
@@ -168,6 +178,10 @@ for(i in 3:nrow(parks)){
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 plot(st_geometry(park_iso15))
+
+write_rds(park_iso5, "./data/working/traveltime_isochrones/park_intersect_pt_5.Rds")
+write_rds(park_iso10, "./data/working/traveltime_isochrones/park_intersect_pt_10.Rds")
+write_rds(park_iso15, "./data/working/traveltime_isochrones/park_intersect_wpt_15.Rds")
 
 # intersect big conglomerated polygons + residential areas
 park_intersect_5 <- st_intersection(park_iso5, residential_sf)
@@ -239,16 +253,18 @@ table
 #
 
 circles <- readRDS("./data/working/circle_poly.Rds")
-circle_park_iso <- st_union(circles[1,], circles[2,])
+circle_park_iso <- st_combine(circles[1,], circles[2,])
 
 for(i in 3:nrow(circles)){
-  circle_park_iso <- st_union(circle_park_iso,circles[i,])
+  circle_park_iso <- st_combine(circle_park_iso,circles[i,])
 }
 
 plot(st_geometry(circle_park_iso))
 
 # intersect big conglomerated polygons + residential areas
 circle_park_intersect <- st_intersection(circle_park_iso, residential_sf)
+
+write_rds(circle_park_iso, "./data/working/circle_park_isochrone.Rds")
 
 # get coverage based on intersections and the number of total residences from corelogic
 circle_park_coverage <- (nrow(circle_park_intersect)/nrow(residential_sf)*100)

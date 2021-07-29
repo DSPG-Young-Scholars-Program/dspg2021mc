@@ -13,9 +13,9 @@ navbar:
       menu:
         - text: "Demographics of Arington" # acs variable plots
           href: demographics.html
-        - text: "Parks of Arlington" # parks + residences + coverage at county level
+        - text: "Parks Access" # parks + residences + coverage at county level
           href: parks.html
-        - text: "Equity of Parks" # statistics tables
-          href: equity.html
-        - text: "Equity of Parks by Residences and Car Usage" # specific coverage by types of residences + cars
-          href: case_study.html
+        - text: "Park Ammenity Access" # statistics tables
+          href: ammenities.html
+        - text: "Racial Equity of Parks" # specific coverage by types of residences + cars
+          href: floating_catchment.html
