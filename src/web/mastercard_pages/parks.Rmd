@@ -1,28 +1,92 @@
 ---
-title: "Parks of Arlington"
+title: "Park Access Coverage"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+root.dir = rprojroot::find_rstudio_root_file()
+
+library(tidyverse)
+library(sf)
+library(sp)
+library(mapview)
+library(leaflet)
+
+colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
+
+residential <- read_sf(paste0(root.dir, "/data/working/corelogic/residential.csv"))
+residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "parcel_level_latitude"))
+st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
+residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
 ```
 
-## R Markdown
+```{r circles}
+circle_park_iso <- read_rds("./data/working/circle_park_isochrone.Rds")
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+circle_table <- read.csv(file = "./data/working/circle_park_iso_table.csv")
+circle_table
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r circle map}
+plot(st_geometry(circle_park_iso))
+# m1 = mapview(circle_park_iso, layer.name = "1/2 mile circle isochrone", col.regions = colors[1])
+# circle_map = m1 + residential
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r walking}
+park_iso5 = read_rds("./data/working/traveltime_isochrones/park_intersect_w_5.Rds")
+park_iso10 = read_rds("./data/working/traveltime_isochrones/park_intersect_w_10.Rds")
+park_iso15 = read_rds("./data/working/traveltime_isochrones/park_intersect_w_15.Rds")
+
+table <- read.csv(file = "./data/working/park_iso_table.csv")
+table
+```
+
+```{r walk map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top
+walk_map = m1 + m2 + m3 + residential
+walk_map
+```
+
+```{r driving}
+park_iso5 = read_rds("./data/working/traveltime_isochrones/park_intersect_drv_5.Rds")
+park_iso10 = read_rds("./data/working/traveltime_isochrones/park_intersect_drv_10.Rds")
+park_iso15 = read_rds("./data/working/traveltime_isochrones/park_intersect_drv_15.Rds")
+
+table <- read.csv(file = "./data/working/traveltime_isochrones/park_iso_drv_table.csv")
+table
+```
+
+```{r driving map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top
+drv_map = m1 + m2 + m3 + residential
+drv_map
+```
+
+```{r pt}
+park_iso5 = read_rds("./data/working/traveltime_isochrones/park_intersect_pt_5.Rds")
+park_iso10 = read_rds("./data/working/traveltime_isochrones/park_intersect_pt_10.Rds")
+park_iso15 = read_rds("./data/working/traveltime_isochrones/park_intersect_wpt_15.Rds")
+
+table <- read.csv("./data/working/traveltime_isochrones/park_iso_pt_table.csv")
+table
+
+```
+
+```{r pt map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top
+pt_map = m1 + m2 + m3 + residential
+pt_map
+
+```
