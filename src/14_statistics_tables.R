@@ -31,19 +31,16 @@ t_test_tract <- lapply(tract_variables, function(x)
 # create empty vectors
 t_test_vector <- c()
 p_value_vector <- c()
-conf_int_vector <- c()
 # create loop
 for(x in t_test_tract){
   t_test = x$statistic
   t_test_vector = append(t_test_vector, t_test)
   p_value = x$p.value
   p_value_vector = append(p_value_vector, p_value)
-  conf_int = x$conf.int
-  conf_int_vector = append(conf_int_vector, conf_int)
 }
 # add names/store/save table
-t_test_table_tract <- data.frame(names(t_test_tract), t_test_vector, p_value_vector, conf_int_vector)
-write.csv(t_test_table_tract, file = "./output/t_test_table_tract.csv") # need to fix conf int
+t_test_table_tract <- data.frame(names(t_test_tract), t_test_vector, p_value_vector)
+write.csv(t_test_table_tract, file = "./output/t_test_table_tract.csv")
 
 # repeat for bgrp
 t_test_bgrp <- lapply(bgrp_variables, function(x) 
@@ -51,73 +48,138 @@ t_test_bgrp <- lapply(bgrp_variables, function(x)
 # create empty vectors
 t_test_vector <- c()
 p_value_vector <- c()
-conf_int_vector <- c()
 # create loop
 for(x in t_test_bgrp){
   t_test = x$statistic
   t_test_vector = append(t_test_vector, t_test)
   p_value = x$p.value
   p_value_vector = append(p_value_vector, p_value)
-  conf_int = x$conf.int
-  conf_int_vector = append(conf_int_vector, conf_int)
 }
 # add names/store/save table
-t_test_table_bgrp <- data.frame(names(t_test_bgrp), t_test_vector, p_value_vector, conf_int_vector)
-write.csv(t_test_table_bgrp, file = "./output/t_test_table_bgrp.csv") # need to fix conf int
+t_test_table_bgrp <- data.frame(names(t_test_bgrp), t_test_vector, p_value_vector)
+write.csv(t_test_table_bgrp, file = "./output/t_test_table_bgrp.csv")
 
-# Multi-panel plots ------------
-# reduce df (8-9 variables at a time)
+# Multi-panel plots ------------ 
+# reduce df (9 variables at a time)
 tract_pt1 <- acs_tract[, c("black", "hispanic", "noba", "unempl",
-                           "inpov", "nohealthins", "med_inc_w", "med_inc_a")]
-tract_pt2 <- acs_tract[, c("med_inc_b", "med_inc_h", "pov_w", "pov_b", "pov_a",
-                           "pov_h", "rent_ov_30", "commute_un_10")]                  
-tract_pt3 <- acs_tract[, c("commute_10_14","commute_15_19", "commute_20_24", "commute_25_29",
-                            "commute_30_34", "commute_35_44", "commute_45_59", "commute_60_pl")]
-tract_pt4 <- acs_tract[, c("unemploy_rate_w", "unemploy_rate_a",
-                           "unemploy_rate_w", "unemploy_rate_b", "unemploy_rate_h",
-                           "ba_higher_w", "ba_higher_a", "ba_higher_h", "ba_higher_b")] 
-
-# Transform data into long format (do 4 times)
+                           "inpov", "nohealthins", "rent_ov_30")]
+tract_pt2 <- acs_tract[, c("pov_w", "pov_b", "pov_a", "pov_h")]
+tract_pt2 <- tract_pt2 %>% 
+  rename(
+    White = pov_w, Black = pov_b, Asian = pov_a, Hispanic = pov_h
+  )
+tract_pt3 <- acs_tract[, c("commute_un_10", "commute_10_14","commute_15_19", 
+                           "commute_20_24", "commute_25_29", "commute_30_34", 
+                           "commute_35_44", "commute_45_59", "commute_60_pl")]  
+tract_pt3 <- tract_pt3 %>% 
+  rename(
+    "Under 10 Minutes" = commute_un_10, "10 to 14 Minutes" = commute_10_14,
+    "15 to 19 Minutes" = commute_15_19, "20 to 24 Minutes" = commute_20_24,
+    "25 to 29 Minutes" = commute_30_34, "35 to 44 Minutes" = commute_35_44,
+    "45 to 59 Minutes" = commute_45_59, "Over 60 Minutes" = commute_60_pl
+  )
+tract_pt4 <- acs_tract[, c("unemploy_rate_w", "unemploy_rate_b", "unemploy_rate_a", "unemploy_rate_h")]
+tract_pt4 <- tract_pt4 %>% 
+  rename(
+    White = unemploy_rate_w, Black = unemploy_rate_b, Asian = unemploy_rate_a, Hispanic = unemploy_rate_h
+  )
+tract_pt5 <- acs_tract[, c("ba_higher_w", "ba_higher_a", "ba_higher_b", "ba_higher_h")]
+tract_pt5 <- tract_pt5 %>%
+  rename(
+  White = ba_higher_w, Black = ba_higher_b, Asian = ba_higher_a, Hispanic = ba_higher_h
+)
+tract_pt6 <- acs_tract[, c("med_inc_w", "med_inc_b", "med_inc_a", "med_inc_h")]
+tract_pt6 <- tract_pt6 %>%
+  rename(
+    White = med_inc_w, Black = med_inc_b, Asian = med_inc_a, Hispanic = med_inc_h
+  )
+######## Transform data into long format 
 tract_long_pt1 <- pivot_longer(
   tract_pt1,
-  "black":"med_inc_a",
+  "black":"rent_ov_30",
   names_to = "variables",
   values_to = "value",
 )
 tract_long_pt2 <- pivot_longer(
   tract_pt2,
-  "med_inc_b":"commute_un_10",
+  "White":"Hispanic",
   names_to = "variables",
   values_to = "value",
 )
 tract_long_pt3 <- pivot_longer(
   tract_pt3,
-  "commute_10_14":"commute_60_pl",
+  "Under 10 Minutes":"Over 60 Minutes",
   names_to = "variables",
   values_to = "value",
 )
 tract_long_pt4 <- pivot_longer(
   tract_pt4,
-  "unemploy_rate_w":"ba_higher_b",
+  "White":"Hispanic",
+  names_to = "variables",
+  values_to = "value",
+)
+tract_long_pt5 <- pivot_longer(
+  tract_pt5,
+  "White":"Hispanic",
+  names_to = "variables",
+  values_to = "value",
+)
+tract_long_pt6 <- pivot_longer(
+  tract_pt6,
+  "White":"Hispanic",
   names_to = "variables",
   values_to = "value",
 )
 
-# tract (issues with scales)
-tract_plots <- ggboxplot(
-  tract_long_pt1, x = "variables", y = "value", palette = "npg",
-  xlab = "Demographics", legend = "none",
+##### plotting tract
+tract_plot_pov <- ggboxplot(
+  tract_long_pt2, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent", legend = "none",
+  title = "Distribution of Racial Groups Living in \n Poverty by tract, 2015/19",
   ggtheme = theme_pubr(border = TRUE)
 ) +
   facet_wrap(~variables)
+ggsave(path = "./output/", device = "png", filename = "tract_plot_pov.png", plot = last_plot())
+
+tract_plot_commute <- ggboxplot(
+  tract_long_pt3, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent", legend = "none",
+  title = "Distribution of commute times \n by tract, 2015/19",
+  ggtheme = theme_pubr(border = TRUE)
+) +
+  facet_wrap(~variables)
+ggsave(path = "./output/", device = "png", filename = "tract_plot_commute.png", plot = last_plot())
+
+tract_plot_unemploy <- ggboxplot(
+  tract_long_pt4, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent", legend = "none",
+  title = "Distribution of unemployment by racial group \n by tract, 2015/19",
+  ggtheme = theme_pubr(border = TRUE)
+) +
+  facet_wrap(~variables)
+ggsave(path = "./output/", device = "png", filename = "tract_plot_unemploy.png", plot = last_plot())
+
+tract_plot_edu <- ggboxplot(
+  tract_long_pt5, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent", legend = "none", 
+  title = "Distribution of educational attainment \n by racial group by tract, 2015/19",
+  ggtheme = theme_pubr(border = TRUE), outlier.shape = 
+) +
+  facet_wrap(~variables)
+ggsave(path = "./output/", device = "png", filename = "tract_plot_edu.png", plot = last_plot())
+
+tract_plot_inc <- ggboxplot(
+  tract_long_pt6, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent", legend = "none", 
+  title = "Distribution of median income \n by racial group by tract, 2015/19",
+  ggtheme = theme_pubr(border = TRUE), outlier.shape = 
+) +
+  facet_wrap(~variables)
+ggsave(path = "./output/", device = "png", filename = "tract_plot_inc.png", plot = last_plot())
+
 
 # block group level
-ggboxplot(
-  bgrp_variables_long, x = "variables", y = "value", palette = "npg",
-  xlab = "Demographics", legend = "none",
-  ggtheme = theme_pubr(border = TRUE)
-) +
-  facet_wrap(~variables)
+
 
 # Summary stats tables ----------
 # select variables
