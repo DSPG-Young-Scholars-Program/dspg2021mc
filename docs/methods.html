@@ -291,13 +291,13 @@ $(document).ready(function () {
       <a href="demographics.html">Demographics of Arington</a>
     </li>
     <li>
-      <a href="parks.html">Parks of Arlington</a>
+      <a href="parks.html">Parks Access</a>
     </li>
     <li>
-      <a href="equity.html">Equity of Parks</a>
+      <a href="ammenities.html">Park Ammenity Access</a>
     </li>
     <li>
-      <a href="case_study.html">Equity of Parks by Residences and Car Usage</a>
+      <a href="floating_catchment.html">Racial Equity of Parks</a>
     </li>
   </ul>
 </li>
@@ -318,24 +318,16 @@ $(document).ready(function () {
 </div>
 
 
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
-</div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="methods_files/figure-html/pressure-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<p>In this project we used a few methods to measure racial equity in Arlington's parks.</p>
+<ul>
+<li><p>Literature Review? In addition we completed a literature review. Specifically examinng the Nichols piece that examined accessibility and equity of public park using GIS.</p></li>
+<li><p>Measure of Park Quality Analyzing amenities and parkscore</p></li>
+<li><p>Isochrones Created isochrones connecting walking, driving, and public transportation across parks and ammenitites. Mapped from centroid of park and boundary. Merged block and tract ACS with this data to get a sens of acres and block groups together</p></li>
+<li><p>Statisical Tests Testing differences between groups for statistical significance.</p></li>
+<li><p>Floating Catchment?? This measures demand as values of race in a given geographic area, a lense for examining racial equity.</p></li>
+</ul>
 </div>
 
 

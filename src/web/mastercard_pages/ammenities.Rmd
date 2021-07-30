@@ -5,9 +5,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
-root.dir = rprojroot::find_rstudio_root_file()
-
+# run this once
+# remotes::install_github("r-spatial/mapview")
+# remotes::install_github("r-spatial/leafpop")
 library(tidyverse)
 library(sf)
 library(sp)
@@ -16,12 +16,12 @@ library(leaflet)
 
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
-residential <- read_sf(paste0(root.dir, "/data/working/corelogic/residential.csv"))
+residential <- read_sf("/home/mes5bu/git/mc/data/working/corelogic/residential.csv")
 residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "parcel_level_latitude"))
 st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
 residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
 
-parks_amenities <- read.csv(paste0(root.dir,"/data/working/parks_amenities.csv"))
+parks_amenities <- read.csv("/home/mes5bu/git/mc/data/working/parks_amenities.csv")
 
 # get indices for parks that have certain amenities
 tennis_parks <- which(parks_amenities$tennis == 1)
@@ -35,38 +35,38 @@ grill_parks <- which(parks_amenities$charcoal_grill == 1)
 
 ```{r tennis}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", tennis_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", tennis_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", tennis_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", tennis_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", tennis_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", tennis_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", tennis_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", tennis_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", tennis_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", tennis_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", tennis_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", tennis_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
   
 # loop through isochrones and continiously union with last
 for(i in 3:length(tennis_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(tennis_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(tennis_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -83,7 +83,7 @@ park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
-table
+knitr::kable(table)
 ```
 
 ```{r tennis maps}
@@ -99,38 +99,38 @@ tennis_map
 
 ```{r tennis pt}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", tennis_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_", tennis_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", tennis_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_", tennis_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", tennis_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_", tennis_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", tennis_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_", tennis_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", tennis_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_", tennis_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", tennis_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_", tennis_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(tennis_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(tennis_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(tennis_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -139,8 +139,8 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
-table <- read.csv(file = "./data/working/traveltime_isochrones/park_iso_pt_tennis.csv")
-table
+table <- read.csv(file = "/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_tennis.csv")
+knitr::kable(table)
 ```
 
 ```{r tennis pt map}
@@ -155,38 +155,38 @@ tennis_pt_map
 
 ```{r tennis drv}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", tennis_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", tennis_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", tennis_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", tennis_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", tennis_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", tennis_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", tennis_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", tennis_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", tennis_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", tennis_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", tennis_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", tennis_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(tennis_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(tennis_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(tennis_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -203,7 +203,7 @@ park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
-table
+knitr::kable(table)
 ```
 
 ```{r tennis drv map}
@@ -220,38 +220,38 @@ tennis_drv_map
 
 ```{r playground}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", playground_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", playground_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", playground_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", playground_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", playground_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", playground_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", playground_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", playground_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", playground_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", playground_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", playground_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", playground_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(playground_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(playground_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(playground_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -260,8 +260,8 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
-table <- read.csv("./data/working/traveltime_isochrones/park_iso_playground.csv")
-table
+table <- read.csv("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_playground.csv")
+knitr::kable(table)
 ```
 
 ```{r playground map}
@@ -276,38 +276,38 @@ playground_map
 ```{r pt playground}
 
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", playground_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_", playground_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", playground_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_", playground_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", playground_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_", playground_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", playground_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_", playground_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", playground_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_", playground_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", playground_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_", playground_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(playground_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(playground_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(playground_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -316,8 +316,8 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
-table <- read.csv("./data/working/traveltime_isochrones/park_iso_pt_playground.csv")
-table
+table <- read.csv("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_playground.csv")
+knitr::kable(table)
 ```
 
 ```{r playground pt map}
@@ -332,38 +332,38 @@ playground_pt_map
 ```{r playground drv}
 
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", playground_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", playground_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", playground_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", playground_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", playground_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", playground_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", playground_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", playground_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", playground_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", playground_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", playground_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", playground_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(playground_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(playground_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(playground_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -380,7 +380,7 @@ park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
-table
+knitr::kable(table)
 ```
 
 ```{r playground drv map}
@@ -396,38 +396,38 @@ playground_drv_map
 
 ```{r basketball}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", basketball_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", basketball_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", basketball_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", basketball_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", basketball_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", basketball_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", basketball_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", basketball_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", basketball_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", basketball_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", basketball_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", basketball_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(basketball_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(basketball_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(basketball_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -436,8 +436,8 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
-table <- read.csv("./data/working/traveltime_isochrones/park_iso_basketball.csv")
-
+table <- read.csv("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_basketball.csv")
+knitr::kable(table)
 
 ```
 
@@ -452,38 +452,38 @@ basket_map
 
 ```{r basketball pt}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", basketball_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_", basketball_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", basketball_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_", basketball_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", basketball_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_", basketball_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", basketball_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_", basketball_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", basketball_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_", basketball_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", basketball_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_", basketball_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(basketball_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(basketball_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(basketball_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -497,8 +497,8 @@ park_coverage_5 <- (nrow(park_intersect_5)/nrow(residential_sf)*100)
 park_coverage_10 <- (nrow(park_intersect_10)/nrow(residential_sf)*100)
 park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 
-table <- read.csv("./data/working/traveltime_isochrones/park_iso_pt_basketball.csv")
-table
+table <- read.csv("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_pt_basketball.csv")
+knitr::kable(table)
 
 ```
 
@@ -513,38 +513,38 @@ basket_pt_map
 
 ```{r basketball drv}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", basketball_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", basketball_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", basketball_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", basketball_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", basketball_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", basketball_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", basketball_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", basketball_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", basketball_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", basketball_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", basketball_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", basketball_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(basketball_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(basketball_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(basketball_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -566,7 +566,7 @@ park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
-table
+knitr::kable(table)
 ```
 
 ```{r basketball drv map}
@@ -591,38 +591,38 @@ grill_map
 
 ```{r parking}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", parking_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", parking_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", parking_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", parking_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", parking_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", parking_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", parking_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", parking_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", parking_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", parking_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", parking_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", parking_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(parking_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(parking_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(parking_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -631,8 +631,8 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
-table <- read.csv("./data/working/traveltime_isochrones/park_iso_parking.csv")
-table
+table <- read.csv("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_parking.csv")
+knitr::kable(table)
 ```
 
 ```{r parking map}
@@ -646,38 +646,38 @@ parking_map
 
 ```{r parking drv}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", parking_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", parking_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", parking_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_", parking_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", parking_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", parking_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", parking_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_", parking_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", parking_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", parking_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", parking_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_", parking_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(parking_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(parking_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(parking_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -694,7 +694,7 @@ park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
 table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
-table
+knitr::kable(table)
 ```
 
 ```{r parking drv map}
@@ -710,38 +710,38 @@ parking_drv_map
 
 ```{r grill}
 for (i in 1:2){
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", grill_parks[1],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", grill_parks[1],".RDS")
   park_iso_5_1 <- readRDS(iso_5_temp)
-  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", grill_parks[2],".RDS")
+  iso_5_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_", grill_parks[2],".RDS")
   park_iso_5_2 <- readRDS(iso_5_temp)
   park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
   
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", grill_parks[1],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", grill_parks[1],".RDS")
   park_iso_10_1 <- readRDS(iso_10_temp)
-  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", grill_parks[2],".RDS")
+  iso_10_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_", grill_parks[2],".RDS")
   park_iso_10_2 <- readRDS(iso_10_temp)
   park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
   
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", grill_parks[1],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", grill_parks[1],".RDS")
   park_iso_15_1 <- readRDS(iso_15_temp)
-  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", grill_parks[2],".RDS")
+  iso_15_temp <- paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_", grill_parks[2],".RDS")
   park_iso_15_2 <- readRDS(iso_15_temp)
   park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
 }
 
 # loop through isochrones and continiously union with last
 for(i in 3:length(grill_parks)){
-  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
+  park_iso5_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
   park_iso5 <- st_union(park_iso5,park_iso5_i)
 }
 
 for(i in 3:length(grill_parks)){
-  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
+  park_iso10_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
   park_iso10 <- st_union(park_iso10,park_iso10_i)
 }
 
 for(i in 3:length(grill_parks)){
-  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
+  park_iso15_i <- readRDS(paste0("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
   park_iso15 <- st_union(park_iso15,park_iso15_i)
 }
 
@@ -750,6 +750,6 @@ park_intersect_5 <- st_intersection(park_iso5, residential_sf)
 park_intersect_10 <- st_intersection(park_iso10, residential_sf)
 park_intersect_15 <- st_intersection(park_iso15, residential_sf)
 
-table <- read.csv("./data/working/traveltime_isochrones/park_iso_grill.csv")
-table
+table <- read.csv("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_iso_grill.csv")
+knitr::kable(table)
 ```
