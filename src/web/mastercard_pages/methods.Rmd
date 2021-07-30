@@ -3,26 +3,27 @@ title: "Methods"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-## R Markdown
+## Methods 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In this project we used a few methods to measure racial equity in Arlington's parks. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+- Literature Review? 
+In addition we completed a literature review. Specifically examinng the Nichols piece that examined  accessibility and equity of public park using GIS. 
 
-```{r cars}
-summary(cars)
-```
+- Measure of Park Quality
+Analyzing amenities and parkscore
 
-## Including Plots
+- Isochrones 
+Created isochrones connecting walking, driving, and public transportation across parks and ammenitites. Mapped from centroid of park and boundary. Merged block and tract ACS with this data to get a sens of acres and block groups together 
 
-You can also embed plots, for example:
+- Statisical Tests 
+Testing differences between groups for statistical significance. 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+- Floating Catchment?? 
+This measures demand as values of race in a given geographic area, a lense for examining racial equity. 
+
+
+
+

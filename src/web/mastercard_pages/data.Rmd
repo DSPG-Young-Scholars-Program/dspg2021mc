@@ -3,26 +3,23 @@ title: "Data"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-## R Markdown
+## Data  
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#### ACS Data   
+For this project we used data form the American Community Survey. The American Community Survey (ACS) is a yearly survey that covers a broad range of topics about social, economic, demographic, and housing characteristics of the U.S. population. In this project we used 5-year ACS estimates, this data represents data that has been collected over time. This gives us increased statistical reliability of the data.The 5-year estimates are available for all geographies down to the block group level. We examined both the block and tract levels of this data. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#### Arlington Park Data 
+Additionally, we used data from Arlington County Park Services. This data contained a variety of information from the parks, from park ameneties to general park location to park acerage. This data is public available from https://data.arlingtonva.us/results?term=parks. 
 
-```{r cars}
-summary(cars)
-```
 
-## Including Plots
+#### EJ Screen Data 
+EJSCREEN is an environmental justice mapping and screening tool that provides EPA with a nationally consistent dataset and approach for combining environmental and demographic indicators. EJSCREEN users choose a geographic area; the tool then provides demographic and environmental information for that area. All of the EJSCREEN indicators are publicly-available data. EJSCREEN simply provides a way to display this information and includes a method for combining environmental and demographic indicators into EJ indexes. 
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+      
