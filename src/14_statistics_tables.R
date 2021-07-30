@@ -45,6 +45,26 @@ for(x in t_test_tract){
 t_test_table_tract <- data.frame(names(t_test_tract), t_test_vector, p_value_vector, conf_int_vector)
 write_csv(t_test_table_tract, "./output") # need to fix conf int
 
+# repeat for bgrp
+t_test_bgrp <- lapply(bgrp_variables, function(x) 
+  t.test(x, na.action = na.pass))
+# create empty vectors
+t_test_vector <- c()
+p_value_vector <- c()
+conf_int_vector <- c()
+# create loop
+for(x in t_test_bgrp){
+  t_test = x$statistic
+  t_test_vector = append(t_test_vector, t_test)
+  p_value = x$p.value
+  p_value_vector = append(p_value_vector, p_value)
+  conf_int = x$conf.int
+  conf_int_vector = append(conf_int_vector, conf_int)
+}
+# add names/store/save table
+t_test_table_bgrp <- data.frame(names(t_test_bgrp), t_test_vector, p_value_vector, conf_int_vector)
+write_csv(t_test_table_tract, "./output") # need to fix conf int
+
 # Multi-panel plots ------------
 # reduce df (8-9 variables at a time)
 tract_pt1 <- acs_tract[, c("black", "hispanic", "noba", "unempl",
@@ -126,11 +146,4 @@ tract_tab <- rbind(tract_sd, tract_mean, tract_min, tract_max,
               stringsAsFactors = default.stringsAsFactors(), factor.exclude = NA)
 tract_tab <- t(tract_tab)
 colnames(tract_tab) <- c("sd", "mean", "min", "max")
-print(tract_tab)
-
-write.table(tract_tab, file = "", append = FALSE, quote = TRUE, sep = " ",
-            eol = "\n", na = "NA", dec = ".", row.names = TRUE,
-            col.names = TRUE, qmethod = c("escape", "double"),
-            fileEncoding = "")
-
 ### variables not available at block group level ###
