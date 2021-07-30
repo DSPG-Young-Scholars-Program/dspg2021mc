@@ -43,7 +43,7 @@ for(x in t_test_tract){
 }
 # add names/store/save table
 t_test_table_tract <- data.frame(names(t_test_tract), t_test_vector, p_value_vector, conf_int_vector)
-write_csv(t_test_table_tract, "./output") # need to fix conf int
+write.csv(t_test_table_tract, file = "./output/t_test_table_tract.csv") # need to fix conf int
 
 # repeat for bgrp
 t_test_bgrp <- lapply(bgrp_variables, function(x) 
@@ -63,7 +63,7 @@ for(x in t_test_bgrp){
 }
 # add names/store/save table
 t_test_table_bgrp <- data.frame(names(t_test_bgrp), t_test_vector, p_value_vector, conf_int_vector)
-write_csv(t_test_table_tract, "./output") # need to fix conf int
+write.csv(t_test_table_bgrp, file = "./output/t_test_table_bgrp.csv") # need to fix conf int
 
 # Multi-panel plots ------------
 # reduce df (8-9 variables at a time)
@@ -110,9 +110,6 @@ tract_plots <- ggboxplot(
   ggtheme = theme_pubr(border = TRUE)
 ) +
   facet_wrap(~variables)
-# Add statistical test p-values
-tract.stat.test <- tract.stat.test %>% add_xy_position(x = "variables")
-myplot + stat_pvalue_manual(tract.stat.test, label = "p.adj.signif")
 
 # block group level
 ggboxplot(
@@ -141,9 +138,8 @@ tract_min <- tract_vars %>%
   summarise_if(is.numeric, min, na.rm = TRUE)
 
 # combine
-tract_tab <- rbind(tract_sd, tract_mean, tract_min, tract_max,
-              deparse.level = 1, make.row.names = TRUE,
-              stringsAsFactors = default.stringsAsFactors(), factor.exclude = NA)
+tract_tab <- rbind(tract_sd, tract_mean, tract_min, tract_max)
 tract_tab <- t(tract_tab)
 colnames(tract_tab) <- c("sd", "mean", "min", "max")
+write.csv(tract_tab, file = "./output/tract_tab.csv")
 ### variables not available at block group level ###
