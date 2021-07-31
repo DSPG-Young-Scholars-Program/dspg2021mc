@@ -21,7 +21,7 @@ Created isochrones connecting walking, driving, and public transportation across
 Testing differences between groups for statistical significance. 
 
 
-- Floating Catchment?? 
+- Floating Catchment
 This measures demand as values of race in a given geographic area, a lense for examining racial equity. 
 
 

@@ -11,6 +11,8 @@ navbar:
       href: methods.html
     - text: "Findings"
       menu:
+        - text: "Main Findings" # acs variable plots
+          href: main.html
         - text: "Demographics of Arington" # acs variable plots
           href: demographics.html
         - text: "Parks Access" # parks + residences + coverage at county level

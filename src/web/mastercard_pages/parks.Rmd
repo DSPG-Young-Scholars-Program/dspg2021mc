@@ -3,8 +3,14 @@ title: "Park Access Coverage"
 output: html_document
 ---
 
+Arlington County is home to 148 public parks. Each of these parks are different sizes and have different amenities, but we first want to ask what does basic park access look like to an individual in Arlington. To measure basic park access we computed two different methods. First, we measure access as the percent of residences within Arlington that are covered within 1/2 mile radius circles from the center of all 148 parks. We also computed coverage as the percentage of total residences that are covered within time-based isochrones from the centroid of each park. These time-based isochrones are calculated using Traveltime and are computed at the 5, 10, and 15 minute levels via walking, public transportation, and driving. Each table and map below show percentage of access at each level for a giving transportation mode or method and an interactive map of access showing the polygons of access (circles or isochrones), park locations, and residences.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+root.dir = rprojroot::find_rstudio_root_file()
+
 library(tidyverse)
 library(sf)
 library(sp)
@@ -19,18 +25,29 @@ st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
 residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
 ```
 
-```{r circles}
-circle_park_iso <- read_rds("/home/mes5bu/git/mc/data/working/circle_park_isochrone.Rds")
+## Circle Radius Methods
 
-# circle_table <- read.csv(file = "/home/mes5bu/git/mc/data/working/circle_park_iso_table.csv")
-# knitr::kable(circle_table)
+When we use 1/2 mile radius circles as proxies for access 99.65 percent of residences are covered with park access. This is incredibly high. However, this doesn't take into account park quality, amenities, or acreage.
+
+```{r circles}
+circle_park_iso <- read_rds("./data/working/circle_park_isochrone.Rds")
+circle_park_iso <- st_as_sf(circle_park_iso)
+st_crs(circle_park_iso) <- "+proj=longlat +datum=WGS84"
+circle_table <- read.csv(file = "/home/mes5bu/git/mc/data/working/circle_park_iso_table.csv")
+knitr::kable(circle_table)
 ```
 
 ```{r circle map}
-# plot(st_geometry(circle_park_iso))
-# m1 = mapview(circle_park_iso, layer.name = "1/2 mile circle isochrone", col.regions = colors[1])
-# circle_map = m1 + residential
+m1 = mapview(st_geometry(circle_park_iso), layer.name = "1/2 mile circle", col.regions = colors[1])
+circle_map = m1 + residential
+circle_map
 ```
+
+## Traveltime Isochrone Method
+
+### Walking
+
+When we create access polygons as 5-, 10-, and 15-minute polygons of walking, 32 percent, 85, ad 99 percent of residences are covered respectively. Within a short walk this isn't very high coverage, but within 10 minutes this is high coverage.
 
 ```{r walking}
 park_iso5 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_5.Rds")
@@ -50,6 +67,10 @@ walk_map = m1 + m2 + m3 + residential
 walk_map
 ```
 
+### Driving
+
+When we create access polygons as 5-, 10-, and 15-minute polygons of driving, 100 percent of residences are covered within all three driving time distances. This is great access for people that also have access to cars.
+
 ```{r driving}
 park_iso5 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_drv_5.Rds")
 park_iso10 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_drv_10.Rds")
@@ -67,6 +88,10 @@ m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = color
 drv_map = m1 + m2 + m3 + residential
 drv_map
 ```
+
+
+### Public Transportation
+When we create access polygons as 5-, 10-, and 15-minute polygons of public transportation, 33 percent, 86, ad 99 percent of residences are covered respectively. This access is similar to walking and showcases how access to public transportation often requires walking. However, within a 10 minute use of public transportation access is good for the county.
 
 ```{r pt}
 park_iso5 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_pt_5.Rds")

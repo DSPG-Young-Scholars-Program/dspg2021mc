@@ -253,18 +253,16 @@ table
 #
 
 circles <- readRDS("./data/working/circle_poly.Rds")
-circle_park_iso <- st_combine(circles[1,], circles[2,])
+circle_park_iso <- st_union(circles[1,], circles[2,])
 
 for(i in 3:nrow(circles)){
-  circle_park_iso <- st_combine(circle_park_iso,circles[i,])
+  circle_park_iso <- st_union(circle_park_iso,circles[i,])
 }
-
+write_rds(circle_park_iso, "./data/working/circle_park_isochrone.Rds")
 plot(st_geometry(circle_park_iso))
 
 # intersect big conglomerated polygons + residential areas
 circle_park_intersect <- st_intersection(circle_park_iso, residential_sf)
-
-write_rds(circle_park_iso, "./data/working/circle_park_isochrone.Rds")
 
 # get coverage based on intersections and the number of total residences from corelogic
 circle_park_coverage <- (nrow(circle_park_intersect)/nrow(residential_sf)*100)
