@@ -11,6 +11,8 @@ We completed a literature review related to this project. In this literature rev
 
 In our project we completed two measures of access based on Nicholls (2001). In the first, we created half mile circles around park centroids and looked at the percentage of residences that were covered in a half mile radius. In the second, we created polygons called "isochrones" which are shapes of a certain time threshold. In our analysis we created isochrones at the 5-, 10-, and 15-minute levels for walking, driving, and public transportation. We then calculated the percentage of residences that are covered in each of these time thresholds.
 
+We then calculated access across amenities. We care not only about park availability, but also how quality of parks impact access. We measure the same range of time and transportation types across different amenities. We map access for tennis court, basketball courts, playgrounds, and public parking. This gives us an understanding of what access looks like with quality of parks included.
+
 ### Racial Equity in Park Access
 
 To compare the equitability of park access by race, we use the two-step floating catchment area (TSFCA) method of [Luo and Wang (2005)](https://www.sciencedirect.com/science/article/abs/pii/S1353829204000085) to measure the ratio of park supply to park demand. For this project, we defined park supply as the number of acres of parks in a given Census tract. We additionally considered accessibility to certain park amenities such as playgrounds and free parking, for which the park supply was limited to those with those amenities under consideration. We defined park demand as the total population of a racial group in a Census tract. 
