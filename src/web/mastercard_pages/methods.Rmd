@@ -13,7 +13,10 @@ In our project we completed two measures of access based on Nicholls (2001). In 
 
 ### Racial Equity in Park Access
 
-To measure racial equity in park access we use a two-step floating catchment area (TSFCA) method to measure ratio of parks to people. Demand of parks is measured as the fraction of a given racial group in a given geography, in this case we use tracts. Supply is measured as the number of acres of parks in a given tract. This method creates a measure to compare a racial groups' access to parks in one area versus another. High values indicate high acres, but could also mean low numbers of members of a given racial group.
+To compare the equitability of park access by race, we use the two-step floating catchment area (TSFCA) method of [Luo and Wang (2005)](https://www.sciencedirect.com/science/article/abs/pii/S1353829204000085) to measure the ratio of park supply to park demand. For this project, we defined park supply as the number of acres of parks in a given Census tract. We additionally considered accessibility to certain park amenities such as playgrounds and free parking, for which the park supply was limited to those with those amenities under consideration. We defined park demand as the total population of a racial group in a Census tract. 
+
+The TSFCA score is calculated for each tract as $$A_i=\sum_{l \in T_i} \frac{s_l}{\sum_{r \in T_l} d_r}$$
+where $T_i$ is a buffer of fixed distance from the centroid of Census tract $i$, $l$ is each park centroid location, $s_l$ is park $l$'s supply, $T_l$ is a buffer of fixed distance from the centroid of park $l$, $r$ is each tract centroid location, and $d_r$ is tract $r$'s demand. Tracts with higher TSFCA scores indicate greater levels of accessibility to parks and their amenities. We use the TSFCA scores to compare racial groups' access to parks and their amenities in one area versus another.
 
 
 
