@@ -1,6 +1,8 @@
 ---
 title: "Park Access Coverage"
-output: html_document
+output: 
+  html_document:
+    theme: cerulean
 ---
 
 Arlington County is home to 148 public parks. Each of these parks are different sizes and have different amenities, but we first want to ask what does basic park access look like to an individual in Arlington. To measure basic park access we computed two different methods. First, we measure access as the percent of residences within Arlington that are covered within 1/2 mile radius circles from the center of all 148 parks. We also computed coverage as the percentage of total residences that are covered within time-based isochrones from the centroid of each park. These time-based isochrones are calculated using Traveltime and are computed at the 5, 10, and 15 minute levels via walking, public transportation, and driving. Each table and map below show percentage of access at each level for a giving transportation mode or method and an interactive map of access showing the polygons of access (circles or isochrones), park locations, and residences.

@@ -1,6 +1,8 @@
 ---
 title: "Park Amenity Access"
-output: html_document
+output: 
+  html_document:
+    theme: cerulean
 ---
 
 Arlington County is home to parks which also have different amenities. To measure park access we care about access to individual parks and also how good the parks are. To measure park goodness we use amenities as a proxy variable. The following maps and tables measure individual's access to different types of amenities including tennis courts, basketball courts, playgrounds, and parking. We evaluate access in terms of the percent of total residences in the county that have access within a 5, 10, or 15 minute via walking, public transportation, or driving.

@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -321,16 +321,14 @@ $(document).ready(function () {
 </div>
 
 
-<div id="methods" class="section level2">
-<h2>Methods</h2>
-<p>In this project we used a few methods to measure racial equity in Arlington's parks.</p>
-<ul>
-<li><p>Literature Review? In addition we completed a literature review. Specifically examinng the Nichols piece that examined accessibility and equity of public park using GIS.</p></li>
-<li><p>Measure of Park Quality Analyzing amenities and parkscore</p></li>
-<li><p>Isochrones Created isochrones connecting walking, driving, and public transportation across parks and ammenitites. Mapped from centroid of park and boundary. Merged block and tract ACS with this data to get a sens of acres and block groups together</p></li>
-<li><p>Statisical Tests Testing differences between groups for statistical significance.</p></li>
-<li><p>Floating Catchment This measures demand as values of race in a given geographic area, a lense for examining racial equity.</p></li>
-</ul>
+<div id="park-access" class="section level3">
+<h3>Park Access</h3>
+<p>We completed a literature review related to this project. In this literature review we reviewed <a href="https://www.tandfonline.com/doi/abs/10.1080/13606710110084651">Nicholls (2001)</a> which measured accessability in two ways. In the first method, the author creates half mile radius circles around the centroid of a park to measure access. This indicates that if a residence is within a half mile circle of the middle of the park, they have access. The second method involved creating polygons of access based on roads and entrance ways of parks. In this method, access is defined if a person is within a certain walking distance (by time) from the openings of a park.</p>
+<p>In our project we completed two measures of access based on Nicholls (2001). In the first, we created half mile circles around park centroids and looked at the percentage of residences that were covered in a half mile radius. In the second, we created polygons called &quot;isochrones&quot; which are shapes of a certain time threshold. In our analysis we created isochrones at the 5-, 10-, and 15-minute levels for walking, driving, and public transportation. We then calculated the percentage of residences that are covered in each of these time thresholds.</p>
+</div>
+<div id="racial-equity-in-park-access" class="section level3">
+<h3>Racial Equity in Park Access</h3>
+<p>To measure racial equity in park access we use a two-step floating catchment area (TSFCA) method to measure ratio of parks to people. Demand of parks is measured as the fraction of a given racial group in a given geography, in this case we use tracts. Supply is measured as the number of acres of parks in a given tract. This method creates a measure to compare a racial groups' access to parks in one area versus another. High values indicate high acres, but could also mean low numbers of members of a given racial group.</p>
 </div>
 
 

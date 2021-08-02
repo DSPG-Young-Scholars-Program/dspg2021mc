@@ -1,6 +1,8 @@
 ---
 title: "Spatial Accessibility of Parks by Race"
-output: html_document
+output: 
+  html_document:
+    theme: cerulean
 ---
 
 ```{r setup, include=FALSE}
