@@ -21,3 +21,5 @@ navbar:
           href: ammenities.html
         - text: "Racial Equity of Parks" # specific coverage by types of residences + cars
           href: floating_catchment.html
+    - text: "Team"
+      href: team.html
