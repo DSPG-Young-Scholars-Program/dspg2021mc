@@ -7,15 +7,93 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = F) 
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 root.dir = rprojroot::find_rstudio_root_file()
 ```
+```{r}
+library(tidyverse)
 
-## Summary Statistics
+acs_tract <- read_rds("./data/working/acs_tract.Rds")
+acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
+```
+
+## Summary Statistics  
+```{r echo=FALSE}
+# "totalpop_trct"
+# Summary stats tables ----------
+# select variables
+tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o", "no_vehic", "perc_under_18")]
+## summary statistics ##
+# standard deviation
+tract_sd <- tract_vars %>% 
+  summarise_if(is.numeric, sd, na.rm = TRUE)
+# mean
+tract_mean <- tract_vars %>% 
+  summarise_if(is.numeric, mean, na.rm = TRUE)
+# max
+tract_max <- tract_vars %>% 
+  summarise_if(is.numeric, max, na.rm = TRUE)
+# min
+tract_min <- tract_vars %>% 
+  summarise_if(is.numeric, min, na.rm = TRUE)
+# median
+tract_med <- tract_vars %>% 
+  summarise_if(is.numeric, median, na.rm = TRUE)
+
+# combine
+tract_tab <- rbind(tract_sd, tract_mean, tract_min, tract_max, tract_med)
+tract_tab <- t(tract_tab)
+colnames(tract_tab) <- c("sd", "mean", "min", "max", "Median")
+tract_tab = as.data.frame(tract_tab, row.names = NULL)
+tract_tab$Statistics = rownames(tract_tab)
+row.names(tract_tab) = NULL
+tract_tab = 
+  tract_tab %>% 
+  arrange(desc(mean)) %>% 
+  select("Statistics",
+         "Mean" = `mean`,
+         "Standard Deviation" = `sd`,
+         "Median",
+         "Minimum" = min,
+         "Maximum" = max) %>% 
+  mutate(Statistics = ifelse(Statistics == "totalpop_trct", "Total Population", Statistics),
+         Statistics = ifelse(Statistics == "black", "% Population African-American", Statistics),
+         Statistics = ifelse(Statistics == "hispanic", "% Population Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "unempl", "% Population Unemployed", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_all", "Median Household Income (HHI): All", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_w", "Median HHI: White", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_a", "Median HHI: Asian", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_b", "Median HHI: African-American", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: More than 1 Race", Statistics),
+         Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
+         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics)) 
+
+tract_tab %>% 
+  stargazer::stargazer(type = "html", 
+                       digits = 2, 
+                       summary = F,
+                       title = "Summary Statistics of Demographic Indicators for Arlington County",
+                       header = F,
+                       notes =  "Source: American Community Survey 5-Year Data (2015-2019)")
+```
+
 
 ## Box Plots
+```{r}
+
+```
+
 
 ## Maps
+```{r}
+
+```
+
 
 ## Residences and Parks
+```{r}
+
+```
+
