@@ -11,11 +11,26 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = F)
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 root.dir = rprojroot::find_rstudio_root_file()
 ```
-```{r}
+```{r include=FALSE}
 library(tidyverse)
+library(data.table)
+library(tidyverse)
+library(viridis)
+library(sf)
+library(ggthemes)
+library(RColorBrewer)
+library(ggplot2)
+library(leaflet)
+library(sf)
+library(osmdata)
+library(mapview)
+library(RColorBrewer)
+library(readr)
 
 acs_tract <- read_rds("./data/working/acs_tract.Rds")
 acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
+ej = read_rds("./data/working/ej.Rds")
+parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
 ```
 
 ## Summary Statistics  
@@ -26,6 +41,7 @@ acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
 tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o", "no_vehic", "perc_under_18")]
 ## summary statistics ##
 # standard deviation
+tract_vars = as.data.frame(tract_vars) %>% select(-geometry)
 tract_sd <- tract_vars %>% 
   summarise_if(is.numeric, sd, na.rm = TRUE)
 # mean
@@ -79,20 +95,121 @@ tract_tab %>%
                        notes =  "Source: American Community Survey 5-Year Data (2015-2019)")
 ```
 
-
-## Box Plots
+## Box Plots  
 ```{r}
 
 ```
 
 
-## Maps
+## Maps  
 ```{r}
 
+acs_tract <- acs_tract %>%
+  st_as_sf(coords = c("long","lat")) %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+parks = parks %>%
+  st_as_sf(coords = c("long","lat")) %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+bb <- getbb('arlington county, virginia')
+
+## PLOTTING  - Demography
+
+leaflet(acs_tract) %>% #create leaflet object
+  ## Parks Polygons (the green weird things on the map)
+  addPolygons(data = parks, color = "green", group = "Parks") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "No Parks") %>%
+  ## Basemaps
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "Total Population") %>%
+  # totalpop_trct
+  addProviderTiles(provider = "CartoDB.Positron", group = "African-American Population") %>% # black
+  addProviderTiles(provider = "CartoDB.Positron", group = "Hispanic Population") %>% # hispanic
+  addProviderTiles(provider = "CartoDB.Positron", group = "Unemployed Population") %>% # hispanic
+  fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% #add bounding box
+  
+  ## Polygons
+    ## Total 
+  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("PuOr", totalpop_trct)(totalpop_trct),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "Total Population",
+              label = ~paste0("The total population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", `totalpop_trct`))  %>%
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$totalpop_trct), values = ~totalpop_trct, group = "Total Population", title = "Total<br>Population", position = "topleft") %>%
+  
+    ## Black
+  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("PuOr", black)(black),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "African-American Population",
+              label = ~paste0("The African-American population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`black`,2), "%."))  %>%
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$black), values = ~black, group = "African-American Population", title = "African-American<br>Population", position = "topleft") %>%
+  
+    ## Hispanic
+  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("PuOr", hispanic)(hispanic),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "Hispanic Population",
+              label = ~paste0("The Hispanic population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`hispanic`,2), "%.")) %>% 
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$hispanic), values = ~hispanic, group = "Hispanic Population", title = "Hispanic<br>Population", position = "topleft") %>%
+  
+    ## Unemployed
+  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("PuOr", unempl)(unempl),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "Unemployed Population",
+              label = ~paste0("The unemployed population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`unempl`,2), "%.")) %>% 
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$unempl), values = ~unempl, group = "Unemployed Population", title = "Unemployed<br>Population", position = "topleft") %>%
+  
+  # Layers control
+  addLayersControl(
+    overlayGroups = c("Total Population", "African-American Population", "Hispanic Population", "Unemployed Population"),
+    baseGroups = c("Parks", "No Parks"),
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  hideGroup("African-American Population") %>% 
+  hideGroup("Hispanic Population") %>% 
+  hideGroup("Unemployed Population")
 ```
+Demography:
+
+rent_ov_30
+"perc_under_18" 
+"perc_ambulatory_disability"
+"no_vehic"
+
+Income plots:
+med_inc_all
+med_inc_w
+med_inc_b
+med_inc_a
+med_inc_h
+med_inc_o
 
 
-## Residences and Parks
+Plots by Unemployment
+unemploy_rate_all      
+unemploy_rate_w
+unemploy_rate_b           
+unemploy_rate_a
+unemploy_rate_h
+
+Plots by Commute time:
+"commute_un_10"              "commute_10_14"             
+[31] "commute_15_19"              "commute_20_24"             
+[33] "commute_25_29"              "commute_30_34"             
+[35] "commute_35_44"              "commute_45_59"             
+[37] "commute_60_pl"              
+
+## Residences and Parks  
 ```{r}
 
 ```
