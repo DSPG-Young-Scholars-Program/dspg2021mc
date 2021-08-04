@@ -10,6 +10,17 @@ knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 root.dir = rprojroot::find_rstudio_root_file()
+
+library(tidyverse)
+library(sf)
+library(sp)
+library(mapview)
+library(leaflet)
+library(SpatialAcc)
+library(osrm)
+library(dplyr)
+library(tidycensus)
+library(png)
 ```
 
 ## Demographics
@@ -21,16 +32,6 @@ root.dir = rprojroot::find_rstudio_root_file()
 
 ## Park Access
 ```{r}
-library(tidyverse)
-library(sf)
-library(sp)
-library(mapview)
-library(leaflet)
-library(SpatialAcc)
-library(osrm)
-library(dplyr)
-library(tidycensus)
-
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
 residential <- read_sf("/home/mes5bu/git/mc/data/working/corelogic/residential.csv")
@@ -48,22 +49,11 @@ To get an idea of parck access, we computed coverage as the percentage of total 
 When we create access polygons as 5-, 10-, and 15-minute polygons of walking, 32 percent, 85, ad 99 percent of residences are covered respectively. Within a short walk this isn't very high coverage, but within 10 minutes this is high coverage.
 
 ```{r walking}
-park_iso5 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_5.Rds")
-park_iso10 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_10.Rds")
-park_iso15 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_15.Rds")
-
 table <- read.csv(file = "/home/mes5bu/git/mc/data/working/park_iso_table.csv")
 knitr::kable(table)
 ```
 
-```{r walk map}
-m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
-m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
-m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
-# add the second layer on top
-walk_map = m1 + m2 + m3 + residential
-walk_map
-```
+![](./images/park_map_w.png)
 
 ### Amenity Access
 
@@ -73,26 +63,28 @@ To measure park access we also care about measuring access to good parks. To mea
 
 So similarly to what we saw above, we now evaluate access in terms of the percent of total residences in the county that have access to the playground amenity within a 5-, 10-, or 15-minute isochrone via walking, public transportation, or driving.
 
+##### Walking
+
 ```{r playground}
 table <- read.csv("./data/working/traveltime_isochrones/park_iso_playground.csv")
 knitr::kable(table)
-playground_map <- read_rds("./data/working/amenities_web/park_map_w_playground.Rds")
-playground_map
 ```
+![](./images/park_map_w_playground.png)
+
+##### Public Transportation
 
 ```{r pt playground}
 table <- read.csv("./data/working/traveltime_isochrones/park_iso_pt_playground.csv")
 knitr::kable(table)
-playground_pt_map <- read_rds("./data/working/amenities_web/park_map_pt_playground.Rds")
-playground_pt_map
 ```
+![](./images/park_map_pt_playground.png)
 
+##### Driving
 ```{r playground drv}
 table <- read.csv("./data/working/amenities_web/park_iso_drv_playground.csv")
 knitr::kable(table)
-playground_drv_map <- read_rds("./data/working/amenities_web/park_map_drv_playground.Rds")
-playground_drv_map
 ```
+![](./images/park_map_drv_playground.png)
 
 ### Floating Catchment
 

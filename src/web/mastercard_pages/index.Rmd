@@ -1,5 +1,5 @@
 ---
-title: "Overview"
+title: "An Equity Case Study of Parks in Arlington County"
 output: 
   html_document:
     theme: cerulean
