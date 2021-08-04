@@ -6,11 +6,12 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = F) 
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = FALSE) 
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 root.dir = rprojroot::find_rstudio_root_file()
 ```
+
 ```{r include=FALSE}
 library(tidyverse)
 library(data.table)
@@ -26,11 +27,30 @@ library(osmdata)
 library(mapview)
 library(RColorBrewer)
 library(readr)
+library(stargazer)
 
 acs_tract <- read_rds("./data/working/acs_tract.Rds")
 acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
 ej = read_rds("./data/working/ej.Rds")
 parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
+
+bgrp_greenspace <- read.csv("./data/working/bgrp_greenspace.csv")
+bgrp_greenspace$bgrp_geoid <- as.character(bgrp_greenspace$bgrp_geoid)
+  
+tract_greenspace <- read.csv("./data/working/tract_greenspace.csv")
+tract_greenspace$tract_geoid <- as.character(tract_greenspace$tract_geoid)
+
+acs_tract <- acs_tract %>%
+  merge(tract_greenspace, 
+        by.x = "GEOID", 
+        by.y = "tract_geoid",
+        all.x = TRUE)
+
+acs_bgrp <- acs_bgrp %>%
+  merge(bgrp_greenspace, 
+        by.x = "GEOID", 
+        by.y = "bgrp_geoid",
+        all.x = TRUE)
 ```
 
 ## Summary Statistics  
@@ -38,7 +58,9 @@ parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
 # "totalpop_trct"
 # Summary stats tables ----------
 # select variables
+
 tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o")]
+
 ## summary statistics ##
 # standard deviation
 tract_vars = as.data.frame(tract_vars) %>% select(-geometry)
@@ -84,10 +106,12 @@ tract_tab =
          Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
          Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: More than 1 Race", Statistics),
          Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
-         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics)) 
+         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties with greenspace", Statistics)) 
 
 tract_tab %>% 
   knitr::kable(format = "html", 
+  stargazer::stargazer(type = "latex", 
                        digits = 2, 
                       # summary = F,
                        caption = "Summary Statistics of Demographic Indicators for Arlington County",

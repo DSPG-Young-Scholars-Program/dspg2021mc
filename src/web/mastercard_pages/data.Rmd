@@ -4,15 +4,19 @@ output:
   html_document:
     theme: cerulean
 ---
+```{js echo=FALSE}
 
-### ACS Data   
+   document.getElementsByTagName('a')[0].innerHTML = '<img src="./images/DSPG_white-01.png" width="120px" />'
+
+   document.getElementsByClassName('navbar-header')[0].style = 'margin-top:-10px;'
+
+```
+
+### American Community Survey   
 For this project we used data from the [American Community Survey (ACS)](https://www.census.gov/programs-surveys/acs/data.html). The American Community Survey (ACS) is a yearly survey that covers a broad range of topics about social, economic, demographic, and housing characteristics of the U.S. population. In this project we used 5-year ACS estimates, where represents data that has been collected over time. This gives us increased statistical reliability of the data. The 5-year estimates are available at the tract and block group lebel.
 
-### Arlington Park Data 
+### Arlington Open Data Portal 
 Additionally, we used data from [Arlington County Open Data Portal](https://data.arlingtonva.us/). This data contained a variety of information from the parks, from park ameneties to general park location to park acerage.
-
-### EJSCREEN Data 
-[EJSCREEN](https://www.epa.gov/ejscreen) is an environmental justice mapping and screening tool that provides EPA with a nationally consistent dataset and approach for combining environmental and demographic indicators. EJSCREEN users choose a geographic area; the tool then provides demographic and environmental information for that area. All of the EJSCREEN indicators are publicly-available data. EJSCREEN simply provides a way to display this information and includes a method for combining environmental and demographic indicators into EJ indexes. 
 
 ### Corelogic
 [Corelogic](https://www.corelogic.com/) data is proprietary property data which provides latitude/longitude level geographic data on residences in a given place. We use this data to measure types of residences and locations of residences near parks. This allows us to proxy coverage of coverage polygons.

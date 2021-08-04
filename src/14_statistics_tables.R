@@ -138,7 +138,7 @@ tract_plot_pov <- ggboxplot(
   title = "Distribution of Racial Groups Living in \n Poverty by tract, 2015/19",
   ggtheme = theme_pubr(border = TRUE)
 ) +
-  facet_wrap(~variables)
+  facet_wrap(~variables, scales = "free")
 ggsave(path = "./output/", device = "png", filename = "tract_plot_pov.png", plot = last_plot())
 
 tract_plot_commute <- ggboxplot(
@@ -147,7 +147,7 @@ tract_plot_commute <- ggboxplot(
   title = "Distribution of commute times \n by tract, 2015/19",
   ggtheme = theme_pubr(border = TRUE)
 ) +
-  facet_wrap(~variables)
+  facet_wrap(~variables, scales = "free")
 ggsave(path = "./output/", device = "png", filename = "tract_plot_commute.png", plot = last_plot())
 
 tract_plot_unemploy <- ggboxplot(
@@ -165,7 +165,7 @@ tract_plot_edu <- ggboxplot(
   title = "Distribution of educational attainment \n by racial group by tract, 2015/19",
   ggtheme = theme_pubr(border = TRUE), outlier.shape = 
 ) +
-  facet_wrap(~variables)
+  facet_wrap(~variables, scales = "free")
 ggsave(path = "./output/", device = "png", filename = "tract_plot_edu.png", plot = last_plot())
 
 tract_plot_inc <- ggboxplot(
@@ -174,11 +174,87 @@ tract_plot_inc <- ggboxplot(
   title = "Distribution of median income \n by racial group by tract, 2015/19",
   ggtheme = theme_pubr(border = TRUE), outlier.shape = 
 ) +
-  facet_wrap(~variables)
+  facet_wrap(~variables, scales = "free")
 ggsave(path = "./output/", device = "png", filename = "tract_plot_inc.png", plot = last_plot())
 
 
 # block group level
+# Transform block group data in to long variables 
+bgrp_pt1 <- acs_bgrp[, c("black", "hispanic", "noba", "unempl",
+                         "inpov", "nohealthins", "med_inc_w", "med_inc_a")]
+bgrp_pt2 <- acs_tract[, c("med_inc_b", "med_inc_h", "pov_w", "pov_b", "pov_a",
+                          "pov_h", "rent_ov_30", "commute_un_10")]                  
+bgrp_pt3 <- acs_tract[, c("commute_10_14","commute_15_19", "commute_20_24", "commute_25_29",
+                          "commute_30_34", "commute_35_44", "commute_45_59", "commute_60_pl")]
+bgrp_pt4 <- acs_tract[, c("unemploy_rate_w", "unemploy_rate_a",
+                          "unemploy_rate_w", "unemploy_rate_b", "unemploy_rate_h",
+                          "ba_higher_w", "ba_higher_a", "ba_higher_h", "ba_higher_b")] 
+
+
+bgrp_long_pt1 <- pivot_longer(
+  bgrp_pt1,
+  "black":"med_inc_a",
+  names_to = "variables",
+  values_to = "value",
+)
+
+bgrp_long_pt2 <- pivot_longer(
+  bgrp_pt2,
+  "med_inc_b":"commute_un_10",
+  names_to = "variables",
+  values_to = "value",
+)
+
+bgrp_long_pt3 <- pivot_longer(
+  bgrp_pt3,
+  "commute_10_14":"commute_60_pl",
+  names_to = "variables",
+  values_to = "value",
+)
+
+bgrp_long_pt4 <- pivot_longer(
+  bgrp_pt4,
+  "unemploy_rate_w":"ba_higher_b",
+  names_to = "variables",
+  values_to = "value",
+)
+
+
+
+# block group level
+bgrp_plot_black <- ggboxplot(
+  bgrp_long_pt1, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics",ylab = "Percent",
+  title = "Distribution of percent black \n by median income by block, 2015/19", legend = "none",
+  ggtheme = theme_pubr(border = TRUE)
+) +
+  facet_wrap(~variables, scales = "free")
+
+bgrp_plot_inc <- ggboxplot(
+  bgrp_long_pt2, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent",  
+  title = "Distribution of median income \n by commute under 10mins by block, 2015/19", legend = "none",
+  ggtheme = theme_pubr(border = TRUE)
+) +
+  facet_wrap(~variables, scales = "free")
+
+bgrp_plot_commute <- ggboxplot(
+  bgrp_long_pt3, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent",  
+  title = "Distribution of unemployment \n by population with ba by block, 2015/19",legend = "none",
+  ggtheme = theme_pubr(border = TRUE)
+) +
+  facet_wrap(~variables, scales = "free")
+
+
+bgrp_plot_unemploy <- ggboxplot(
+  bgrp_long_pt4, x = "variables", y = "value", palette = "npg",
+  xlab = "Demographics", ylab = "Percent",  
+  title = "Distribution of median income \n by racial group by tract, 2015/19",legend = "none",
+  ggtheme = theme_pubr(border = TRUE)
+) +
+  facet_wrap(~variables, scales = "free")
+
 
 
 # Summary stats tables ----------
