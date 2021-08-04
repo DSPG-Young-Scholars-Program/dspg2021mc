@@ -14,8 +14,8 @@ library(ggplot2)
 
 ######## Pull ACS 2015/19 data for basic Arlington County sociodemographics #################
 
-acs_tract <- read_rds("./data/working/acs_tract")
-acs_bgrp <- read_rds("./data/working/acs_bgrp")
+acs_tract <- read_rds("./data/working/acs_tract.Rds")
+acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
 
 
 # Plot ----------------------------------------------------------------------

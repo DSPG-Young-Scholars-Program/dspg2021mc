@@ -4,6 +4,13 @@ output:
   html_document:
     theme: cerulean
 ---
+```{js echo=FALSE}
+
+   document.getElementsByTagName('a')[0].innerHTML = '<img src="./images/DSPG_white-01.png" width="120px" />'
+
+   document.getElementsByClassName('navbar-header')[0].style = 'margin-top:-10px;'
+
+```
 
 ### American Community Survey   
 For this project we used data from the [American Community Survey (ACS)](https://www.census.gov/programs-surveys/acs/data.html). The American Community Survey (ACS) is a yearly survey that covers a broad range of topics about social, economic, demographic, and housing characteristics of the U.S. population. In this project we used 5-year ACS estimates, where represents data that has been collected over time. This gives us increased statistical reliability of the data. The 5-year estimates are available at the tract and block group lebel.

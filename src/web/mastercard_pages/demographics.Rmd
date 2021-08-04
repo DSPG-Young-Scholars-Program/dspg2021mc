@@ -6,7 +6,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = F) 
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 root.dir = rprojroot::find_rstudio_root_file()
@@ -87,7 +87,7 @@ tract_tab =
          Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics)) 
 
 tract_tab %>% 
-  stargazer::stargazer(type = "html", 
+  stargazer::stargazer(type = "latex", 
                        digits = 2, 
                        summary = F,
                        title = "Summary Statistics of Demographic Indicators for Arlington County",

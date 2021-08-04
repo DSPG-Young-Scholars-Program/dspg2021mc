@@ -14,8 +14,430 @@ root.dir = rprojroot::find_rstudio_root_file()
 
 ## Demographics
 
+
+
+
+
+
 ## Park Access
+```{r}
+library(tidyverse)
+library(sf)
+library(sp)
+library(mapview)
+library(leaflet)
 
-## Amenity Access
+colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
-## Floating Catchment
+residential <- read_sf("/home/mes5bu/git/mc/data/working/corelogic/residential.csv")
+residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "parcel_level_latitude"))
+st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
+residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
+```
+
+### Traveltime Isochrone Method
+
+To get an idea of parck access, we computed coverage as the percentage of total residences that are covered within time-based isochrones from the centroid of each park. We did this for walking, driving, and public transportation. Here we feature the walking map. 
+
+#### Walking
+
+When we create access polygons as 5-, 10-, and 15-minute polygons of walking, 32 percent, 85, ad 99 percent of residences are covered respectively. Within a short walk this isn't very high coverage, but within 10 minutes this is high coverage.
+
+```{r walking}
+park_iso5 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_5.Rds")
+park_iso10 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_10.Rds")
+park_iso15 = read_rds("/home/mes5bu/git/mc/data/working/traveltime_isochrones/park_intersect_w_15.Rds")
+
+table <- read.csv(file = "/home/mes5bu/git/mc/data/working/park_iso_table.csv")
+knitr::kable(table)
+```
+
+```{r walk map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top
+walk_map = m1 + m2 + m3 + residential
+walk_map
+```
+
+### Amenity Access
+
+To measure park access we also care about measuring access to good parks. To measure park goodness we use amenities as a proxy variable. The following maps and tables measure individual's access to different types of amenities. We did this for tennis courts, basketball courts, playgrounds, and parking. We will highlight playgrounds below. 
+
+#### Playgrounds
+
+So similarly to what we saw above, we now evaluate access in terms of the percent of total residences in the county that have access to the playground amenity within a 5-, 10-, or 15-minute isochrone via walking, public transportation, or driving.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+root.dir = rprojroot::find_rstudio_root_file()
+
+# run this once if knitting website
+# remotes::install_github("r-spatial/mapview")
+# remotes::install_github("r-spatial/leafpop")
+library(tidyverse)
+library(sf)
+library(sp)
+library(mapview)
+library(leaflet)
+```
+
+```{r reading in}
+colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
+
+residential <- read_sf("./data/working/corelogic/residential.csv")
+residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "parcel_level_latitude"))
+st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
+residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
+
+parks_amenities <- read.csv("./data/working/parks_amenities.csv")
+
+# get indices for parks that have certain amenities
+tennis_parks <- which(parks_amenities$tennis == 1)
+playground_parks <- which(parks_amenities$playground == 1)
+parking_parks <- which(parks_amenities$free_parking == 1)
+basketball_parks <- which(parks_amenities$basketball == 1)
+grill_parks <- which(parks_amenities$charcoal_grill == 1)
+```
+
+```{r playground}
+for (i in 1:2){
+  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", playground_parks[1],".RDS")
+  park_iso_5_1 <- readRDS(iso_5_temp)
+  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_5_", playground_parks[2],".RDS")
+  park_iso_5_2 <- readRDS(iso_5_temp)
+  park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
+  
+  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", playground_parks[1],".RDS")
+  park_iso_10_1 <- readRDS(iso_10_temp)
+  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_10_", playground_parks[2],".RDS")
+  park_iso_10_2 <- readRDS(iso_10_temp)
+  park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
+  
+  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", playground_parks[1],".RDS")
+  park_iso_15_1 <- readRDS(iso_15_temp)
+  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_15_", playground_parks[2],".RDS")
+  park_iso_15_2 <- readRDS(iso_15_temp)
+  park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
+}
+
+# loop through isochrones and continiously union with last
+for(i in 3:length(playground_parks)){
+  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_5_",i,".RDS"))
+  park_iso5 <- st_union(park_iso5,park_iso5_i)
+}
+
+for(i in 3:length(playground_parks)){
+  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_10_",i,".RDS"))
+  park_iso10 <- st_union(park_iso10,park_iso10_i)
+}
+
+for(i in 3:length(playground_parks)){
+  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_15_",i,".RDS"))
+  park_iso15 <- st_union(park_iso15,park_iso15_i)
+}
+
+# intersect big conglomerated polygons + residential areas
+park_intersect_5 <- st_intersection(park_iso5, residential_sf)
+park_intersect_10 <- st_intersection(park_iso10, residential_sf)
+park_intersect_15 <- st_intersection(park_iso15, residential_sf)
+
+table <- read.csv("./data/working/traveltime_isochrones/park_iso_playground.csv")
+knitr::kable(table)
+```
+
+```{r playground map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top
+playground_map = m1 + m2 + m3 + residential
+playground_map
+```
+
+```{r pt playground}
+
+for (i in 1:2){
+  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", playground_parks[1],".RDS")
+  park_iso_5_1 <- readRDS(iso_5_temp)
+  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_5_", playground_parks[2],".RDS")
+  park_iso_5_2 <- readRDS(iso_5_temp)
+  park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
+  
+  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", playground_parks[1],".RDS")
+  park_iso_10_1 <- readRDS(iso_10_temp)
+  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_10_", playground_parks[2],".RDS")
+  park_iso_10_2 <- readRDS(iso_10_temp)
+  park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
+  
+  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", playground_parks[1],".RDS")
+  park_iso_15_1 <- readRDS(iso_15_temp)
+  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_pt_15_", playground_parks[2],".RDS")
+  park_iso_15_2 <- readRDS(iso_15_temp)
+  park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
+}
+
+# loop through isochrones and continiously union with last
+for(i in 3:length(playground_parks)){
+  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_5_",i,".RDS"))
+  park_iso5 <- st_union(park_iso5,park_iso5_i)
+}
+
+for(i in 3:length(playground_parks)){
+  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_10_",i,".RDS"))
+  park_iso10 <- st_union(park_iso10,park_iso10_i)
+}
+
+for(i in 3:length(playground_parks)){
+  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_pt_15_",i,".RDS"))
+  park_iso15 <- st_union(park_iso15,park_iso15_i)
+}
+
+# intersect big conglomerated polygons + residential areas
+park_intersect_5 <- st_intersection(park_iso5, residential_sf)
+park_intersect_10 <- st_intersection(park_iso10, residential_sf)
+park_intersect_15 <- st_intersection(park_iso15, residential_sf)
+
+table <- read.csv("./data/working/traveltime_isochrones/park_iso_pt_playground.csv")
+knitr::kable(table)
+```
+
+```{r playground pt map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top 
+playground_pt_map = m1 + m2 + m3 + residential
+playground_pt_map
+```
+
+```{r playground drv}
+
+for (i in 1:2){
+  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", playground_parks[1],".RDS")
+  park_iso_5_1 <- readRDS(iso_5_temp)
+  iso_5_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_5_", playground_parks[2],".RDS")
+  park_iso_5_2 <- readRDS(iso_5_temp)
+  park_iso5 <- st_union(park_iso_5_1,park_iso_5_2)
+  
+  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", playground_parks[1],".RDS")
+  park_iso_10_1 <- readRDS(iso_10_temp)
+  iso_10_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_10_", playground_parks[2],".RDS")
+  park_iso_10_2 <- readRDS(iso_10_temp)
+  park_iso10 <- st_union(park_iso_10_1,park_iso_10_2)
+  
+  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", playground_parks[1],".RDS")
+  park_iso_15_1 <- readRDS(iso_15_temp)
+  iso_15_temp <- paste0("./data/working/traveltime_isochrones/park_iso_drv_15_", playground_parks[2],".RDS")
+  park_iso_15_2 <- readRDS(iso_15_temp)
+  park_iso15 <- st_union(park_iso_15_1,park_iso_15_2)
+}
+
+# loop through isochrones and continiously union with last
+for(i in 3:length(playground_parks)){
+  park_iso5_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_5_",i,".RDS"))
+  park_iso5 <- st_union(park_iso5,park_iso5_i)
+}
+
+for(i in 3:length(playground_parks)){
+  park_iso10_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_10_",i,".RDS"))
+  park_iso10 <- st_union(park_iso10,park_iso10_i)
+}
+
+for(i in 3:length(playground_parks)){
+  park_iso15_i <- readRDS(paste0("./data/working/traveltime_isochrones/park_iso_drv_15_",i,".RDS"))
+  park_iso15 <- st_union(park_iso15,park_iso15_i)
+}
+
+# intersect big conglomerated polygons + residential areas
+park_intersect_5 <- st_intersection(park_iso5, residential_sf)
+park_intersect_10 <- st_intersection(park_iso10, residential_sf)
+park_intersect_15 <- st_intersection(park_iso15, residential_sf)
+
+park_coverage_5 <- (nrow(park_intersect_5)/nrow(residential_sf)*100)
+park_coverage_10 <- (nrow(park_intersect_10)/nrow(residential_sf)*100)
+park_coverage_15 <- (nrow(park_intersect_15)/nrow(residential_sf)*100)
+
+# make a nice table
+table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
+table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
+colnames(table) <- c("Time", "Coverage")
+knitr::kable(table)
+```
+
+```{r playground drv map}
+m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
+m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
+m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
+# add the second layer on top
+playground_drv_map = m1 + m2 + m3 + residential
+playground_drv_map
+```
+
+### Floating Catchment
+
+In addition we want to look at how park access is distributed across racial groups. We use the two-step floating catchment area method to calculate spatial accessibility scores for Census tracts in Arlington County by race. These scores give a measure of accessibility for each tract to the parks and their amenities in Arlington County and are calculated as the summation of the supply to demand ratio for each park contained in the catchment area of the Census tract. The supply of a park is defined by its acreage and its demand is defined by the total population count of a racial group in a Census tract. The catchment areas for both the parks as well as Census tracts are defined by a distance of one mile. Census tracts with higher scores are considered to have more accesibility to parks and their amenities.
+
+#### Black 
+Here we highlight the TSFCA score for black community members in Arlington County by tract. We observed that for the Black, Asian, and Other populations, however, there are high levels of accessibility in the Northern region. This is due to the fact that those areas have a number of large acreage parks combined with the low numbers of people who identify as Black, Asian, or Other.  
+
+```{r, include=FALSE}
+library(sf)
+library(SpatialAcc)
+library(osrm)
+library(dplyr)
+library(tidycensus)
+library(mapview)
+
+# read in ACS data
+#Sys.getenv("CENSUS_API_KEY")
+
+acs_vars <- c(  
+  # total population
+  "B01003_001",
+  # Hispanic ethnicity
+  "B03001_003", "B03001_001",
+  # White
+  "B02001_002", "B02001_001",
+  # Black
+  "B02001_003",
+  # Asian
+  "B02001_005",
+  # Other
+  "B02001_004", "B02001_006", "B02001_007",
+  "B02001_008", "B02001_009", "B02001_010"
+  )
+
+data_tract <- get_acs(geography = "tract", 
+                      state = 51, 
+                      county = 013,
+                      variables = acs_vars,
+                      year = 2019, 
+                      survey = "acs5",
+                      cache_table = TRUE, 
+                      output = "wide", 
+                      geometry = TRUE,
+                      keep_geo_vars = TRUE)
+
+acs_tract <- data_tract %>%
+  transmute(STATEFP = STATEFP,
+            COUNTYFP = COUNTYFP,
+            TRACTCE = TRACTCE,
+            GEOID = GEOID,
+            NAME.x = NAME.x,
+            NAME.y = NAME.y,
+            ALAND = ALAND,
+            AWATER = AWATER,
+            total_pop = B01003_001E,
+            hispanic = B03001_003E,
+            white = B02001_002E,
+            black = B02001_003E,
+            asian = B02001_005E,
+            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
+            )
+
+acs_tract$total_pop[acs_tract$total_pop == 0] <- 0.0001
+acs_tract$hispanic[acs_tract$hispanic == 0] <- 0.0001
+acs_tract$white[acs_tract$white == 0] <- 0.0001
+acs_tract$black[acs_tract$black == 0] <- 0.0001
+acs_tract$asian[acs_tract$asian == 0] <- 0.0001
+acs_tract$other[acs_tract$other == 0] <- 0.0001
+
+data_bgrp <- get_acs(geography = "block group", 
+                     state = 51, 
+                     county = 013,
+                     variables = acs_vars,
+                     year = 2019, 
+                     survey = "acs5",
+                     cache_table = TRUE, 
+                     output = "wide", 
+                     geometry = TRUE,
+                     keep_geo_vars = TRUE)
+
+acs_bgrp <- data_bgrp %>%
+  transmute(STATEFP = STATEFP,
+            COUNTYFP = COUNTYFP,
+            TRACTCE = TRACTCE,
+            GEOID = GEOID,
+            NAME.x = NAME.x,
+            NAME.y = NAME.y,
+            ALAND = ALAND,
+            AWATER = AWATER,
+            total_pop = B01003_001E,
+            hispanic = B03001_003E,
+            white = B02001_002E,
+            black = B02001_003E,
+            asian = B02001_005E,
+            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
+  )
+
+acs_bgrp$total_pop[acs_bgrp$total_pop == 0] <- 0.0001
+acs_bgrp$hispanic[acs_bgrp$hispanic == 0] <- 0.0001
+acs_bgrp$white[acs_bgrp$white == 0] <- 0.0001
+acs_bgrp$black[acs_bgrp$black == 0] <- 0.0001
+acs_bgrp$asian[acs_bgrp$asian == 0] <- 0.0001
+acs_bgrp$other[acs_bgrp$other == 0] <- 0.0001
+
+## park data
+# transform to utm with meter units
+parks <- st_read(paste0(root.dir, "/data/original/arlington_parks/Park_Polygons.shp")) %>%
+  filter(Ownership == "Arlington County Park")
+
+# amenities
+parks_amenities <- read.csv(paste0(root.dir, "/data/working/parks_amenities.csv"))
+
+tract_dist_mat <- read.csv(paste0(root.dir, "/data/working/park_to_tract_dist_mat.csv"))
+
+bgrp_dist_mat <- read.csv(paste0(root.dir, "/data/working/park_to_bgrp_dist_mat.csv"))
+```
+
+```{r tract}
+white_tract_tsfca <- ac(p = acs_tract$white, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$white_tract_tsfca <- white_tract_tsfca
+
+black_tract_tsfca <- ac(p = acs_tract$black, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$black_tract_tsfca <- black_tract_tsfca
+
+asian_tract_tsfca <- ac(p = acs_tract$asian, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$asian_tract_tsfca <- asian_tract_tsfca
+
+other_tract_tsfca <- ac(p = acs_tract$other, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$other_tract_tsfca <- other_tract_tsfca
+```
+
+```{r tract_plots_black}
+# black
+mapview(st_geometry(parks), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "black_tract_tsfca", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+```

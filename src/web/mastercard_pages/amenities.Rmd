@@ -5,6 +5,14 @@ output:
     theme: cerulean
 ---
 
+```{js echo=FALSE}
+
+   document.getElementsByTagName('a')[0].innerHTML = '<img src="./images/DSPG_white-01.png" width="120px" />'
+
+   document.getElementsByClassName('navbar-header')[0].style = 'margin-top:-10px;'
+
+```
+
 Arlington County is home to parks which also have different amenities. To measure park access we care about access to individual parks and also how good the parks are. To measure park goodness we use amenities as a proxy variable. The following maps and tables measure individual's access to different types of amenities including tennis courts, basketball courts, playgrounds, and parking. We evaluate access in terms of the percent of total residences in the county that have access within a 5-, 10-, or 15-minute isochrone via walking, public transportation, or driving. The main finding of this work is that members of the community with cars have incredible park access, but walkers and public transport users may have aharder time accessing amenities in Arlington. This access to a car is determined by income and therefore lower income members of the community are underserved in park access compared to their car-owning counterparts.
 
 ```{r setup, include=FALSE}
