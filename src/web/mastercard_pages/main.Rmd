@@ -53,7 +53,7 @@ table <- read.csv(file = "/home/mes5bu/git/mc/data/working/park_iso_table.csv")
 knitr::kable(table)
 ```
 
-![](./images/park_map_w.png)
+![](./images/park_map_w.png){style="width:60%"}
 
 ### Amenity Access
 
@@ -69,7 +69,7 @@ So similarly to what we saw above, we now evaluate access in terms of the percen
 table <- read.csv("./data/working/traveltime_isochrones/park_iso_playground.csv")
 knitr::kable(table)
 ```
-![](./images/park_map_w_playground.png)
+![](./images/park_map_w_playground.png){style="width:60%"}
 
 ##### Public Transportation
 
@@ -77,14 +77,14 @@ knitr::kable(table)
 table <- read.csv("./data/working/traveltime_isochrones/park_iso_pt_playground.csv")
 knitr::kable(table)
 ```
-![](./images/park_map_pt_playground.png)
+![](./images/park_map_pt_playground.png){style="width:60%"}
 
 ##### Driving
 ```{r playground drv}
 table <- read.csv("./data/working/amenities_web/park_iso_drv_playground.csv")
 knitr::kable(table)
 ```
-![](./images/park_map_drv_playground.png)
+![](./images/park_map_drv_playground.png){style="width:60%"}
 
 ### Floating Catchment
 

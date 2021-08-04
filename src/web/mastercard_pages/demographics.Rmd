@@ -107,17 +107,9 @@ tract_tab =
          Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: More than 1 Race", Statistics),
          Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
          Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
-         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties with greenspace", Statistics)) 
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties with greenspace", Statistics))
 
-tract_tab %>% 
-  knitr::kable(format = "html", 
-  stargazer::stargazer(type = "latex", 
-                       digits = 2, 
-                      # summary = F,
-                       caption = "Summary Statistics of Demographic Indicators for Arlington County",
-                       header = F,
-               align = "c",
-                       label =  "Source: American Community Survey 5-Year Data (2015-2019)")
+knitr::kable(tract_tab, format = "html")
 ```
 
 ## Box Plots  
