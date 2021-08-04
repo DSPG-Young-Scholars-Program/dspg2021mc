@@ -83,8 +83,8 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 tennis_map = m1 + m2 + m3 + residential
-write.csv(table, "./data/working/park_iso_w_tennis.csv")
-write_rds(tennis_map, "./data/working/park_map_w_tennis.Rds")
+write.csv(table, "./data/working/amenities_web/park_iso_w_tennis.csv")
+write_rds(tennis_map, "./data/working/amenities_web/park_map_w_tennis.Rds")
 
 # tennis pt -----------------------
 
@@ -136,7 +136,7 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 tennis_pt_map = m1 + m2 + m3 + residential
-write_rds(tennis_pt_map, "./data/working/park_map_pt_tennis.Rds")
+write_rds(tennis_pt_map, "./data/working/amenities_web/park_map_pt_tennis.Rds")
 
 
 # tennis drv -----------------------
@@ -198,8 +198,8 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 tennis_drv_map = m1 + m2 + m3 + residential
-write.csv(table, "./data/working/park_iso_drv_tennis.csv")
-write_rds(tennis_drv_map, "./data/working/park_map_drv_tennis.Rds")
+write.csv(table, "./data/working/amenities_web/park_iso_drv_tennis.csv")
+write_rds(tennis_drv_map, "./data/working/amenities_web/park_map_drv_tennis.Rds")
 
 
 
@@ -252,7 +252,7 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 playground_map = m1 + m2 + m3 + residential
-write_rds(playground_map, "./data/working/park_map_w_playground.Rds")
+write_rds(playground_map, "./data/working/amenities_web/park_map_w_playground.Rds")
 
 
 # playground pt -------------------------------------
@@ -305,7 +305,7 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 playground_pt_map = m1 + m2 + m3 + residential
-write_rds(playground_pt_map, "./data/working/park_map_pt_playground.Rds")
+write_rds(playground_pt_map, "./data/working/amenities_web/park_map_pt_playground.Rds")
 
 
 r playground drv}
@@ -367,8 +367,8 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 playground_drv_map = m1 + m2 + m3 + residential
-write.csv(table, "./data/working/park_iso_drv_playground.csv")
-write_rds(playground_drv_map, "./data/working/park_map_drv_playground.Rds")
+write.csv(table, "./data/working/amenities_web/park_iso_drv_playground.csv")
+write_rds(playground_drv_map, "./data/working/amenities_web/park_map_drv_playground.Rds")
 
 
 # basketball w ---------------------------------
@@ -418,7 +418,7 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 basket_map = m1 + m2 + m3 + residential
-write_rds(basket_map, "./data/working/park_map_w_basketball.Rds")
+write_rds(basket_map, "./data/working/amenities_web/park_map_w_basketball.Rds")
 
 # basektball pt -----------------------------------
 for (i in 1:2){
@@ -474,7 +474,7 @@ m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = color
 # add the second layer on top
 basket_pt_map = m1 + m2 + m3 + residential
 
-write_rds(basket_pt_map, "./data/working/park_map_pt_basketball.Rds")
+write_rds(basket_pt_map, "./data/working/amenities_web/park_map_pt_basketball.Rds")
 
 # bsketball drv -----------------------------
 for (i in 1:2){
@@ -537,8 +537,8 @@ m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = color
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 basket_drv_map = m1 + m2 + m3 + residential
-write.csv(table, "./data/working/park_iso_drv_basketball.csv")
-write_rds(basket_drv_map, "./data/working/park_map_drv_basketball.Rds")
+write.csv(table, "./data/working/amenities_web/park_iso_drv_basketball.csv")
+write_rds(basket_drv_map, "./data/working/amenities_web/park_map_drv_basketball.Rds")
 
 # parking drv ----------------------------
 
@@ -592,13 +592,11 @@ table <- as.data.frame(c("5 Minutes", "10 Minutes", "15 Minutes"))
 table$Coverage <- c(park_coverage_5, park_coverage_10, park_coverage_15)
 colnames(table) <- c("Time", "Coverage")
 
-
-r parking drv map}
 m1 = mapview(park_iso5, layer.name = "5 minute isochrone", col.regions = colors[1])
 m2 = mapview(park_iso10, layer.name = "10 minute isochrone", col.regions = colors[2])
 m3 = mapview(park_iso15, layer.name = "15 minute isochrone", col.regions = colors[3])
 # add the second layer on top
 parking_drv_map = m1 + m2 + m3 + residential
 
-write.csv(table, "./data/working/park_iso_drv_parking.csv")
-write_rds(parking_drv_map, "./data/working/park_map_drv_parking.Rds")
+write.csv(table, "./data/working/amenities_web/park_iso_drv_parking.csv")
+write_rds(parking_drv_map, "./data/working/amenities_web/park_map_drv_parking.Rds")
