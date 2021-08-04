@@ -103,6 +103,7 @@ tract_tab %>%
 
 ## Maps  
 ```{r}
+acs_tract = acs_tract %>% drop_na(totalpop_trct, black, hispanic, unempl)
 
 acs_tract <- acs_tract %>%
   st_as_sf(coords = c("long","lat")) %>%
