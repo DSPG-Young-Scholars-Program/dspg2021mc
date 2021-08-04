@@ -102,6 +102,9 @@ tract_tab %>%
 
 
 ## Maps  
+### By Racial Demography  
+
+"other_race"
 ```{r}
 acs_tract = acs_tract %>% drop_na(totalpop_trct, black, hispanic, unempl)
 
@@ -138,7 +141,7 @@ leaflet(acs_tract) %>% #create leaflet object
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Total Population",
-              label = ~paste0("The total population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", `totalpop_trct`))  %>%
+              label = ~paste0("The total population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", `totalpop_trct`, "."))  %>%
   addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$totalpop_trct), values = ~totalpop_trct, group = "Total Population", title = "Total<br>Population", position = "topleft") %>%
   
     ## Black
@@ -151,6 +154,16 @@ leaflet(acs_tract) %>% #create leaflet object
               label = ~paste0("The African-American population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`black`,2), "%."))  %>%
   addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$black), values = ~black, group = "African-American Population", title = "African-American<br>Population", position = "topleft") %>%
   
+   ## Asian
+  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("PuOr", asian)(asian),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "Asian Population",
+              label = ~paste0("The Asian population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`asian`,2), "%."))  %>%
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$asian), values = ~asian, group = "Asian Population", title = "Asian<br>Population", position = "topleft") %>%
+  
     ## Hispanic
   addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
@@ -161,31 +174,30 @@ leaflet(acs_tract) %>% #create leaflet object
               label = ~paste0("The Hispanic population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`hispanic`,2), "%.")) %>% 
   addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$hispanic), values = ~hispanic, group = "Hispanic Population", title = "Hispanic<br>Population", position = "topleft") %>%
   
-    ## Unemployed
+  ## White
   addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorQuantile("PuOr", unempl)(unempl),
+              fillColor = ~colorQuantile("PuOr", white)(white),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
-              group = "Unemployed Population",
-              label = ~paste0("The unemployed population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`unempl`,2), "%.")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$unempl), values = ~unempl, group = "Unemployed Population", title = "Unemployed<br>Population", position = "topleft") %>%
+              group = "White Population",
+              label = ~paste0("The White population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`white`,2), "%.")) %>% 
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$white), values = ~white, group = "White Population", title = "White<br>Population", position = "topleft") %>%
+  
+   
   
   # Layers control
   addLayersControl(
-    overlayGroups = c("Total Population", "African-American Population", "Hispanic Population", "Unemployed Population"),
+    overlayGroups = c("Total Population", "African-American Population", "Asian Population", "Hispanic Population", "White Population"),
     baseGroups = c("Parks", "No Parks"),
     options = layersControlOptions(collapsed = FALSE)) %>% 
   hideGroup("African-American Population") %>% 
+  hideGroup("Asian Population") %>% 
   hideGroup("Hispanic Population") %>% 
-  hideGroup("Unemployed Population")
+  hideGroup("White Population")
 ```
-Demography:
 
-rent_ov_30
-"perc_under_18" 
-"perc_ambulatory_disability"
-"no_vehic"
+
 
 Income plots:
 med_inc_all
@@ -197,7 +209,8 @@ med_inc_o
 
 
 Plots by Unemployment
-unemploy_rate_all      
+
+unempl      
 unemploy_rate_w
 unemploy_rate_b           
 unemploy_rate_a
@@ -208,10 +221,86 @@ Plots by Commute time:
 [31] "commute_15_19"              "commute_20_24"             
 [33] "commute_25_29"              "commute_30_34"             
 [35] "commute_35_44"              "commute_45_59"             
-[37] "commute_60_pl"              
+[37] "commute_60_pl"            
 
-## Residences and Parks  
+Plots by Misc:
+rent_ov_30
+"perc_under_18" 
+"perc_ambulatory_disability"
+"no_vehic"
+
 ```{r}
-
+ ## Unemployed
+  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorQuantile("PuOr", unempl)(unempl),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "Unemployed Population",
+              label = ~paste0("The unemployed population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`unempl`,2), "%.")) %>% 
+  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$unempl), values = ~unempl, group = "Unemployed Population", title = "Unemployed<br>Population", position = "topleft") %>%
 ```
 
+## Residences and Parks  
+
+## Race
+"totalpop_trct"             
+"hispanic"
+"white"                     
+"black"
+"asian"                     
+"other_race"
+
+## Income
+"med_inc_all" 
+"med_inc_b"
+"med_inc_a" 
+"med_inc_h"
+"med_inc_w"
+"med_inc_o"
+
+## Education
+"perc_college_higher"
+"noba"    
+"ba_higher_all"
+"ba_higher_b"
+"ba_higher_a"
+"ba_higher_h"
+"ba_higher_w"
+
+## Unemployment
+"unempl"          
+"unemploy_rate_b"
+"unemploy_rate_a"
+"unemploy_rate_h"
+"unemploy_rate_w"
+
+
+## Poverty
+"pov_all"
+"pov_b"
+"pov_a" 
+"pov_h"
+"pov_w"
+"pov_o"
+
+## Commute Times               
+"commute_un_10"
+"commute_10_14"             
+"commute_15_19"
+"commute_20_24"             
+"commute_25_29"
+"commute_30_34"             
+"commute_35_44"
+"commute_45_59"             
+"commute_60_pl"                      
+
+## Misc
+"nohealthins"                              
+"rent_ov_30"                         
+"perc_under_18"
+"perc_ambulatory_disability"
+"no_vehic"
+"one_or_more_vehic"         
+"children_under_18"
+"no_children_under_18" 
