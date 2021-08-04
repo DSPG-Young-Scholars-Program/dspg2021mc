@@ -18,7 +18,7 @@ navbar:
         - text: "Parks Access" # parks + residences + coverage at county level
           href: parks.html
         - text: "Park Ammenity Access" # statistics tables
-          href: ammenities.html
+          href: amenities.html
         - text: "Racial Equity of Parks" # specific coverage by types of residences + cars
           href: floating_catchment.html
     - text: "Team"
