@@ -3,8 +3,6 @@ title: "Overview"
 output: 
   html_document:
     theme: cerulean
-title: |
-  ![](images/dspg.png){width=4in} 
 ---
 ```{js echo=FALSE}
 

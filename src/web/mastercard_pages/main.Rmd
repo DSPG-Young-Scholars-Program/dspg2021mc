@@ -26,6 +26,10 @@ library(sf)
 library(sp)
 library(mapview)
 library(leaflet)
+library(SpatialAcc)
+library(osrm)
+library(dplyr)
+library(tidycensus)
 
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
@@ -68,23 +72,6 @@ To measure park access we also care about measuring access to good parks. To mea
 #### Playgrounds
 
 So similarly to what we saw above, we now evaluate access in terms of the percent of total residences in the county that have access to the playground amenity within a 5-, 10-, or 15-minute isochrone via walking, public transportation, or driving.
-
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
-root.dir = rprojroot::find_rstudio_root_file()
-
-# run this once if knitting website
-# remotes::install_github("r-spatial/mapview")
-# remotes::install_github("r-spatial/leafpop")
-library(tidyverse)
-library(sf)
-library(sp)
-library(mapview)
-library(leaflet)
-```
 
 ```{r reading in}
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
@@ -286,12 +273,6 @@ In addition we want to look at how park access is distributed across racial grou
 Here we highlight the TSFCA score for black community members in Arlington County by tract. We observed that for the Black, Asian, and Other populations, however, there are high levels of accessibility in the Northern region. This is due to the fact that those areas have a number of large acreage parks combined with the low numbers of people who identify as Black, Asian, or Other.  
 
 ```{r, include=FALSE}
-library(sf)
-library(SpatialAcc)
-library(osrm)
-library(dplyr)
-library(tidycensus)
-library(mapview)
 
 # read in ACS data
 #Sys.getenv("CENSUS_API_KEY")
