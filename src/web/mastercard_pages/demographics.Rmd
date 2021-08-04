@@ -52,7 +52,24 @@ acs_bgrp <- acs_bgrp %>%
         by.y = "bgrp_geoid",
         all.x = TRUE)
 ```
-
+"totalpop_trct"
+"black"
+"asian"
+"hispanic"
+"white"
+"other_race"
+"med_inc_all"
+"med_inc_b"
+"med_inc_a"
+"med_inc_h"
+"med_inc_w"
+"med_inc_o"
+"pov_all"
+"pov_b"
+"pov_a" 
+"pov_h"
+"pov_w"
+"pov_o"
 ## Summary Statistics  
 ```{r echo=FALSE}
 # "totalpop_trct"
@@ -331,6 +348,29 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("Median Income: Other Race")
 ```
 
+### Misc  
+"nohealthins"                              
+"rent_ov_30"                         
+"perc_under_18"
+"perc_ambulatory_disability"
+"no_vehic"
+"one_or_more_vehic"         
+"children_under_18"
+"no_children_under_18" 
+
+```{r}
+leaflet(acs_tract) %>% #create leaflet object
+  
+  ## Parks Polygons (the green weird things on the map)
+  addPolygons(data = parks, color = "green", group = "Parks") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "No Parks") %>%
+  
+  ## Basemaps
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: All") %>%
+```
+
+
 ### Education  
 
 
@@ -348,7 +388,6 @@ leaflet(acs_tract) %>% #create leaflet object
 "unemploy_rate_a"
 "unemploy_rate_h"
 "unemploy_rate_w"
-
 
 ### Poverty  
 ```{r}
@@ -444,16 +483,7 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("% in Poverty: White") %>% 
   hideGroup("% in Poverty: Other Race")
 ```
-"pov_all"
-"pov_b"
-"pov_a" 
-"pov_h"
-"pov_w"
-"pov_o"
-```{r}
-x = acs_tract %>% drop_na(pov_b)
-unique(colorQuantile("PuOr", x$pov_b)(pov_b))
-```
+
 
 ### Commute Times  
 "commute_un_10"
@@ -466,15 +496,7 @@ unique(colorQuantile("PuOr", x$pov_b)(pov_b))
 "commute_45_59"             
 "commute_60_pl"                      
 
-### Misc  
-"nohealthins"                              
-"rent_ov_30"                         
-"perc_under_18"
-"perc_ambulatory_disability"
-"no_vehic"
-"one_or_more_vehic"         
-"children_under_18"
-"no_children_under_18" 
+
 
 ## Residences and Parks  
 ```{r}
