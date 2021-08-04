@@ -6,11 +6,12 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = F) 
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, error = FALSE) 
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 root.dir = rprojroot::find_rstudio_root_file()
 ```
+
 ```{r include=FALSE}
 library(tidyverse)
 library(data.table)
@@ -26,6 +27,7 @@ library(osmdata)
 library(mapview)
 library(RColorBrewer)
 library(readr)
+library(stargazer)
 
 acs_tract <- read_rds("./data/working/acs_tract.Rds")
 acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
@@ -56,7 +58,7 @@ acs_bgrp <- acs_bgrp %>%
 # "totalpop_trct"
 # Summary stats tables ----------
 # select variables
-tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o", "no_vehic", "perc_under_18")]
+tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o", "no_vehic", "perc_under_18", "mean_greenspace")]
 ## summary statistics ##
 # standard deviation
 tract_vars = as.data.frame(tract_vars) %>% select(-geometry)
@@ -102,7 +104,8 @@ tract_tab =
          Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
          Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: More than 1 Race", Statistics),
          Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
-         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics)) 
+         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties with greenspace", Statistics)) 
 
 tract_tab %>% 
   stargazer::stargazer(type = "html", 
@@ -203,6 +206,7 @@ rent_ov_30
 "perc_under_18" 
 "perc_ambulatory_disability"
 "no_vehic"
+"mean_greenspace"
 
 Income plots:
 med_inc_all
