@@ -31,6 +31,24 @@ acs_tract <- read_rds("./data/working/acs_tract.Rds")
 acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
 ej = read_rds("./data/working/ej.Rds")
 parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
+
+bgrp_greenspace <- read.csv("./data/working/bgrp_greenspace.csv")
+bgrp_greenspace$bgrp_geoid <- as.character(bgrp_greenspace$bgrp_geoid)
+  
+tract_greenspace <- read.csv("./data/working/tract_greenspace.csv")
+tract_greenspace$tract_geoid <- as.character(tract_greenspace$tract_geoid)
+
+acs_tract <- acs_tract %>%
+  merge(tract_greenspace, 
+        by.x = "GEOID", 
+        by.y = "tract_geoid",
+        all.x = TRUE)
+
+acs_bgrp <- acs_bgrp %>%
+  merge(bgrp_greenspace, 
+        by.x = "GEOID", 
+        by.y = "bgrp_geoid",
+        all.x = TRUE)
 ```
 
 ## Summary Statistics  
