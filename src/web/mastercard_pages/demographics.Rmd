@@ -79,10 +79,11 @@ bb <- getbb('arlington county, virginia')
 # select variables
 
 tract_vars <- acs_tract[, c("totalpop_trct", "black", "asian", "hispanic", "white", "other_race", "med_inc_all", "med_inc_b", "med_inc_a", "med_inc_h", "med_inc_w", "med_inc_o", "pov_all", "pov_b", "pov_a", "pov_h", "pov_w", "pov_o", "perc_under_18", "perc_ambulatory_disability", "no_vehic", "mean_greenspace", "nohealthins", "rent_ov_30")]
+tract_vars = as.data.frame(tract_vars) %>% select(-geometry)
 
 ## summary statistics ##
 # standard deviation
-tract_vars = as.data.frame(tract_vars) %>% select(-geometry)
+
 tract_sd <- tract_vars %>% 
   summarise_if(is.numeric, sd, na.rm = TRUE)
 # mean
@@ -144,6 +145,69 @@ knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statisti
 
 ```
 Source: American Community Survey 5-Year Data (2015-2019)
+
+### One-Way T-Tests  
+```{r echo=FALSE}
+t_test_tract <- lapply(tract_vars, function(x) 
+  t.test(x, na.action = na.pass))
+
+t_stat = c()
+p_value = c()
+conf_int1 = c()
+conf_int2 = c()
+mean = c()
+std_err = c()
+
+for(x in t_test_tract){
+  t_stat = append(t_stat, x$statistic)
+  p_value = append(p_value, x$p.value)
+  conf_int1 = append(conf_int1, x$conf.int[1])
+  conf_int2 = append(conf_int2, x$conf.int[2])
+  mean = append(mean, x$estimate)
+  std_err = append(std_err, x$stderr)
+}
+
+t_test_table_tract <- data.frame(names(t_test_tract), t_stat, p_value, conf_int1, conf_int2, mean, std_err) %>% 
+  mutate(mean = round(mean,2),
+         std_err = round(std_err, 2),
+         conf_int1 = round(conf_int1, 2),
+         conf_int2 = round(conf_int2, 2),
+         #p_value = round(p_value, 2),
+         t_stat = round(t_stat, 2)) %>% 
+  select("Statistics" = `names.t_test_tract.`,
+         "Mean" = `mean`,
+         "Standard Error" = `std_err`,
+         "Lower CI (95%)" = conf_int1,
+         "Upper CI (95%)" = conf_int2,
+         "T-Statistic" = `t_stat`,
+         "P Value" = `p_value`) %>% 
+  mutate(Statistics = ifelse(Statistics == "totalpop_trct", "Total Population", Statistics),
+         Statistics = ifelse(Statistics == "black", "% Population: African-American", Statistics),
+         Statistics = ifelse(Statistics == "hispanic", "% Population: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "asian", "% Population: Asian", Statistics),
+         Statistics = ifelse(Statistics == "white", "% Population: White", Statistics),
+         Statistics = ifelse(Statistics == "other_race", "% Population: Other Race", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_all", "Median Household Income (HHI): All", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_w", "Median HHI: White", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_a", "Median HHI: Asian", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_b", "Median HHI: African-American", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: Other Race", Statistics),
+         Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
+         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties<br>with greenspace", Statistics),
+         Statistics = ifelse(Statistics == "pov_all", "% in Poverty: All", Statistics),
+         Statistics = ifelse(Statistics == "pov_b", "% in Poverty: African-American", Statistics),
+         Statistics = ifelse(Statistics == "pov_a", "% in Poverty: Asian", Statistics),
+         Statistics = ifelse(Statistics == "pov_h", "% in Poverty: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "pov_w", "% in Poverty: White", Statistics),
+         Statistics = ifelse(Statistics == "pov_o", "% in Poverty: Other Race", Statistics),
+         Statistics = ifelse(Statistics == "perc_ambulatory_disability", "% with an Ambulatory Disability", Statistics),
+         Statistics = ifelse(Statistics == "nohealthins", "% Pop. with no Health Insurance", Statistics),
+         Statistics = ifelse(Statistics == "rent_ov_30", "% of housing with rent > $30K", Statistics))
+
+knitr::kable(t_test_table_tract, format = "html", caption = "Summary Statistics for One-Way T-Tests", align = "c", digits = 50)
+```
 
 ## Maps  
 ### Race  
