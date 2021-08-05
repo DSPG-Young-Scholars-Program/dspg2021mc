@@ -13,7 +13,7 @@ output:
 
 ```
 
-Arlington County is home to parks which also have different amenities. To measure park access we care about access to individual parks and also how good the parks are. To measure park goodness we use amenities as a proxy variable. The following maps and tables measure individual's access to different types of amenities including tennis courts, basketball courts, playgrounds, and parking. We evaluate access in terms of the percent of total residences in the county that have access within a 5-, 10-, or 15-minute isochrone via walking, public transportation, or driving. The main finding of this work is that members of the community with cars have incredible park access, but walkers and public transport users may have aharder time accessing amenities in Arlington. This access to a car is determined by income and therefore lower income members of the community are underserved in park access compared to their car-owning counterparts.
+Arlington County is home to parks with various amenities. To measure park access, we not only care about access by residents to individual parks but also how good they are. To measure park goodness, we used amenities as a proxy variable. The maps and tables presented below measure an individual's access to different types of amenities such as tennis courts, basketball courts, playgrounds, and parking. We evaluate access in terms of the percent of total residences in the county that have access within a 5-, 10-, or 15-minute isochrone via walking, public transportation, or driving. We found that members of the community with cars have incredible park access. On the other hand, walkers and public transport users may have a less easy time accessing amenities. This access to a car is determined by income, thus lower-income members of the community are underserved in park access compared to their car-owning counterparts.  
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -49,9 +49,8 @@ basketball_parks <- which(parks_amenities$basketball == 1)
 grill_parks <- which(parks_amenities$charcoal_grill == 1)
 ```
 
-## Tennis Courts
-
-Tennis court access in Arlington County is low for people without cars. At the 5-minute level across all walking and public transportation is close to 4 percent, but for driving it's 86 percent. For 10- to 15-minute isochrones acros walking ad public transportation, coverage is 24 and 56 percent respectively. For driving it's 100 percent. This indicates that access for tennis requires enough income for a car in order to enjoy public tennis courts.
+## Tennis Courts  
+Tennis court access in Arlington County is low for people without cars. The 5-minute level comprises of only close to 4 percent across all walking and public transportation, but for driving it's 86 percent in Arlington County. For 10- to 15-minute isochrones across walking and public transportation, coverage is 24 and 56 percent, respectively. For driving, it is 100 percent. This indicates that access to playing tennis in a public court requires enough income for someone to own a car.  
 
 ```{r tennis w}
 table <- read.csv("./data/working/amenities_web/park_iso_w_tennis.csv")
@@ -74,8 +73,8 @@ tennis_drv_map <- read_rds("./data/working/amenities_web/park_map_drv_tennis.Rds
 tennis_drv_map
 ```
 
-## Playgrounds
-Playground access in Arlington County is low for people without cars, but higher than tennis court access. At the 5-minute level across all walking and public transportation is close to 13 percent. For 10- to 15-minute isochrones acros walking and public transportation, coverage is 54 and 88 percent respectively, which is higher. For driving it's 100 percent across all three isochrones. This indicates that access for playgrounds requires enough income for a car in order to enjoy them, which may be difficult for low income families with children who want playgrounds.
+## Playgrounds  
+Playground access in Arlington County is low for people without cars, but higher than tennis court access. At the 5-minute level across all walking and public transportation, access is close to 13 percent. For 10- to 15-minute isochrones across walking and public transportation coverage is 54 and 88 percent, respectively, that is higher. For driving, it is 100 percent across all three isochrones. This indicates that access to playgrounds requires enough income for a car to enjoy them, which may be difficult for low-income families with children who want to enjoy playing on playgrounds.  
 
 ```{r playground}
 table <- read.csv("./data/working/traveltime_isochrones/park_iso_playground.csv")
@@ -98,9 +97,8 @@ playground_drv_map <- read_rds("./data/working/amenities_web/park_map_drv_playgr
 playground_drv_map
 ```
 
-## Basketball Courts
-
-Basketball court access in Arlington County is also low for people without cars. At the 5-minute level across all walking and public transportation is close to 8 percent. For 10- to 15-minute isochrones acros walking and public transportation, coverage is 41 and 72 percent respectively, which is higher than tennis court access but lower than playgrounds. For driving it's close to or at 100 percent across all three isochrones. This indicates that access for basketball requires enough income for a car in order to access them.
+## Basketball Courts  
+Basketball court access in Arlington County is also low for people without cars. At the 5-minute level across all walking and public transportation, access is close to 8 percent. For 10- to 15-minute isochrones across walking and public transportation, coverage is 41 and 72 percent respectively, which is higher than tennis court access but lower than playgrounds. For driving it's close to or at 100 percent across all three isochrones. This indicates that access to basketball requires enough income for a car in order to access the courts.  
 
 ```{r basketball w}
 table <- read.csv("./data/working/traveltime_isochrones/park_iso_basketball.csv")
@@ -123,9 +121,8 @@ basket_drv_map <- read_rds("./data/working/amenities_web/park_map_drv_basketball
 basket_drv_map
 ```
 
-## Public Parking
-
-For members of the community with cars, public parking is highly accessible at parks. There is almost 100 percent coverage within a 5-, 10-, or 15- minute drive from all residences. People with cars in Arlingon County have lots of publically available parking at parks across the county.
+## Public Parking  
+For members of the community with cars, public parking is highly accessible at parks. There is almost 100 percent coverage within a 5-, 10-, or 15- minute drive from all residences. People with cars in Arlington County have lots of publically available parking at parks across the county.  
 
 ```{r parking drv}
 table <- read.csv("./data/working/amenities_web/park_iso_drv_parking.csv")
