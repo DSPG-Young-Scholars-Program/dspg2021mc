@@ -63,37 +63,14 @@ parks = parks %>%
 
 bb <- getbb('arlington county, virginia')
 ```
-"totalpop_trct"
-"black"
-"asian"
-"hispanic"
-"white"
-"other_race"
-"med_inc_all"
-"med_inc_b"
-"med_inc_a"
-"med_inc_h"
-"med_inc_w"
-"med_inc_o"
-"pov_all"
-"pov_b"
-"pov_a" 
-"pov_h"
-"pov_w"
-"pov_o"
-"nohealthins"
-"rent_ov_30"           
-"perc_under_18"
-"perc_ambulatory_disability"
-"no_vehic"
-"mean_greenspace"
+
 ## Summary Statistics  
 ```{r echo=FALSE}
 # "totalpop_trct"
 # Summary stats tables ----------
 # select variables
 
-tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o")]
+tract_vars <- acs_tract[, c("totalpop_trct", "black", "asian", "hispanic", "white", "other_race", "med_inc_all", "med_inc_b", "med_inc_a", "med_inc_h", "med_inc_w", "med_inc_o", "pov_all", "pov_b", "pov_a", "pov_h", "pov_w", "pov_o", "perc_under_18", "perc_ambulatory_disability", "no_vehic", "mean_greenspace", "nohealthins", "rent_ov_30")]
 
 ## summary statistics ##
 # standard deviation
@@ -122,7 +99,7 @@ tract_tab$Statistics = rownames(tract_tab)
 row.names(tract_tab) = NULL
 tract_tab = 
   tract_tab %>% 
-  arrange(desc(mean)) %>% 
+  #arrange(desc(mean)) %>% 
   select("Statistics",
          "Mean" = `mean`,
          "Standard Deviation" = `sd`,
@@ -130,18 +107,29 @@ tract_tab =
          "Minimum" = min,
          "Maximum" = max) %>% 
   mutate(Statistics = ifelse(Statistics == "totalpop_trct", "Total Population", Statistics),
-         Statistics = ifelse(Statistics == "black", "% Population African-American", Statistics),
-         Statistics = ifelse(Statistics == "hispanic", "% Population Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "unempl", "% Population Unemployed", Statistics),
+         Statistics = ifelse(Statistics == "black", "% Population: African-American", Statistics),
+         Statistics = ifelse(Statistics == "hispanic", "% Population: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "asian", "% Population: Asian", Statistics),
+         Statistics = ifelse(Statistics == "white", "% Population: White", Statistics),
+         Statistics = ifelse(Statistics == "other_race", "% Population: Other Race", Statistics),
          Statistics = ifelse(Statistics == "med_inc_all", "Median Household Income (HHI): All", Statistics),
          Statistics = ifelse(Statistics == "med_inc_w", "Median HHI: White", Statistics),
          Statistics = ifelse(Statistics == "med_inc_a", "Median HHI: Asian", Statistics),
          Statistics = ifelse(Statistics == "med_inc_b", "Median HHI: African-American", Statistics),
          Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: More than 1 Race", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: Other Race", Statistics),
          Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
          Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
-         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties with greenspace", Statistics)) 
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties<br>with greenspace", Statistics),
+         Statistics = ifelse(Statistics == "pov_all", "% in Poverty: All", Statistics),
+         Statistics = ifelse(Statistics == "pov_b", "% in Poverty: African-American", Statistics),
+         Statistics = ifelse(Statistics == "pov_a", "% in Poverty: Asian", Statistics),
+         Statistics = ifelse(Statistics == "pov_h", "% in Poverty: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "pov_w", "% in Poverty: White", Statistics),
+         Statistics = ifelse(Statistics == "pov_o", "% in Poverty: Other Race", Statistics),
+         Statistics = ifelse(Statistics == "perc_ambulatory_disability", "% with an Ambulatory Disability", Statistics),
+         Statistics = ifelse(Statistics == "nohealthins", "% Pop. with no Health Insurance", Statistics),
+         Statistics = ifelse(Statistics == "rent_ov_30", "% of housing with rent > $30K", Statistics)) 
 
 tract_tab %>% 
   knitr::kable(format = "html", 
@@ -152,12 +140,6 @@ tract_tab %>%
                align = "c",
                        label =  "Source: American Community Survey 5-Year Data (2015-2019)")
 ```
-
-## Box Plots  
-```{r}
-
-```
-
 
 ## Maps  
 ### Race  
@@ -440,25 +422,6 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("% Mean Greenspace")
 ```
 
-
-### Education  
-
-
-"perc_college_higher"
-"noba"    
-"ba_higher_all"
-"ba_higher_b"
-"ba_higher_a"
-"ba_higher_h"
-"ba_higher_w"
-
-### Unemployment  
-"unempl"          
-"unemploy_rate_b"
-"unemploy_rate_a"
-"unemploy_rate_h"
-"unemploy_rate_w"
-
 ### Poverty  
 ```{r}
 ## PLOTTING  - Demography: Poverty
@@ -553,23 +516,3 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("% in Poverty: White") %>% 
   hideGroup("% in Poverty: Other Race")
 ```
-
-
-### Commute Times  
-"commute_un_10"
-"commute_10_14"             
-"commute_15_19"
-"commute_20_24"             
-"commute_25_29"
-"commute_30_34"             
-"commute_35_44"
-"commute_45_59"             
-"commute_60_pl"                      
-
-
-
-## Residences and Parks  
-```{r}
-colnames(acs_tract)
-```
-
