@@ -73,6 +73,7 @@ bb <- getbb('arlington county, virginia')
 ```
 
 ## Summary Statistics  
+The table below shows the summary statistics for different variables relating to demographic information from the American Community Survey (2015-19) Tract level data. We see racially, Arlington County Tracts have about 70% white population on average, with a balanced distribution of other races and ethnic groups. The median household income at a tract-level on average is 130,000, which is much higher than the median household income of an African-American household at a tract level.  
 ```{r echo=FALSE}
 # "totalpop_trct"
 # Summary stats tables ----------
@@ -141,12 +142,13 @@ tract_tab =
          Statistics = ifelse(Statistics == "rent_ov_30", "% of housing with rent > $30K", Statistics)) 
 
 
-knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statistics of Demographic Indicators for Arlington County", align = "c")
+knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statistics of Demographic Indicators for Arlington County (By Tract)", align = "c")
 
 ```
-Source: American Community Survey 5-Year Data (2015-2019)
+Source: American Community Survey 5-Year Data (2015-2019)  
 
 ### One-Way T-Tests  
+We also perform one-sample t-tests on our variables to make sure that our variables were continuous, our data were randomly sampled and normally distributed, and the variance was homogenous across variables.  
 ```{r echo=FALSE}
 t_test_tract <- lapply(tract_vars, function(x) 
   t.test(x, na.action = na.pass))
@@ -211,6 +213,7 @@ knitr::kable(t_test_table_tract, format = "html", caption = "Summary Statistics 
 
 ## Maps  
 ### Race  
+The map below shows the racial demography of Arlington county by census tract while also displaying park space areas. We see that even though tracts 1002 and 1003 are both densely populated, their park access is restricted. Some clusters of areas densely populated with African-American populations do not have good access to parks. We see this especially in Tracts 1031 and 1034. On the other hand, densely populated Asian population areas have tremendous access to parks. We see that access to parks for areas densely populated with Hispanic or Latino populations is fair. Areas densely populated by white persons do not have good access to parks in Arlington County.  
 ```{r echo=FALSE}
 ## PLOTTING  - Demography: Race
 
@@ -305,6 +308,7 @@ leaflet(acs_tract) %>% #create leaflet object
 ```
 
 ### Income  
+The map below shows the income demography of Arlington county by census tract while also displaying park space areas. We see tracts where African-American populations with lower incomes do not have many parks in the neighborhood. On the other hand, park access does not seem to correlate with the median income for Asian, Hispanic, or White households.  
 ```{r}
 ## PLOTTING  - Demography: Income
 
@@ -400,6 +404,7 @@ leaflet(acs_tract) %>% #create leaflet object
 ```
 
 ### Miscellaneous  
+The map below shows the miscellaneous demography of Arlington county by census tract while also displaying park space areas. We see tracts with a higher percentage of the population under 18 also have access to lots of parks. Tracts with a higher percentage of ambulatory disability populations, surprisingly do not have too many parks around in those tracts. Census Tract 1020.03 is the tract with the highest percent population that has no vehicle and also has very little access to parks. The tracts 1002 and 1003 as mentioned above that lacked a lot of parks have a lot of green spaces available. This may be one of the reasons why park access in these tracts is limited due to the availability of natural green spaces. For areas with more expensive housing, we see decent access to parks.  
 ```{r}
 leaflet(acs_tract) %>% #create leaflet object
   
@@ -491,6 +496,7 @@ leaflet(acs_tract) %>% #create leaflet object
 ```
 
 ### Poverty  
+The map below shows the poverty of Arlington county by census tract while also displaying park space areas.  
 ```{r}
 ## PLOTTING  - Demography: Poverty
 
