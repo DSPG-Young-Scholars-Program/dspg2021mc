@@ -51,6 +51,17 @@ acs_bgrp <- acs_bgrp %>%
         by.x = "GEOID", 
         by.y = "bgrp_geoid",
         all.x = TRUE)
+
+
+acs_tract <- acs_tract %>%
+  st_as_sf(coords = c("long","lat")) %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+parks = parks %>%
+  st_as_sf(coords = c("long","lat")) %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+bb <- getbb('arlington county, virginia')
 ```
 
 ## Summary Statistics  
@@ -59,7 +70,7 @@ acs_bgrp <- acs_bgrp %>%
 # Summary stats tables ----------
 # select variables
 
-tract_vars <- acs_tract[, c("black", "hispanic", 'unempl', "med_inc_all", "med_inc_w", "med_inc_a", "med_inc_b", "med_inc_h", "med_inc_o")]
+tract_vars <- acs_tract[, c("totalpop_trct", "black", "asian", "hispanic", "white", "other_race", "med_inc_all", "med_inc_b", "med_inc_a", "med_inc_h", "med_inc_w", "med_inc_o", "pov_all", "pov_b", "pov_a", "pov_h", "pov_w", "pov_o", "perc_under_18", "perc_ambulatory_disability", "no_vehic", "mean_greenspace", "nohealthins", "rent_ov_30")]
 
 ## summary statistics ##
 # standard deviation
@@ -88,7 +99,7 @@ tract_tab$Statistics = rownames(tract_tab)
 row.names(tract_tab) = NULL
 tract_tab = 
   tract_tab %>% 
-  arrange(desc(mean)) %>% 
+  #arrange(desc(mean)) %>% 
   select("Statistics",
          "Mean" = `mean`,
          "Standard Deviation" = `sd`,
@@ -96,44 +107,39 @@ tract_tab =
          "Minimum" = min,
          "Maximum" = max) %>% 
   mutate(Statistics = ifelse(Statistics == "totalpop_trct", "Total Population", Statistics),
-         Statistics = ifelse(Statistics == "black", "% Population African-American", Statistics),
-         Statistics = ifelse(Statistics == "hispanic", "% Population Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "unempl", "% Population Unemployed", Statistics),
+         Statistics = ifelse(Statistics == "black", "% Population: African-American", Statistics),
+         Statistics = ifelse(Statistics == "hispanic", "% Population: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "asian", "% Population: Asian", Statistics),
+         Statistics = ifelse(Statistics == "white", "% Population: White", Statistics),
+         Statistics = ifelse(Statistics == "other_race", "% Population: Other Race", Statistics),
          Statistics = ifelse(Statistics == "med_inc_all", "Median Household Income (HHI): All", Statistics),
          Statistics = ifelse(Statistics == "med_inc_w", "Median HHI: White", Statistics),
          Statistics = ifelse(Statistics == "med_inc_a", "Median HHI: Asian", Statistics),
          Statistics = ifelse(Statistics == "med_inc_b", "Median HHI: African-American", Statistics),
          Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: More than 1 Race", Statistics),
+         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: Other Race", Statistics),
          Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
          Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
-         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties with greenspace", Statistics))
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties<br>with greenspace", Statistics),
+         Statistics = ifelse(Statistics == "pov_all", "% in Poverty: All", Statistics),
+         Statistics = ifelse(Statistics == "pov_b", "% in Poverty: African-American", Statistics),
+         Statistics = ifelse(Statistics == "pov_a", "% in Poverty: Asian", Statistics),
+         Statistics = ifelse(Statistics == "pov_h", "% in Poverty: Hispanic or Latino", Statistics),
+         Statistics = ifelse(Statistics == "pov_w", "% in Poverty: White", Statistics),
+         Statistics = ifelse(Statistics == "pov_o", "% in Poverty: Other Race", Statistics),
+         Statistics = ifelse(Statistics == "perc_ambulatory_disability", "% with an Ambulatory Disability", Statistics),
+         Statistics = ifelse(Statistics == "nohealthins", "% Pop. with no Health Insurance", Statistics),
+         Statistics = ifelse(Statistics == "rent_ov_30", "% of housing with rent > $30K", Statistics)) 
 
-knitr::kable(tract_tab, format = "html")
+
+knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statistics of Demographic Indicators for Arlington County", align = "c")
+
 ```
-
-## Box Plots  
-```{r}
-
-```
-
+Source: American Community Survey 5-Year Data (2015-2019)
 
 ## Maps  
-### By Racial Demography  
+### Race  
 ```{r echo=FALSE}
-acs <- read_rds("./data/working/acs_tract.Rds")
-acs_tract = acs %>% drop_na(totalpop_trct, black, asian, hispanic, white, other_race)
-
-acs_tract <- acs_tract %>%
-  st_as_sf(coords = c("long","lat")) %>%
-  st_transform("+proj=longlat +datum=WGS84")
-
-parks = parks %>%
-  st_as_sf(coords = c("long","lat")) %>%
-  st_transform("+proj=longlat +datum=WGS84")
-
-bb <- getbb('arlington county, virginia')
-
 ## PLOTTING  - Demography: Race
 
 leaflet(acs_tract) %>% #create leaflet object
@@ -153,64 +159,64 @@ leaflet(acs_tract) %>% #create leaflet object
   
   ## Polygons
     ## Total 
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(totalpop_trct), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", totalpop_trct)(totalpop_trct),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Total Population",
               label = ~paste0("The total population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", `totalpop_trct`, "."))  %>%
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$totalpop_trct), values = ~totalpop_trct, group = "Total Population", title = "Total<br>Population", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(totalpop_trct), pal = colorNumeric("PuOr", acs_tract$totalpop_trct), values = ~totalpop_trct, group = "Total Population", title = "Total<br>Population", position = "topleft") %>%
   
     ## Black
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(black), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", black)(black),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "African-American Population",
               label = ~paste0("The African-American population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`black`,2), "%."))  %>%
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$black), values = ~black, group = "African-American Population", title = "African-American<br>Population", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(black), pal = colorNumeric("PuOr", acs_tract$black), values = ~black, group = "African-American Population", title = "African-American<br>Population", position = "topleft") %>%
   
    ## Asian
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(asian), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", asian)(asian),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Asian Population",
               label = ~paste0("The Asian population in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`asian`,2), "%."))  %>%
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$asian), values = ~asian, group = "Asian Population", title = "Asian<br>Population", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(asian), pal = colorNumeric("PuOr", acs_tract$asian), values = ~asian, group = "Asian Population", title = "Asian<br>Population", position = "topleft") %>%
   
     ## Hispanic
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(hispanic), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", hispanic)(hispanic),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Hispanic Population",
               label = ~paste0("The Hispanic population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`hispanic`,2), "%.")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$hispanic), values = ~hispanic, group = "Hispanic Population", title = "Hispanic<br>Population", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(hispanic), pal = colorNumeric("PuOr", acs_tract$hispanic), values = ~hispanic, group = "Hispanic Population", title = "Hispanic<br>Population", position = "topleft") %>%
   
   ## White
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(white), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", white)(white),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "White Population",
               label = ~paste0("The White population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`white`,2), "%.")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$white), values = ~white, group = "White Population", title = "White<br>Population", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(white), pal = colorNumeric("PuOr", acs_tract$white), values = ~white, group = "White Population", title = "White<br>Population", position = "topleft") %>%
   
   ## Other
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(other_race), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", other_race)(other_race),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Other Race Population",
               label = ~paste0("The other race population in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`other_race`,2), "%.")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$other_race), values = ~other_race, group = "Other Race Population", title = "Other Race<br>Population", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(other_race), pal = colorNumeric("PuOr", acs_tract$other_race), values = ~other_race, group = "Other Race Population", title = "Other Race<br>Population", position = "topleft") %>%
   
    
   
@@ -226,20 +232,8 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("Other Race Population")
 ```
 
-### By Income  
+### Income  
 ```{r}
-acs <- read_rds("./data/working/acs_tract.Rds")
-acs_tract = acs %>% drop_na(med_inc_all)
-
-acs_tract <- acs_tract %>%
-  st_as_sf(coords = c("long","lat")) %>%
-  st_transform("+proj=longlat +datum=WGS84")
-
-parks = parks %>%
-  st_as_sf(coords = c("long","lat")) %>%
-  st_transform("+proj=longlat +datum=WGS84")
-
-bb <- getbb('arlington county, virginia')
 ## PLOTTING  - Demography: Income
 
 leaflet(acs_tract) %>% #create leaflet object
@@ -261,64 +255,64 @@ leaflet(acs_tract) %>% #create leaflet object
   
   ## Polygons
     ## Total 
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(med_inc_all), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", med_inc_all)(med_inc_all),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Median Income: All",
               label = ~paste0("The median income in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_all`, "."))  %>%
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$med_inc_all), values = ~med_inc_all, group = "Median Income: All", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(med_inc_all), pal = colorNumeric("PuOr", acs_tract$med_inc_all), values = ~med_inc_all, group = "Median Income: All", title = "Median<br>Income", position = "topleft") %>%
   
     ## Black
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(med_inc_b), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", med_inc_b)(med_inc_b),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Median Income: African-American",
               label = ~paste0("The median income of an African-American household in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_b`, "."))  %>%
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$med_inc_b), values = ~med_inc_b, group = "Median Income: African-American", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(med_inc_b), pal = colorNumeric("PuOr", acs_tract$med_inc_b), values = ~med_inc_b, group = "Median Income: African-American", title = "Median<br>Income", position = "topleft") %>%
   
    ## Asian
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract %>% drop_na(med_inc_a), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", med_inc_a)(med_inc_a),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Median Income: Asian",
-              label = ~paste0("The median income of an Asian household in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", round(`med_inc_a`,2), "."))  %>%
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$med_inc_a), values = ~med_inc_a, group = "Median Income: Asian", title = "Median<br>Income", position = "topleft") %>%
+              label = ~paste0("The median income of an Asian household in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_a`, "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(med_inc_a), pal = colorNumeric("PuOr", acs_tract$med_inc_a), values = ~med_inc_a, group = "Median Income: Asian", title = "Median<br>Income", position = "topleft") %>%
   
     ## Hispanic
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract%>% drop_na(med_inc_h), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", med_inc_h)(med_inc_h),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Median Income: Hispanic",
               label = ~paste0("The median income of a Hispanic household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_h`, ".")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$med_inc_h), values = ~med_inc_h, group = "Median Income: Hispanic", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract%>% drop_na(med_inc_h), pal = colorNumeric("PuOr", acs_tract$med_inc_h), values = ~med_inc_h, group = "Median Income: Hispanic", title = "Median<br>Income", position = "topleft") %>%
   
   ## White
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract%>% drop_na(med_inc_w), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", med_inc_w)(med_inc_w),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Median Income: White",
               label = ~paste0("The median income of a White household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_w`, ".")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$med_inc_w), values = ~med_inc_w, group = "Median Income: White", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract%>% drop_na(med_inc_w), pal = colorNumeric("PuOr", acs_tract$med_inc_w), values = ~med_inc_w, group = "Median Income: White", title = "Median<br>Income", position = "topleft") %>%
   
   ## Other
-  addPolygons(data = acs_tract, color = "#444444", weight = 1, smoothFactor = 0.5,
+  addPolygons(data = acs_tract%>% drop_na(med_inc_o), color = "#444444", weight = 1, smoothFactor = 0.5,
               opacity = 1.0, fillOpacity = 0.5,
               fillColor = ~colorQuantile("PuOr", med_inc_o)(med_inc_o),
               highlightOptions = highlightOptions(color = "white", weight = 2,
                                                   bringToFront = TRUE),
               group = "Median Income: Other Race",
-              label = ~paste0("The median income of other race household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", round(`med_inc_o`,2), "%.")) %>% 
-  addLegend(data = acs_tract, pal = colorNumeric("PuOr", acs_tract$med_inc_o), values = ~med_inc_o, group = "Median Income: Other Race", title = "Medianr<br>Income", position = "topleft") %>%
+              label = ~paste0("The median income of other race household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_o`, "%.")) %>% 
+  addLegend(data = acs_tract%>% drop_na(med_inc_o), pal = colorNumeric("PuOr", acs_tract$med_inc_o), values = ~med_inc_o, group = "Median Income: Other Race", title = "Median<br>Income", position = "topleft") %>%
   
    
   # Layers control
@@ -333,49 +327,188 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("Median Income: Other Race")
 ```
 
-### Education  
-"perc_college_higher"
-"noba"    
-"ba_higher_all"
-"ba_higher_b"
-"ba_higher_a"
-"ba_higher_h"
-"ba_higher_w"
-
-### Unemployment  
-"unempl"          
-"unemploy_rate_b"
-"unemploy_rate_a"
-"unemploy_rate_h"
-"unemploy_rate_w"
+### Miscellaneous  
+```{r}
+leaflet(acs_tract) %>% #create leaflet object
+  
+  ## Parks Polygons (the green weird things on the map)
+  addPolygons(data = parks, color = "green", group = "Parks") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "No Parks") %>%
+  
+  ## Basemaps
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% No Health Insurance") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Homes with rent > $30K") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Population under 18") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Pop. with Ambulatory Disability") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Pop. with No Vehicle") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Mean Greenspace") %>%
+  
+  fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% #add bounding box
+  
+  ## Polygons
+    ## No health insurance 
+  addPolygons(data = acs_tract %>% drop_na(nohealthins), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", nohealthins)(nohealthins),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% No Health Insurance",
+              label = ~paste0("The % of people having no health insurance in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`nohealthins`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(nohealthins), pal = colorNumeric("PuOr", acs_tract$nohealthins), values = ~nohealthins, group = "% No Health Insurance", title = "% No Health<br>Insurance", position = "topleft") %>% 
+    
+    ## rent > 30k 
+  addPolygons(data = acs_tract %>% drop_na(rent_ov_30), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", rent_ov_30)(rent_ov_30),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Homes with rent > $30K",
+              label = ~paste0("The % of homes with the annual rent > 30K in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`rent_ov_30`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(rent_ov_30), pal = colorNumeric("PuOr", acs_tract$rent_ov_30), values = ~rent_ov_30, group = "% Homes with rent > $30K", title = "% Homes with<br>rent > $30K", position = "topleft") %>%
+  
+    ## "% Population under 18"
+  addPolygons(data = acs_tract %>% drop_na(perc_under_18), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", perc_under_18)(perc_under_18),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Population under 18",
+              label = ~paste0("The % of population under 18 in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`perc_under_18`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(perc_under_18), pal = colorNumeric("PuOr", acs_tract$perc_under_18), values = ~perc_under_18, group = "% Population under 18", title = "% Population<br>under 18", position = "topleft") %>%
+  
+      ## "% pop. with Ambulatory Disability"
+  addPolygons(data = acs_tract %>% drop_na(perc_ambulatory_disability), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", perc_ambulatory_disability)(perc_ambulatory_disability),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Pop. with Ambulatory Disability",
+              label = ~paste0("The % of population with an ambulatory disability in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`perc_ambulatory_disability`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(perc_ambulatory_disability), pal = colorNumeric("PuOr", acs_tract$perc_ambulatory_disability), values = ~perc_ambulatory_disability, group = "% Pop. with Ambulatory Disability", title = "% Pop. with<br>Ambulatory Disability", position = "topleft") %>%
+  
+    ## "% Pop. with No Vehicle"
+  addPolygons(data = acs_tract %>% drop_na(no_vehic), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", no_vehic)(no_vehic),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Pop. with No Vehicle",
+              label = ~paste0("The % of population without a vehicle in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`no_vehic`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(no_vehic), pal = colorNumeric("PuOr", acs_tract$no_vehic), values = ~no_vehic, group = "% Pop. with No Vehicle", title = "% Pop. with<br>No Vehicle", position = "topleft") %>%
+  
+    ## "% Mean Greenspace"
+  addPolygons(data = acs_tract %>% drop_na(mean_greenspace), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", mean_greenspace)(mean_greenspace),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Mean Greenspace",
+              label = ~paste0("The % of mean greenspace in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`mean_greenspace`*100,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(mean_greenspace), pal = colorNumeric("PuOr", acs_tract$mean_greenspace), values = ~mean_greenspace*100, group = "% Mean Greenspace", title = "% Mean<br>Greenspace", position = "topleft") %>%
+   # Layers control
+  addLayersControl(
+    overlayGroups = c("% Population under 18", "% Pop. with Ambulatory Disability", "% Pop. with No Vehicle", "% Mean Greenspace", "% No Health Insurance", "% Homes with rent > $30K"),
+    baseGroups = c("Parks", "No Parks"),
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  hideGroup("% Homes with rent > $30K") %>% 
+  hideGroup("% No Health Insurance") %>% 
+  hideGroup("% Pop. with Ambulatory Disability") %>% 
+  hideGroup("% Pop. with No Vehicle") %>% 
+  hideGroup("% Mean Greenspace")
+```
 
 ### Poverty  
-"pov_all"
-"pov_b"
-"pov_a" 
-"pov_h"
-"pov_w"
-"pov_o"
+```{r}
+## PLOTTING  - Demography: Poverty
 
-### Commute Times  
-"commute_un_10"
-"commute_10_14"             
-"commute_15_19"
-"commute_20_24"             
-"commute_25_29"
-"commute_30_34"             
-"commute_35_44"
-"commute_45_59"             
-"commute_60_pl"                      
-
-### Misc  
-"nohealthins"                              
-"rent_ov_30"                         
-"perc_under_18"
-"perc_ambulatory_disability"
-"no_vehic"
-"one_or_more_vehic"         
-"children_under_18"
-"no_children_under_18" 
-
-## Residences and Parks  
+leaflet(acs_tract) %>% #create leaflet object
+  
+  ## Parks Polygons (the green weird things on the map)
+  addPolygons(data = parks, color = "green", group = "Parks") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "No Parks") %>%
+  
+  ## Basemaps
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: All") %>% # totalpop_trct
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: African-American") %>% # black
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: Asian") %>% # asian
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: Hispanic") %>% # hispanic
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: White") %>% # white
+  addProviderTiles(provider = "CartoDB.Positron", group = "% in Poverty: Other Race") %>% # other_race
+  
+  fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% #add bounding box
+  
+  ## Polygons
+    ## Total 
+  addPolygons(data = acs_tract %>% drop_na(pov_all), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", pov_all)(pov_all),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% in Poverty: All",
+              label = ~paste0("The % in Poverty in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`pov_all`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(pov_all), pal = colorNumeric("PuOr", acs_tract$pov_all), values = ~pov_all, group = "% in Poverty: All", title = "% in Poverty", position = "topleft") %>%
+  
+    ## Black
+  addPolygons(data = acs_tract %>% drop_na(pov_b), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", acs_tract$pov_b)(pov_b),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% in Poverty: African-American",
+              label = ~paste0("The % in Poverty of African-Americans in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`pov_b`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(pov_b), pal = colorNumeric("PuOr", acs_tract$pov_b), values = ~pov_b, group = "% in Poverty: African-American", title = "% in Poverty", position = "topleft") %>%
+  
+   ## Asian
+  addPolygons(data = acs_tract %>% drop_na(pov_a), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", pov_a)(pov_a),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% in Poverty: Asian",
+              label = ~paste0("The % in Poverty of Asians in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`pov_a`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(pov_a), pal = colorNumeric("PuOr", acs_tract$pov_a), values = ~pov_a, group = "% in Poverty: Asian", title = "% in Poverty", position = "topleft") %>%
+  
+    ## Hispanic
+  addPolygons(data = acs_tract%>% drop_na(pov_h), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", pov_h)(pov_h),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% in Poverty: Hispanic",
+              label = ~paste0("The % in Poverty of Hispanics in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`pov_h`,2), ".")) %>% 
+  addLegend(data = acs_tract%>% drop_na(pov_h), pal = colorNumeric("PuOr", acs_tract$pov_h), values = ~pov_h, group = "% in Poverty: Hispanic", title = "% in Poverty", position = "topleft") %>%
+  
+  ## White
+  addPolygons(data = acs_tract%>% drop_na(pov_w), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", pov_w)(pov_w),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% in Poverty: White",
+              label = ~paste0("The % in Poverty of Whites in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`pov_w`,2), ".")) %>% 
+  addLegend(data = acs_tract%>% drop_na(pov_w), pal = colorNumeric("PuOr", acs_tract$pov_w), values = ~pov_w, group = "% in Poverty: White", title = "% in Poverty", position = "topleft") %>%
+  
+  ## Other
+  addPolygons(data = acs_tract%>% drop_na(pov_o), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", pov_o)(pov_o),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% in Poverty: Other Race",
+              label = ~paste0("The % in Poverty of other races in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`pov_o`,2), "%.")) %>% 
+  addLegend(data = acs_tract%>% drop_na(pov_o), pal = colorNumeric("PuOr", acs_tract$pov_o), values = ~pov_o, group = "% in Poverty: Other Race", title = "% in Poverty", position = "topleft") %>%
+  
+   
+  # Layers control
+  addLayersControl(
+    overlayGroups = c("% in Poverty: All", "% in Poverty: African-American", "% in Poverty: Asian", "% in Poverty: Hispanic", "% in Poverty: White", "% in Poverty: Other Race"),
+    baseGroups = c("Parks", "No Parks"),
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  hideGroup("% in Poverty: African-American") %>% 
+  hideGroup("% in Poverty: Asian") %>% 
+  hideGroup("% in Poverty: Hispanic") %>% 
+  hideGroup("% in Poverty: White") %>% 
+  hideGroup("% in Poverty: Other Race")
+```
