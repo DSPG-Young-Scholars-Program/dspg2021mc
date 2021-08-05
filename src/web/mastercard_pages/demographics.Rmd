@@ -131,15 +131,11 @@ tract_tab =
          Statistics = ifelse(Statistics == "nohealthins", "% Pop. with no Health Insurance", Statistics),
          Statistics = ifelse(Statistics == "rent_ov_30", "% of housing with rent > $30K", Statistics)) 
 
-tract_tab %>% 
-  knitr::kable(format = "html", 
-                       digits = 2, 
-                      # summary = F,
-                       caption = "Summary Statistics of Demographic Indicators for Arlington County",
-                       header = F,
-               align = "c",
-                       label =  "Source: American Community Survey 5-Year Data (2015-2019)")
+
+knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statistics of Demographic Indicators for Arlington County", align = "c")
+
 ```
+Source: American Community Survey 5-Year Data (2015-2019)
 
 ## Maps  
 ### Race  
