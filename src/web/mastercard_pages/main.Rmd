@@ -31,7 +31,7 @@ library(tidycensus)
 library(png)
 ```
 
-## Demographics Overview
+### Demographics Overview
 ```{r include=FALSE}
 library(tidyverse)
 library(data.table)
@@ -84,7 +84,7 @@ parks = parks %>%
 bb <- getbb('arlington county, virginia')
 ```
 
-### Summary Statistics  
+#### Summary Statistics  
 ```{r echo=FALSE}
 # "totalpop_trct"
 # Summary stats tables ----------
@@ -156,6 +156,9 @@ tract_tab =
 knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statistics of Demographic Indicators for Arlington County", align = "c")
 
 ```
+
+
+
 
 #### Map Breakdown by Race  
 ```{r echo=FALSE}
@@ -263,6 +266,9 @@ residential_sf <- st_as_sf(residential, coords = c("parcel_level_longitude", "pa
 st_crs(residential_sf) <- "+proj=longlat +datum=WGS84"
 residential = mapview(st_geometry(residential_sf), cex =.5, layer.name = "residential areas", color = colors[5])
 ```
+
+
+
 #### Circle Radius Methods
 
 When we use 1/2 mile radius circles as proxies for access 99.65 percent of residences are covered with park access. This is incredibly high. However, this doesn't take into account park quality, amenities, or acreage.
@@ -283,7 +289,8 @@ circle_map
 
 #### Traveltime Isochrone Method
 
-To get an idea of parck access, we computed coverage as the percentage of total residences that are covered within time-based isochrones from the centroid of each park. We did this for walking, driving, and public transportation. Here we feature the walking map. 
+To get an idea of park access, we computed coverage as the percentage of total residences that are covered within time-based isochrones from the centroid of each park. We did this for walking, driving, and public transportation. Here we feature the walking map. 
+
 
 ##### Walking
 
@@ -296,9 +303,15 @@ knitr::kable(table)
 
 ![](./images/park_map_w.png){style="width:60%"}
 
+
+
+
+
 ### Amenity Access
 
 To measure park access we also care about measuring access to good parks. To measure park goodness we use amenities as a proxy variable. The following maps and tables measure individual's access to different types of amenities. We did this for tennis courts, basketball courts, playgrounds, and parking. We will highlight playgrounds below. 
+
+
 
 ##### Playgrounds
 
@@ -312,6 +325,8 @@ knitr::kable(table)
 ```
 ![](./images/park_map_w_playground.png){style="width:60%"}
 
+
+
 ##### Public Transportation
 
 ```{r pt playground}
@@ -320,12 +335,19 @@ knitr::kable(table)
 ```
 ![](./images/park_map_pt_playground.png){style="width:60%"}
 
+
+
 ##### Driving
 ```{r playground drv}
 table <- read.csv("./data/working/amenities_web/park_iso_drv_playground.csv")
 knitr::kable(table)
 ```
 ![](./images/park_map_drv_playground.png){style="width:60%"}
+
+
+
+
+
 
 ### Floating Catchment
 
@@ -480,6 +502,8 @@ other_tract_tsfca <- ac(p = acs_tract$other,
 acs_tract$other_tract_tsfca <- other_tract_tsfca
 ```
 
+
+
 #### White
 
 ```{r tract_plots_white}
@@ -494,6 +518,8 @@ mapview(st_geometry(parks),
           layer.name = "TSFCA",  
           col.regions = sf.colors(alpha = 0.1))
 ```
+
+
 
 #### Black
 
@@ -510,6 +536,8 @@ mapview(st_geometry(parks),
           col.regions = sf.colors(alpha = 0.1))
 ```
 
+
+
 #### Asian
 
 ```{r tract_plots_asian}
@@ -524,6 +552,8 @@ mapview(st_geometry(parks),
           layer.name = "TSFCA",  
           col.regions = sf.colors(alpha = 0.1))
 ```
+
+
 
 #### Other
 
