@@ -267,7 +267,7 @@ acs_bgrp$other_bgrp_tsfca <- other_bgrp_tsfca
 
 ### Acreage for parks with playgrounds
 
-Here, we consider only those parks in Arlington County that have playgrounds when calculating the accessibility of the Census tracts. In contrast to the maps above considering every park, the Western tracts of Arlington County have the highest accessibility for all racial groups. This is primarily due to the fact that most of the parks containing playgrounds are in the Western tracts. (MAKE SOME CONNECTION TO % KIDS IN EACH TRACT)
+Here, we consider only those parks in Arlington County that have playgrounds when calculating the accessibility of the Census tracts. In contrast to the maps above considering every park, the Western tracts of Arlington County have the highest accessibility for all racial groups. This is primarily due to the fact that most of the parks containing playgrounds are in the Western tracts.
 
 ```{r tract_playground}
 playground <- which(parks_amenities$playground == 1)
@@ -368,7 +368,7 @@ mapview(st_geometry(parks[playground,]),
 
 ### Acreage for parks with free parking
 
-Here, we consider only those parks in Arlington County that have free parking available when calculating the accessibility of the Census tracts. The accessibility score distributions for parks with free parking are similar to that of all parks. For the White population, the Western tracts have the highest accessibility scores due to the large parks in that area having free parking. This area again has high accessibility scores for the Black, Asian, and other populations; however, we see relatively high scores for the Northern tracts as well given the low population counts of those racial groups and the presence of large parks with parking. Interesting, we see very few if any parks with free parking in the Southern tracts of the County, which are the ones with the highest Black population. (MAKE SOME CONNECTION TO % OWN CAR IN TRACT)
+Here, we consider only those parks in Arlington County that have free parking available when calculating the accessibility of the Census tracts. The accessibility score distributions for parks with free parking are similar to that of all parks. For the White population, the Western tracts have the highest accessibility scores due to the large parks in that area having free parking. This area again has high accessibility scores for the Black, Asian, and other populations; however, we see relatively high scores for the Northern tracts as well given the low population counts of those racial groups and the presence of large parks with parking. Interesting, we see very few if any parks with free parking in the Southern tracts of the County, which are the ones with the highest Black population.
 
 ```{r tract_parking}
 parking <- which(parks_amenities$free_parking == 1)
