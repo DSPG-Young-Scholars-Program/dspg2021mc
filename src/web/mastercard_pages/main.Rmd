@@ -332,10 +332,155 @@ knitr::kable(table)
 In addition we want to look at how park access is distributed across racial groups. We use the two-step floating catchment area method to calculate spatial accessibility scores for Census tracts in Arlington County by race. These scores give a measure of accessibility for each tract to the parks and their amenities in Arlington County and are calculated as the summation of the supply to demand ratio for each park contained in the catchment area of the Census tract. The supply of a park is defined by its acreage and its demand is defined by the total population count of a racial group in a Census tract. The catchment areas for both the parks as well as Census tracts are defined by a distance of one mile. Census tracts with higher scores are considered to have more accesibility to parks and their amenities.
 
 #### All Park Acreage 
+
 Here, we consider every park in Arlington County when calculating the accessibility of the Census tracts. We can see that the West to Southwest area of Arlington County has the highest level of accessibility. We observed that for the Black, Asian, and Other populations, however, there are high levels of accessibility in the Northern region. This is due to the fact that those areas have a number of large acreage parks combined with the low numbers of people who identify as Black, Asian, or Other.  
 
 
-##### White
+```{r, include=FALSE}
+library(sf)
+library(SpatialAcc)
+library(osrm)
+library(dplyr)
+library(tidycensus)
+library(mapview)
+
+# read in ACS data
+#Sys.getenv("CENSUS_API_KEY")
+
+acs_vars <- c(  
+  # total population
+  "B01003_001",
+  # Hispanic ethnicity
+  "B03001_003", "B03001_001",
+  # White
+  "B02001_002", "B02001_001",
+  # Black
+  "B02001_003",
+  # Asian
+  "B02001_005",
+  # Other
+  "B02001_004", "B02001_006", "B02001_007",
+  "B02001_008", "B02001_009", "B02001_010"
+  )
+
+data_tract <- get_acs(geography = "tract", 
+                      state = 51, 
+                      county = 013,
+                      variables = acs_vars,
+                      year = 2019, 
+                      survey = "acs5",
+                      cache_table = TRUE, 
+                      output = "wide", 
+                      geometry = TRUE,
+                      keep_geo_vars = TRUE)
+
+acs_tract <- data_tract %>%
+  transmute(STATEFP = STATEFP,
+            COUNTYFP = COUNTYFP,
+            TRACTCE = TRACTCE,
+            GEOID = GEOID,
+            NAME.x = NAME.x,
+            NAME.y = NAME.y,
+            ALAND = ALAND,
+            AWATER = AWATER,
+            total_pop = B01003_001E,
+            hispanic = B03001_003E,
+            white = B02001_002E,
+            black = B02001_003E,
+            asian = B02001_005E,
+            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
+            )
+
+acs_tract$total_pop[acs_tract$total_pop == 0] <- 0.0001
+acs_tract$hispanic[acs_tract$hispanic == 0] <- 0.0001
+acs_tract$white[acs_tract$white == 0] <- 0.0001
+acs_tract$black[acs_tract$black == 0] <- 0.0001
+acs_tract$asian[acs_tract$asian == 0] <- 0.0001
+acs_tract$other[acs_tract$other == 0] <- 0.0001
+
+data_bgrp <- get_acs(geography = "block group", 
+                     state = 51, 
+                     county = 013,
+                     variables = acs_vars,
+                     year = 2019, 
+                     survey = "acs5",
+                     cache_table = TRUE, 
+                     output = "wide", 
+                     geometry = TRUE,
+                     keep_geo_vars = TRUE)
+
+acs_bgrp <- data_bgrp %>%
+  transmute(STATEFP = STATEFP,
+            COUNTYFP = COUNTYFP,
+            TRACTCE = TRACTCE,
+            GEOID = GEOID,
+            NAME.x = NAME.x,
+            NAME.y = NAME.y,
+            ALAND = ALAND,
+            AWATER = AWATER,
+            total_pop = B01003_001E,
+            hispanic = B03001_003E,
+            white = B02001_002E,
+            black = B02001_003E,
+            asian = B02001_005E,
+            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
+  )
+
+acs_bgrp$total_pop[acs_bgrp$total_pop == 0] <- 0.0001
+acs_bgrp$hispanic[acs_bgrp$hispanic == 0] <- 0.0001
+acs_bgrp$white[acs_bgrp$white == 0] <- 0.0001
+acs_bgrp$black[acs_bgrp$black == 0] <- 0.0001
+acs_bgrp$asian[acs_bgrp$asian == 0] <- 0.0001
+acs_bgrp$other[acs_bgrp$other == 0] <- 0.0001
+
+## park data
+# transform to utm with meter units
+parks <- st_read(paste0(root.dir, "/data/original/arlington_parks/Park_Polygons.shp")) %>%
+  filter(Ownership == "Arlington County Park")
+
+# amenities
+parks_amenities <- read.csv(paste0(root.dir, "/data/working/parks_amenities.csv"))
+
+tract_dist_mat <- read.csv(paste0(root.dir, "/data/working/park_to_tract_dist_mat.csv"))
+
+bgrp_dist_mat <- read.csv(paste0(root.dir, "/data/working/park_to_bgrp_dist_mat.csv"))
+```
+
+```{r tract}
+white_tract_tsfca <- ac(p = acs_tract$white, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$white_tract_tsfca <- white_tract_tsfca
+
+black_tract_tsfca <- ac(p = acs_tract$black, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$black_tract_tsfca <- black_tract_tsfca
+
+asian_tract_tsfca <- ac(p = acs_tract$asian, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$asian_tract_tsfca <- asian_tract_tsfca
+
+other_tract_tsfca <- ac(p = acs_tract$other, 
+                        n = parks$Acreage, 
+                        D = tract_dist_mat, 
+                        d0 = 1609, 
+                        family = "2SFCA")
+
+acs_tract$other_tract_tsfca <- other_tract_tsfca
+```
+
+#### White
 
 ```{r tract_plots_white}
 # white
@@ -350,7 +495,7 @@ mapview(st_geometry(parks),
           col.regions = sf.colors(alpha = 0.1))
 ```
 
-##### Black
+#### Black
 
 ```{r tract_plots_black}
 # black
@@ -365,7 +510,7 @@ mapview(st_geometry(parks),
           col.regions = sf.colors(alpha = 0.1))
 ```
 
-##### Asian
+#### Asian
 
 ```{r tract_plots_asian}
 # asian
@@ -380,7 +525,7 @@ mapview(st_geometry(parks),
           col.regions = sf.colors(alpha = 0.1))
 ```
 
-##### Other
+#### Other
 
 ```{r tract_plots_other}
 # other
@@ -391,142 +536,6 @@ mapview(st_geometry(parks),
         color = "gray") + 
   mapview(acs_tract, 
           zcol = "other_tract_tsfca", 
-          layer.name = "TSFCA",  
-          col.regions = sf.colors(alpha = 0.1))
-```
-
-
-```{r bgrp}
-white_bgrp_tsfca <- ac(p = acs_bgrp$white, 
-                       n = parks$Acreage, 
-                       D = bgrp_dist_mat, 
-                       d0 = 1609, 
-                       family = "2SFCA")
-
-acs_bgrp$white_bgrp_tsfca <- white_bgrp_tsfca
-
-black_bgrp_tsfca <- ac(p = acs_bgrp$black, 
-                       n = parks$Acreage, 
-                       D = bgrp_dist_mat, 
-                       d0 = 1609, 
-                       family = "2SFCA")
-
-acs_bgrp$black_bgrp_tsfca <- black_bgrp_tsfca
-
-asian_bgrp_tsfca <- ac(p = acs_bgrp$asian, 
-                       n = parks$Acreage, 
-                       D = bgrp_dist_mat, 
-                       d0 = 1609, 
-                       family = "2SFCA")
-
-acs_bgrp$asian_bgrp_tsfca <- asian_bgrp_tsfca
-
-other_bgrp_tsfca <- ac(p = acs_bgrp$other, 
-                       n = parks$Acreage, 
-                       D = bgrp_dist_mat, 
-                       d0 = 1609, 
-                       family = "2SFCA")
-
-acs_bgrp$other_bgrp_tsfca <- other_bgrp_tsfca
-```
-
-#### Acreage for parks with playgrounds
-
-Here, we consider only those parks in Arlington County that have playgrounds when calculating the accessibility of the Census tracts. In contrast to the maps above considering every park, the Western tracts of Arlington County have the highest accessibility for all racial groups. This is primarily due to the fact that most of the parks containing playgrounds are in the Western tracts. (MAKE SOME CONNECTION TO % KIDS IN EACH TRACT)
-
-```{r tract_playground}
-playground <- which(parks_amenities$playground == 1)
-
-white_tract_tsfca_playground <- ac(p = acs_tract$white, 
-                                   n = parks$Acreage[playground], 
-                                   D = tract_dist_mat[,playground], 
-                                   d0 = 1609, 
-                                   family = "2SFCA")
-
-acs_tract$white_tract_tsfca_playground <- white_tract_tsfca_playground
-
-black_tract_tsfca_playground <- ac(p = acs_tract$black, 
-                                   n = parks$Acreage[playground], 
-                                   D = tract_dist_mat[,playground], 
-                                   d0 = 1609, 
-                                   family = "2SFCA")
-
-acs_tract$black_tract_tsfca_playground <- black_tract_tsfca_playground
-
-asian_tract_tsfca_playground <- ac(p = acs_tract$asian, 
-                                   n = parks$Acreage[playground], 
-                                   D = tract_dist_mat[,playground], 
-                                   d0 = 1609, 
-                                   family = "2SFCA")
-
-acs_tract$asian_tract_tsfca_playground <- asian_tract_tsfca_playground
-
-other_tract_tsfca_playground <- ac(p = acs_tract$other, 
-                                   n = parks$Acreage[playground], 
-                                   D = tract_dist_mat[,playground], 
-                                   d0 = 1609, 
-                                   family = "2SFCA")
-
-acs_tract$other_tract_tsfca_playground <- other_tract_tsfca_playground
-```
-
-##### White
-
-```{r tract_playground_plots_white}
-# white
-mapview(st_geometry(parks[playground,]), 
-        cex =.5, 
-        layer.name = "Parks in Arlington County", 
-        col.region = "gray",
-        color = "gray") + 
-  mapview(acs_tract, 
-          zcol = "white_tract_tsfca_playground", 
-          layer.name = "TSFCA",  
-          col.regions = sf.colors(alpha = 0.1))
-
-```
-
-##### Black
-
-```{r tract_playground_plots_black}
-# black
-mapview(st_geometry(parks[playground,]), 
-        cex =.5, 
-        layer.name = "Parks in Arlington County", 
-        col.region = "gray",
-        color = "gray") + 
-  mapview(acs_tract, 
-          zcol = "black_tract_tsfca_playground", 
-          layer.name = "TSFCA",  
-          col.regions = sf.colors(alpha = 0.1))
-```
-
-##### Asian
-
-```{r tract_playground_plots_asian}
-# asian
-mapview(st_geometry(parks[playground,]), 
-        cex =.5, 
-        layer.name = "Parks in Arlington County", 
-        col.region = "gray",
-        color = "gray") + 
-  mapview(acs_tract, 
-          zcol = "asian_tract_tsfca_playground", 
-          layer.name = "TSFCA",  
-          col.regions = sf.colors(alpha = 0.1))
-```
-
-##### Other
-
-```{r tract_playground_plots_other}
-# other
-mapview(st_geometry(parks[playground,]), 
-        cex =.5, 
-        layer.name = "Parks in Arlington County", 
-        col.region = "gray",
-        color = "gray") + 
-  mapview(acs_tract, 
-          zcol = "other_tract_tsfca_playground", 
           layer.name = "TSFCA",  
           col.regions = sf.colors(alpha = 0.1))
 ```
