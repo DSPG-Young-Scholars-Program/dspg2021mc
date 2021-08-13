@@ -32,6 +32,7 @@ library(png)
 ```
 
 ### Demographics Overview
+
 ```{r include=FALSE}
 library(tidyverse)
 library(data.table)
@@ -84,7 +85,8 @@ parks = parks %>%
 bb <- getbb('arlington county, virginia')
 ```
 
-#### Summary Statistics  
+#### Summary Statistics of Demographics
+
 ```{r echo=FALSE}
 # "totalpop_trct"
 # Summary stats tables ----------
@@ -160,7 +162,8 @@ knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statisti
 
 
 
-#### Map Breakdown by Race  
+#### Demographic Breakdown by Race  
+
 ```{r echo=FALSE}
 ## PLOTTING  - Demography: Race
 
@@ -352,9 +355,9 @@ knitr::kable(table)
 
 
 
-### Floating Catchment
+### Two-Step Floating Catchment Area Scores
 
-In addition we want to look at how park access is distributed across racial groups. We use the two-step floating catchment area method to calculate spatial accessibility scores for Census tracts in Arlington County by race. These scores give a measure of accessibility for each tract to the parks and their amenities in Arlington County and are calculated as the summation of the supply to demand ratio for each park contained in the catchment area of the Census tract. The supply of a park is defined by its acreage and its demand is defined by the total population count of a racial group in a Census tract. The catchment areas for both the parks as well as Census tracts are defined by a distance of one mile. Census tracts with higher scores are considered to have more accesibility to parks and their amenities.
+In addition, we investigated how park accessibility varies across Census tracts within racial groups. We used the two-step floating catchment area method to calculate spatial accessibility scores for Census tracts in Arlington County by race. These scores give a measure of accessibility for each tract to the parks and their amenities in Arlington County and are calculated as the summation of the supply to demand ratio for each park contained in the catchment area of the Census tract. The supply of a park is defined by its acreage and its demand is defined by the total population count of a racial group in a Census tract. The catchment areas for both the parks as well as Census tracts are defined by a distance of one mile. Census tracts with higher scores are considered to have more accesibility to parks and their amenities.
 
 #### All Park Acreage 
 
@@ -416,47 +419,13 @@ acs_tract <- data_tract %>%
             other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
             )
 
-acs_tract$total_pop[acs_tract$total_pop == 0] <- 0.0001
-acs_tract$hispanic[acs_tract$hispanic == 0] <- 0.0001
-acs_tract$white[acs_tract$white == 0] <- 0.0001
-acs_tract$black[acs_tract$black == 0] <- 0.0001
-acs_tract$asian[acs_tract$asian == 0] <- 0.0001
-acs_tract$other[acs_tract$other == 0] <- 0.0001
+acs_tract$total_pop[acs_tract$total_pop == 0] <- 1
+acs_tract$hispanic[acs_tract$hispanic == 0] <- 1
+acs_tract$white[acs_tract$white == 0] <- 1
+acs_tract$black[acs_tract$black == 0] <- 1
+acs_tract$asian[acs_tract$asian == 0] <- 1
+acs_tract$other[acs_tract$other == 0] <- 1
 
-data_bgrp <- get_acs(geography = "block group", 
-                     state = 51, 
-                     county = 013,
-                     variables = acs_vars,
-                     year = 2019, 
-                     survey = "acs5",
-                     cache_table = TRUE, 
-                     output = "wide", 
-                     geometry = TRUE,
-                     keep_geo_vars = TRUE)
-
-acs_bgrp <- data_bgrp %>%
-  transmute(STATEFP = STATEFP,
-            COUNTYFP = COUNTYFP,
-            TRACTCE = TRACTCE,
-            GEOID = GEOID,
-            NAME.x = NAME.x,
-            NAME.y = NAME.y,
-            ALAND = ALAND,
-            AWATER = AWATER,
-            total_pop = B01003_001E,
-            hispanic = B03001_003E,
-            white = B02001_002E,
-            black = B02001_003E,
-            asian = B02001_005E,
-            other_race = B02001_004E + B02001_006E + B02001_007E + B02001_008E + B02001_009E + B02001_010E
-  )
-
-acs_bgrp$total_pop[acs_bgrp$total_pop == 0] <- 0.0001
-acs_bgrp$hispanic[acs_bgrp$hispanic == 0] <- 0.0001
-acs_bgrp$white[acs_bgrp$white == 0] <- 0.0001
-acs_bgrp$black[acs_bgrp$black == 0] <- 0.0001
-acs_bgrp$asian[acs_bgrp$asian == 0] <- 0.0001
-acs_bgrp$other[acs_bgrp$other == 0] <- 0.0001
 
 ## park data
 # transform to utm with meter units

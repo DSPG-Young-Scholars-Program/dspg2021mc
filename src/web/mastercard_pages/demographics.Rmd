@@ -73,7 +73,9 @@ bb <- getbb('arlington county, virginia')
 ```
 
 ## Summary Statistics  
-The table below shows the summary statistics for different variables relating to demographic information from the American Community Survey (2015-19) Tract level data. We see racially, Arlington County Tracts have about 70% white population on average, with a balanced distribution of other races and ethnic groups. The median household income at a tract-level on average is 130,000, which is much higher than the median household income of an African-American household at a tract level.  
+
+The table below displays summary statistics for demographic information in Arlington County from the American Community Survey (2015-19) data at the Census tract level. We see racially, Arlington County tracts have about 70% white population on average, with a balanced distribution of other races and ethnic groups. The median household income at the tract-level is 130,000 dollars on average, which is much higher than the median household income of an African-American household at the tract level.  
+
 ```{r echo=FALSE}
 # "totalpop_trct"
 # Summary stats tables ----------
@@ -130,7 +132,7 @@ tract_tab =
          Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: Other Race", Statistics),
          Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
          Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
-         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties<br>with greenspace", Statistics),
+         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of Properties with Greenspace", Statistics),
          Statistics = ifelse(Statistics == "pov_all", "% in Poverty: All", Statistics),
          Statistics = ifelse(Statistics == "pov_b", "% in Poverty: African-American", Statistics),
          Statistics = ifelse(Statistics == "pov_a", "% in Poverty: Asian", Statistics),
@@ -151,7 +153,7 @@ Source: American Community Survey 5-Year Data (2015-2019)
 
 ### Race  
 
-The map below shows the racial demographics of Arlington county by Census tract while also displaying park space areas. We see that even though tracts 1002 and 1003 are both densely populated, their park access is restricted. Some clusters of areas densely populated with African-American populations do not have good access to parks. We see this especially in Tracts 1031 and 1034. On the other hand, densely populated Asian population areas have tremendous access to parks. We see that access to parks for areas densely populated with Hispanic or Latino populations is fair. Areas densely populated by White populations have fair access to parks in Arlington County.
+The map below shows the racial demographics of Arlington County by Census tract while also displaying park space areas. We see that even though tracts 1002 and 1003 are both densely populated, their park access is restricted. Some clusters of areas densely populated with African-American populations do not have good access to parks. We see this especially in Tracts 1031 and 1034. On the other hand, densely populated Asian population areas have tremendous access to parks. We see that access to parks for areas densely populated with Hispanic or Latino populations is fair. Areas densely populated by White populations have fair access to parks in Arlington County.
 
 ```{r echo=FALSE}
 ## PLOTTING  - Demography: Race
@@ -383,7 +385,7 @@ leaflet(acs_tract) %>% #create leaflet object
                                                   bringToFront = TRUE),
               group = "Median Income: All",
               label = ~paste0("The median income in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_all`, "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(med_inc_all), pal = colorNumeric("PuOr", acs_tract$med_inc_all), values = ~med_inc_all, group = "Median Income: All", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(med_inc_all), pal = colorNumeric("PuOr", acs_tract$med_inc_all), values = ~med_inc_all, group = "Median Income: All", title = "Median<br>Income ($)", position = "topleft") %>%
   
     ## Black
   addPolygons(data = acs_tract %>% drop_na(med_inc_b), color = "#444444", weight = 1, smoothFactor = 0.5,
@@ -393,7 +395,7 @@ leaflet(acs_tract) %>% #create leaflet object
                                                   bringToFront = TRUE),
               group = "Median Income: African-American",
               label = ~paste0("The median income of an African-American household in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_b`, "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(med_inc_b), pal = colorNumeric("PuOr", acs_tract$med_inc_b), values = ~med_inc_b, group = "Median Income: African-American", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(med_inc_b), pal = colorNumeric("PuOr", acs_tract$med_inc_b), values = ~med_inc_b, group = "Median Income: African-American", title = "Median<br>Income ($)", position = "topleft") %>%
   
    ## Asian
   addPolygons(data = acs_tract %>% drop_na(med_inc_a), color = "#444444", weight = 1, smoothFactor = 0.5,
@@ -403,7 +405,7 @@ leaflet(acs_tract) %>% #create leaflet object
                                                   bringToFront = TRUE),
               group = "Median Income: Asian",
               label = ~paste0("The median income of an Asian household in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_a`, "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(med_inc_a), pal = colorNumeric("PuOr", acs_tract$med_inc_a), values = ~med_inc_a, group = "Median Income: Asian", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract %>% drop_na(med_inc_a), pal = colorNumeric("PuOr", acs_tract$med_inc_a), values = ~med_inc_a, group = "Median Income: Asian", title = "Median<br>Income ($)", position = "topleft") %>%
   
     ## Hispanic
   addPolygons(data = acs_tract%>% drop_na(med_inc_h), color = "#444444", weight = 1, smoothFactor = 0.5,
@@ -413,7 +415,7 @@ leaflet(acs_tract) %>% #create leaflet object
                                                   bringToFront = TRUE),
               group = "Median Income: Hispanic",
               label = ~paste0("The median income of a Hispanic household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_h`, ".")) %>% 
-  addLegend(data = acs_tract%>% drop_na(med_inc_h), pal = colorNumeric("PuOr", acs_tract$med_inc_h), values = ~med_inc_h, group = "Median Income: Hispanic", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract%>% drop_na(med_inc_h), pal = colorNumeric("PuOr", acs_tract$med_inc_h), values = ~med_inc_h, group = "Median Income: Hispanic", title = "Median<br>Income ($)", position = "topleft") %>%
   
   ## White
   addPolygons(data = acs_tract%>% drop_na(med_inc_w), color = "#444444", weight = 1, smoothFactor = 0.5,
@@ -423,7 +425,7 @@ leaflet(acs_tract) %>% #create leaflet object
                                                   bringToFront = TRUE),
               group = "Median Income: White",
               label = ~paste0("The median income of a White household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_w`, ".")) %>% 
-  addLegend(data = acs_tract%>% drop_na(med_inc_w), pal = colorNumeric("PuOr", acs_tract$med_inc_w), values = ~med_inc_w, group = "Median Income: White", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract%>% drop_na(med_inc_w), pal = colorNumeric("PuOr", acs_tract$med_inc_w), values = ~med_inc_w, group = "Median Income: White", title = "Median<br>Income ($)", position = "topleft") %>%
   
   ## Other
   addPolygons(data = acs_tract%>% drop_na(med_inc_o), color = "#444444", weight = 1, smoothFactor = 0.5,
@@ -433,7 +435,7 @@ leaflet(acs_tract) %>% #create leaflet object
                                                   bringToFront = TRUE),
               group = "Median Income: Other Race",
               label = ~paste0("The median income of other race household in\n", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is $", `med_inc_o`, "%.")) %>% 
-  addLegend(data = acs_tract%>% drop_na(med_inc_o), pal = colorNumeric("PuOr", acs_tract$med_inc_o), values = ~med_inc_o, group = "Median Income: Other Race", title = "Median<br>Income", position = "topleft") %>%
+  addLegend(data = acs_tract%>% drop_na(med_inc_o), pal = colorNumeric("PuOr", acs_tract$med_inc_o), values = ~med_inc_o, group = "Median Income: Other Race", title = "Median<br>Income ($)", position = "topleft") %>%
   
    
   # Layers control
@@ -451,7 +453,7 @@ leaflet(acs_tract) %>% #create leaflet object
 
 ### Poverty  
 
-The map below shows the poverty of Arlington county by Census tract while also displaying park space areas.  
+The map below shows the poverty status of Arlington county by Census tract while also displaying park space areas.  
 
 ```{r}
 ## PLOTTING  - Demography: Poverty

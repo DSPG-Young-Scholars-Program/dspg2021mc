@@ -13,13 +13,13 @@ output:
 ```
 
 ### American Community Survey   
-For this project we used data from the [American Community Survey (ACS)](https://www.census.gov/programs-surveys/acs/data.html). The American Community Survey (ACS) is a yearly survey that covers a broad range of topics about social, economic, demographic, and housing characteristics of the U.S. population. In this project we used 5-year ACS estimates, where represents data that has been collected over time. This gives us increased statistical reliability of the data. The 5-year estimates are available at the tract and block group level.
+For this project we used data from the [American Community Survey (ACS)](https://www.census.gov/programs-surveys/acs/data.html). The American Community Survey (ACS) is a yearly survey that covers a broad range of topics about social, economic, demographic, and housing characteristics of the U.S. population. In this project we used 5-year ACS estimates, where represents data that has been collected over a 5 year period of time. This gives us increased statistical reliability of the data. The 5-year estimates are available at the tract and block group level.
 
 ### Arlington Open Data Portal 
 Additionally, we used data from [Arlington County Open Data Portal](https://data.arlingtonva.us/). This data contained a variety of information from the parks, from park amenities to general park location to park acreage. This data allows us to plot locations and areas of parks, compare amenity access, and create polygons of access around parks.
 
 ### Corelogic
-[Corelogic](https://www.corelogic.com/) data is proprietary property data which provides latitude/longitude level geographic data on residences in a given place. We use this data to measure types of residences and locations of residences near parks. This allows us to proxy coverage of isochrones and distance polygons. This is limited to information about the type of residence and does not allow us to see what kinds of people live in those residences, which is why it's considered a proxy.
+[Corelogic](https://www.corelogic.com/) data is proprietary property data which provides latitude/longitude level geographic data on residences in a given place. We used this data to measure types of residences and locations of residences near parks. This allows us to proxy coverage of isochrones and distance polygons. This is limited to information about the type of residence and does not allow us to see what kinds of people live in those residences, which is why it's considered a proxy.
 
 
 
