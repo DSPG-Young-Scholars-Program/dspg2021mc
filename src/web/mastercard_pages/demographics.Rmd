@@ -37,15 +37,15 @@ library(RColorBrewer)
 library(readr)
 library(stargazer)
 
-acs_tract <- read_rds("./data/working/acs_tract.Rds")
-acs_bgrp <- read_rds("./data/working/acs_bgrp.Rds")
-ej = read_rds("./data/working/ej.Rds")
-parks <- st_read("./data/original/arlington_parks/Park_Polygons.shp")
+acs_tract <- read_rds(paste0(root.dir, "/data/working/acs_tract.Rds"))
+acs_bgrp <- read_rds(paste0(root.dir, "/data/working/acs_bgrp.Rds"))
+ej = read_rds(paste0(root.dir, "/data/working/ej.Rds"))
+parks <- st_read(paste0(root.dir, "/data/original/arlington_parks/Park_Polygons.shp"))
 
-bgrp_greenspace <- read.csv("./data/working/bgrp_greenspace.csv")
+bgrp_greenspace <- read.csv(paste0(root.dir, "/data/working/bgrp_greenspace.csv"))
 bgrp_greenspace$bgrp_geoid <- as.character(bgrp_greenspace$bgrp_geoid)
   
-tract_greenspace <- read.csv("./data/working/tract_greenspace.csv")
+tract_greenspace <- read.csv(paste0(root.dir, "/data/working/tract_greenspace.csv"))
 tract_greenspace$tract_geoid <- as.character(tract_greenspace$tract_geoid)
 
 acs_tract <- acs_tract %>%
@@ -147,73 +147,12 @@ knitr::kable(tract_tab, format = "html", digits = 2, caption = "Summary Statisti
 ```
 Source: American Community Survey 5-Year Data (2015-2019)  
 
-### One-Way T-Tests  
-We also perform one-sample t-tests on our variables to make sure that our variables were continuous, our data were randomly sampled and normally distributed, and the variance was homogenous across variables.  
-```{r echo=FALSE}
-t_test_tract <- lapply(tract_vars, function(x) 
-  t.test(x, na.action = na.pass))
+## Spatial distributions
 
-t_stat = c()
-p_value = c()
-conf_int1 = c()
-conf_int2 = c()
-mean = c()
-std_err = c()
-
-for(x in t_test_tract){
-  t_stat = append(t_stat, x$statistic)
-  p_value = append(p_value, x$p.value)
-  conf_int1 = append(conf_int1, x$conf.int[1])
-  conf_int2 = append(conf_int2, x$conf.int[2])
-  mean = append(mean, x$estimate)
-  std_err = append(std_err, x$stderr)
-}
-
-t_test_table_tract <- data.frame(names(t_test_tract), t_stat, p_value, conf_int1, conf_int2, mean, std_err) %>% 
-  mutate(mean = round(mean,2),
-         std_err = round(std_err, 2),
-         conf_int1 = round(conf_int1, 2),
-         conf_int2 = round(conf_int2, 2),
-         #p_value = round(p_value, 2),
-         t_stat = round(t_stat, 2)) %>% 
-  select("Statistics" = `names.t_test_tract.`,
-         "Mean" = `mean`,
-         "Standard Error" = `std_err`,
-         "Lower CI (95%)" = conf_int1,
-         "Upper CI (95%)" = conf_int2,
-         "T-Statistic" = `t_stat`,
-         "P Value" = `p_value`) %>% 
-  mutate(Statistics = ifelse(Statistics == "totalpop_trct", "Total Population", Statistics),
-         Statistics = ifelse(Statistics == "black", "% Population: African-American", Statistics),
-         Statistics = ifelse(Statistics == "hispanic", "% Population: Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "asian", "% Population: Asian", Statistics),
-         Statistics = ifelse(Statistics == "white", "% Population: White", Statistics),
-         Statistics = ifelse(Statistics == "other_race", "% Population: Other Race", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_all", "Median Household Income (HHI): All", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_w", "Median HHI: White", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_a", "Median HHI: Asian", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_b", "Median HHI: African-American", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_h", "Median HHI: Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "med_inc_o", "Median HHI: Other Race", Statistics),
-         Statistics = ifelse(Statistics == "no_vehic", "% Population with No Vehicle", Statistics),
-         Statistics = ifelse(Statistics == "perc_under_18", "% Population under 18", Statistics),
-         Statistics = ifelse(Statistics == "mean_greenspace", "Mean number of properties<br>with greenspace", Statistics),
-         Statistics = ifelse(Statistics == "pov_all", "% in Poverty: All", Statistics),
-         Statistics = ifelse(Statistics == "pov_b", "% in Poverty: African-American", Statistics),
-         Statistics = ifelse(Statistics == "pov_a", "% in Poverty: Asian", Statistics),
-         Statistics = ifelse(Statistics == "pov_h", "% in Poverty: Hispanic or Latino", Statistics),
-         Statistics = ifelse(Statistics == "pov_w", "% in Poverty: White", Statistics),
-         Statistics = ifelse(Statistics == "pov_o", "% in Poverty: Other Race", Statistics),
-         Statistics = ifelse(Statistics == "perc_ambulatory_disability", "% with an Ambulatory Disability", Statistics),
-         Statistics = ifelse(Statistics == "nohealthins", "% Pop. with no Health Insurance", Statistics),
-         Statistics = ifelse(Statistics == "rent_ov_30", "% of housing with rent > $30K", Statistics))
-
-knitr::kable(t_test_table_tract, format = "html", caption = "Summary Statistics for One-Way T-Tests", align = "c", digits = 50)
-```
-
-## Maps  
 ### Race  
-The map below shows the racial demography of Arlington county by census tract while also displaying park space areas. We see that even though tracts 1002 and 1003 are both densely populated, their park access is restricted. Some clusters of areas densely populated with African-American populations do not have good access to parks. We see this especially in Tracts 1031 and 1034. On the other hand, densely populated Asian population areas have tremendous access to parks. We see that access to parks for areas densely populated with Hispanic or Latino populations is fair. Areas densely populated by white persons do not have good access to parks in Arlington County.  
+
+The map below shows the racial demographics of Arlington county by Census tract while also displaying park space areas. We see that even though tracts 1002 and 1003 are both densely populated, their park access is restricted. Some clusters of areas densely populated with African-American populations do not have good access to parks. We see this especially in Tracts 1031 and 1034. On the other hand, densely populated Asian population areas have tremendous access to parks. We see that access to parks for areas densely populated with Hispanic or Latino populations is fair. Areas densely populated by White populations have fair access to parks in Arlington County.
+
 ```{r echo=FALSE}
 ## PLOTTING  - Demography: Race
 
@@ -307,8 +246,114 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("Other Race Population")
 ```
 
+
+### Other factors
+
+The map below shows the distribution of factors that could affect the demand for parks and their amenities by census tract while also displaying park space areas. These factors are:
+
+* percent of population under 18 years of age
+* percent of population with an ambulatory disability
+* percent of population with no vehicle
+* mean number of residences with greenspace
+* percent of population with no health insurance
+
+We see tracts with a higher percentage of the population under 18 also have access to lots of parks. Tracts with a higher percentage of ambulatory disability populations, surprisingly do not have too many parks around in those tracts. Census Tract 1020.03 is the tract with the highest percent population that has no vehicle and also has very little access to parks. The tracts 1002 and 1003 as mentioned above that lacked a lot of parks have a lot of green spaces available. This may be one of the reasons why park access in these tracts is limited due to the availability of natural green spaces. For areas with more expensive housing, we see decent access to parks.  
+
+```{r}
+leaflet(acs_tract) %>% #create leaflet object
+  
+  ## Parks Polygons (the green weird things on the map)
+  addPolygons(data = parks, color = "green", group = "Parks") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "No Parks") %>%
+  
+  ## Basemaps
+  addProviderTiles(provider = "CartoDB.Positron") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% No Health Insurance") %>%
+  #addProviderTiles(provider = "CartoDB.Positron", group = "% Homes with rent > $30K") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Population under 18") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Pop. with Ambulatory Disability") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Pop. with No Vehicle") %>%
+  addProviderTiles(provider = "CartoDB.Positron", group = "% Mean Greenspace") %>%
+  
+  fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% #add bounding box
+  
+  ## Polygons
+    ## No health insurance 
+  addPolygons(data = acs_tract %>% drop_na(nohealthins), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", nohealthins)(nohealthins),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% No Health Insurance",
+              label = ~paste0("The % of people having no health insurance in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`nohealthins`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(nohealthins), pal = colorNumeric("PuOr", acs_tract$nohealthins), values = ~nohealthins, group = "% No Health Insurance", title = "% No Health<br>Insurance", position = "topleft") %>% 
+    
+    ## rent > 30k 
+  #addPolygons(data = acs_tract %>% drop_na(rent_ov_30), color = "#444444", weight = 1, smoothFactor = 0.5,
+              #opacity = 1.0, fillOpacity = 0.5,
+              #fillColor = ~colorNumeric("PuOr", rent_ov_30)(rent_ov_30),
+              #highlightOptions = highlightOptions(color = "white", weight = 2,
+              #                                    bringToFront = TRUE),
+              #group = "% Homes with rent > $30K",
+              #label = ~paste0("The % of homes with the annual rent > 30K in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`rent_ov_30`,2), "."))  %>%
+  #addLegend(data = acs_tract %>% drop_na(rent_ov_30), pal = colorNumeric("PuOr", acs_tract$rent_ov_30), values = ~rent_ov_30, group = "% Homes with rent > $30K", title = "% Homes with<br>rent > $30K", position = "topleft") %>%
+  
+    ## "% Population under 18"
+  addPolygons(data = acs_tract %>% drop_na(perc_under_18), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", perc_under_18)(perc_under_18),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Population under 18",
+              label = ~paste0("The % of population under 18 in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`perc_under_18`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(perc_under_18), pal = colorNumeric("PuOr", acs_tract$perc_under_18), values = ~perc_under_18, group = "% Population under 18", title = "% Population<br>under 18", position = "topleft") %>%
+  
+      ## "% pop. with Ambulatory Disability"
+  addPolygons(data = acs_tract %>% drop_na(perc_ambulatory_disability), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", perc_ambulatory_disability)(perc_ambulatory_disability),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Pop. with Ambulatory Disability",
+              label = ~paste0("The % of population with an ambulatory disability in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`perc_ambulatory_disability`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(perc_ambulatory_disability), pal = colorNumeric("PuOr", acs_tract$perc_ambulatory_disability), values = ~perc_ambulatory_disability, group = "% Pop. with Ambulatory Disability", title = "% Pop. with<br>Ambulatory Disability", position = "topleft") %>%
+  
+    ## "% Pop. with No Vehicle"
+  addPolygons(data = acs_tract %>% drop_na(no_vehic), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", no_vehic)(no_vehic),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Pop. with No Vehicle",
+              label = ~paste0("The % of population without a vehicle in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`no_vehic`,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(no_vehic), pal = colorNumeric("PuOr", acs_tract$no_vehic), values = ~no_vehic, group = "% Pop. with No Vehicle", title = "% Pop. with<br>No Vehicle", position = "topleft") %>%
+  
+    ## "% Mean Greenspace"
+  addPolygons(data = acs_tract %>% drop_na(mean_greenspace), color = "#444444", weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+              fillColor = ~colorNumeric("PuOr", mean_greenspace)(mean_greenspace),
+              highlightOptions = highlightOptions(color = "white", weight = 2,
+                                                  bringToFront = TRUE),
+              group = "% Mean Greenspace",
+              label = ~paste0("The % of mean greenspace in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`mean_greenspace`*100,2), "."))  %>%
+  addLegend(data = acs_tract %>% drop_na(mean_greenspace), pal = colorNumeric("PuOr", acs_tract$mean_greenspace), values = ~mean_greenspace*100, group = "% Mean Greenspace", title = "% Mean<br>Greenspace", position = "topleft") %>%
+   # Layers control
+  addLayersControl(
+    overlayGroups = c("% Population under 18", "% Pop. with Ambulatory Disability", "% Pop. with No Vehicle", "% Mean Greenspace", "% No Health Insurance"),
+    baseGroups = c("Parks", "No Parks"),
+    options = layersControlOptions(collapsed = FALSE)) %>% 
+  #hideGroup("% Homes with rent > $30K") %>% 
+  hideGroup("% No Health Insurance") %>% 
+  hideGroup("% Pop. with Ambulatory Disability") %>% 
+  hideGroup("% Pop. with No Vehicle") %>% 
+  hideGroup("% Mean Greenspace")
+```
+
+
 ### Income  
-The map below shows the income demography of Arlington county by census tract while also displaying park space areas. We see tracts where African-American populations with lower incomes do not have many parks in the neighborhood. On the other hand, park access does not seem to correlate with the median income for Asian, Hispanic, or White households.  
+
+The map below shows the income demography of Arlington county by Census tract while also displaying park space areas. We see tracts where African-American populations with lower incomes do not have many parks in the neighborhood. On the other hand, park access does not seem to correlate with the median income for Asian, Hispanic, or White households.  
+
 ```{r}
 ## PLOTTING  - Demography: Income
 
@@ -403,100 +448,11 @@ leaflet(acs_tract) %>% #create leaflet object
   hideGroup("Median Income: Other Race")
 ```
 
-### Miscellaneous  
-The map below shows the miscellaneous demography of Arlington county by census tract while also displaying park space areas. We see tracts with a higher percentage of the population under 18 also have access to lots of parks. Tracts with a higher percentage of ambulatory disability populations, surprisingly do not have too many parks around in those tracts. Census Tract 1020.03 is the tract with the highest percent population that has no vehicle and also has very little access to parks. The tracts 1002 and 1003 as mentioned above that lacked a lot of parks have a lot of green spaces available. This may be one of the reasons why park access in these tracts is limited due to the availability of natural green spaces. For areas with more expensive housing, we see decent access to parks.  
-```{r}
-leaflet(acs_tract) %>% #create leaflet object
-  
-  ## Parks Polygons (the green weird things on the map)
-  addPolygons(data = parks, color = "green", group = "Parks") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "No Parks") %>%
-  
-  ## Basemaps
-  addProviderTiles(provider = "CartoDB.Positron") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "% No Health Insurance") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "% Homes with rent > $30K") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "% Population under 18") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "% Pop. with Ambulatory Disability") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "% Pop. with No Vehicle") %>%
-  addProviderTiles(provider = "CartoDB.Positron", group = "% Mean Greenspace") %>%
-  
-  fitBounds(bb[1,1], bb[2,1], bb[1,2], bb[2,2]) %>% #add bounding box
-  
-  ## Polygons
-    ## No health insurance 
-  addPolygons(data = acs_tract %>% drop_na(nohealthins), color = "#444444", weight = 1, smoothFactor = 0.5,
-              opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorNumeric("PuOr", nohealthins)(nohealthins),
-              highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),
-              group = "% No Health Insurance",
-              label = ~paste0("The % of people having no health insurance in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`nohealthins`,2), "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(nohealthins), pal = colorNumeric("PuOr", acs_tract$nohealthins), values = ~nohealthins, group = "% No Health Insurance", title = "% No Health<br>Insurance", position = "topleft") %>% 
-    
-    ## rent > 30k 
-  addPolygons(data = acs_tract %>% drop_na(rent_ov_30), color = "#444444", weight = 1, smoothFactor = 0.5,
-              opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorNumeric("PuOr", rent_ov_30)(rent_ov_30),
-              highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),
-              group = "% Homes with rent > $30K",
-              label = ~paste0("The % of homes with the annual rent > 30K in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`rent_ov_30`,2), "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(rent_ov_30), pal = colorNumeric("PuOr", acs_tract$rent_ov_30), values = ~rent_ov_30, group = "% Homes with rent > $30K", title = "% Homes with<br>rent > $30K", position = "topleft") %>%
-  
-    ## "% Population under 18"
-  addPolygons(data = acs_tract %>% drop_na(perc_under_18), color = "#444444", weight = 1, smoothFactor = 0.5,
-              opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorNumeric("PuOr", perc_under_18)(perc_under_18),
-              highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),
-              group = "% Population under 18",
-              label = ~paste0("The % of population under 18 in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`perc_under_18`,2), "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(perc_under_18), pal = colorNumeric("PuOr", acs_tract$perc_under_18), values = ~perc_under_18, group = "% Population under 18", title = "% Population<br>under 18", position = "topleft") %>%
-  
-      ## "% pop. with Ambulatory Disability"
-  addPolygons(data = acs_tract %>% drop_na(perc_ambulatory_disability), color = "#444444", weight = 1, smoothFactor = 0.5,
-              opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorNumeric("PuOr", perc_ambulatory_disability)(perc_ambulatory_disability),
-              highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),
-              group = "% Pop. with Ambulatory Disability",
-              label = ~paste0("The % of population with an ambulatory disability in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`perc_ambulatory_disability`,2), "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(perc_ambulatory_disability), pal = colorNumeric("PuOr", acs_tract$perc_ambulatory_disability), values = ~perc_ambulatory_disability, group = "% Pop. with Ambulatory Disability", title = "% Pop. with<br>Ambulatory Disability", position = "topleft") %>%
-  
-    ## "% Pop. with No Vehicle"
-  addPolygons(data = acs_tract %>% drop_na(no_vehic), color = "#444444", weight = 1, smoothFactor = 0.5,
-              opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorNumeric("PuOr", no_vehic)(no_vehic),
-              highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),
-              group = "% Pop. with No Vehicle",
-              label = ~paste0("The % of population without a vehicle in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`no_vehic`,2), "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(no_vehic), pal = colorNumeric("PuOr", acs_tract$no_vehic), values = ~no_vehic, group = "% Pop. with No Vehicle", title = "% Pop. with<br>No Vehicle", position = "topleft") %>%
-  
-    ## "% Mean Greenspace"
-  addPolygons(data = acs_tract %>% drop_na(mean_greenspace), color = "#444444", weight = 1, smoothFactor = 0.5,
-              opacity = 1.0, fillOpacity = 0.5,
-              fillColor = ~colorNumeric("PuOr", mean_greenspace)(mean_greenspace),
-              highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                  bringToFront = TRUE),
-              group = "% Mean Greenspace",
-              label = ~paste0("The % of mean greenspace in ", str_replace(`NAME.y`,", Arlington County, Virginia", ""), " is ", round(`mean_greenspace`*100,2), "."))  %>%
-  addLegend(data = acs_tract %>% drop_na(mean_greenspace), pal = colorNumeric("PuOr", acs_tract$mean_greenspace), values = ~mean_greenspace*100, group = "% Mean Greenspace", title = "% Mean<br>Greenspace", position = "topleft") %>%
-   # Layers control
-  addLayersControl(
-    overlayGroups = c("% Population under 18", "% Pop. with Ambulatory Disability", "% Pop. with No Vehicle", "% Mean Greenspace", "% No Health Insurance", "% Homes with rent > $30K"),
-    baseGroups = c("Parks", "No Parks"),
-    options = layersControlOptions(collapsed = FALSE)) %>% 
-  hideGroup("% Homes with rent > $30K") %>% 
-  hideGroup("% No Health Insurance") %>% 
-  hideGroup("% Pop. with Ambulatory Disability") %>% 
-  hideGroup("% Pop. with No Vehicle") %>% 
-  hideGroup("% Mean Greenspace")
-```
 
 ### Poverty  
-The map below shows the poverty of Arlington county by census tract while also displaying park space areas.  
+
+The map below shows the poverty of Arlington county by Census tract while also displaying park space areas.  
+
 ```{r}
 ## PLOTTING  - Demography: Poverty
 

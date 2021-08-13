@@ -776,3 +776,71 @@ mapview(st_geometry(parks[parking,]),
           zcol = "other_bgrp_tsfca_parking", 
           layer.name = "TSFCA",  
           col.regions = sf.colors(alpha = 0.1))
+
+
+## access to basketball courts
+
+bball <- which(parks_amenities$basketball == 1)
+
+all_tract_tsfca_bball <- ac(p = acs_tract$total_pop, 
+                            n = parks$Acreage[bball], 
+                            D = tract_dist_mat[,bball], 
+                            d0 = 1609, 
+                            family = "2SFCA")
+
+acs_tract$all_tract_tsfca_bball <- all_tract_tsfca_bball
+
+mapview(st_geometry(parks[bball,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "all_tract_tsfca_bball", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+## access to tennis courts
+
+tennis <- which(parks_amenities$tennis == 1)
+
+all_tract_tsfca_tennis <- ac(p = acs_tract$total_pop, 
+                            n = parks$Acreage[tennis], 
+                            D = tract_dist_mat[,tennis], 
+                            d0 = 1609, 
+                            family = "2SFCA")
+
+acs_tract$all_tract_tsfca_tennis <- all_tract_tsfca_tennis
+
+mapview(st_geometry(parks[tennis,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "all_tract_tsfca_tennis", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
+
+
+## access to charcoal grills
+
+grill <- which(parks_amenities$charcoal_grill == 1)
+
+all_tract_tsfca_grill <- ac(p = acs_tract$total_pop, 
+                             n = parks$Acreage[grill], 
+                             D = tract_dist_mat[,grill], 
+                             d0 = 1609, 
+                             family = "2SFCA")
+
+acs_tract$all_tract_tsfca_grill <- all_tract_tsfca_grill
+
+mapview(st_geometry(parks[grill,]), 
+        cex =.5, 
+        layer.name = "Parks in Arlington County", 
+        col.region = "gray",
+        color = "gray") + 
+  mapview(acs_tract, 
+          zcol = "all_tract_tsfca_grill", 
+          layer.name = "TSFCA",  
+          col.regions = sf.colors(alpha = 0.1))
